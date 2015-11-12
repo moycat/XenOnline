@@ -1,0 +1,17 @@
+# depslib dependency file v1.0
+1447258660 source:/home/moycat/Project/MoyOJ/Cell/Judge/Cell/main.cpp
+	<iostream>
+	<sstream>
+	<string>
+	<vector>
+	<stdio.h>
+	<stdlib.h>
+	<unistd.h>
+	<time.h>
+	<fcntl.h>
+	<unistd.h>
+	<sys/stat.h>
+	<sys/resource.h>
+	<sys/types.h>
+	<sys/wait.h>
+
