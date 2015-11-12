@@ -33,6 +33,9 @@
 			<Add option="-fexceptions" />
 		</Compiler>
 		<Unit filename="main.cpp" />
+		<Unit filename="okcalls.h" />
+		<Unit filename="okcalls32.h" />
+		<Unit filename="okcalls64.h" />
 		<Extensions>
 			<envvars />
 			<code_completion />
