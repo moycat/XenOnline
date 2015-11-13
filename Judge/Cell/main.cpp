@@ -69,7 +69,14 @@ int call_counter[BUFFER_SIZE] = {0};
 
 void write_error(int code, string detail, bool stop = false)
 {
-	freopen(summary_file.c_str(), "w", stdout);
+	if(stop)
+	{
+		freopen(summary_file.c_str(), "w", stdout);
+	}
+	else
+	{
+		freopen(error_log.c_str(), "a+", stdout);
+	}
 	printf("%d\n%s", code, detail.c_str());
 	fclose(stdout);
 	if(stop)
@@ -96,14 +103,14 @@ int get_proc_status(int pid, const char * mark) // 本函数来自hustoj
 	sprintf(fn, "/proc/%d/status", pid);
 	pf = fopen(fn, "re");
 	int m = strlen(mark);
-	while (pf && fgets(buf, BUFFER_SIZE - 1, pf))
+	while(pf && fgets(buf, BUFFER_SIZE - 1, pf))
 		{
 		buf[strlen(buf) - 1] = 0;
-		if (strncmp(buf, mark, m) == 0) {
+		if(strncmp(buf, mark, m) == 0) {
 			sscanf(buf + m + 1, "%d", &ret);
 		}
 	}
-	if (pf)
+	if(pf)
 		fclose(pf);
 	return ret;
 }
@@ -111,32 +118,32 @@ int get_proc_status(int pid, const char * mark) // 本函数来自hustoj
 long get_file_size(const char * filename) // 本函数来自hustoj
 {
 	struct stat f_stat;
-	if (stat(filename, &f_stat) == -1)
+	if(stat(filename, &f_stat) == -1)
 	{
 		return 0;
 	}
-	return (long) f_stat.st_size;
+	return (long)f_stat.st_size;
 }
 
 void init_syscalls_limits(int lang)	// 本函数来自hustoj
 {
 	int i;
 	memset(call_counter, 0, sizeof(call_counter));
-	if (lang == CPP) // C & C++
+	if(lang == CPP) // C & C++
 	{
-		for (i = 0; i==0||LANG_CV[i]; i++)
+		for(i = 0; i==0||LANG_CV[i]; i++)
 		{
 			call_counter[LANG_CV[i]] = HOJ_MAX_LIMIT;
 		}
 	}
-	else if (lang == PASCAL) // Pascal
+	else if(lang == PASCAL) // Pascal
 	{
-		for (i = 0; i==0||LANG_PV[i]; i++)
+		for(i = 0; i==0||LANG_PV[i]; i++)
 			call_counter[LANG_PV[i]] = HOJ_MAX_LIMIT;
 	}
-	else if (lang == JAVA) // Java
+	else if(lang == JAVA) // Java
 	{
-		for (i = 0; i==0||LANG_JV[i]; i++)
+		for(i = 0; i==0||LANG_JV[i]; i++)
 			call_counter[LANG_JV[i]] = HOJ_MAX_LIMIT;
 	}
 }
@@ -218,108 +225,109 @@ void compile(int lang)
 
 void run_post(int lang)
 {
-			const char * run_cpp[] = {exe_file.c_str()};
-		//	const char * run_pascal
-		// const char * run_java
-			ptrace(PTRACE_TRACEME, 0, NULL, NULL);
-			alarm(0);
-			switch(lang)
-			{
-			case CPP:
-				execl(run_cpp[0], run_cpp[0], (char *)NULL);
-				break;
-		//	case PASCAL:
+	const char * run_cpp[] = {exe_file.c_str()};
+//	const char * run_pascal
+//	const char * run_java
+	alarm(0);
+	ptrace(PTRACE_TRACEME, 0, NULL, NULL);
+	switch(lang)
+	{
+	case CPP:
+		execl(run_cpp[0], run_cpp[0], (char *)NULL);
+		break;
+//	case PASCAL:
 
-		//	case JAVA:
+//	case JAVA:
 
-			}
+	}
 
-			exit(0);
+	exit(0);
 }
 
 void watch_post(int pid, int time_limit, int memory_limit, vector<int> &used_time, vector<int> &used_memory,
 				vector<int> &result, string now_error)
 {
-			int now_used_time = 0, now_used_memory = 0;
-			int now_result = NORMAL;
-			int state, sig, return_code;
-			struct user_regs_struct reg;
-			struct rusage ruse;
-			now_used_memory = get_proc_status(pid, "VmRSS:") << 10;
-			while(true)
+	int now_used_time = 0, now_used_memory = 0;
+	int now_result = NORMAL;
+	int state, sig, return_code;
+	struct user_regs_struct reg;
+	struct rusage ruse;
+	now_used_memory = get_proc_status(pid, "VmRSS:") << 10;
+	while(true)
+	{
+		wait4(pid, &state, 0, &ruse);
+		int new_used_memory;
+		new_used_memory = get_proc_status(pid, "VmPeak:") << 10;
+		if(new_used_memory > now_used_memory)
+		{
+			now_used_memory = new_used_memory;
+		}
+		if(now_used_memory > memory_limit)
+		{
+			now_result = OUT_OF_MEMORY;
+			ptrace(PTRACE_KILL, pid, NULL, NULL);
+			break;
+		}
+		if(WIFEXITED(state))
+					break;
+		if(get_file_size(now_error.c_str()))
+		{
+			now_result = RUNTIME_ERROR;
+			ptrace(PTRACE_KILL, pid, NULL, NULL);
+			break;
+		}
+		return_code = WEXITSTATUS(state);
+		if(return_code != 0x05 && return_code != 0)
+		{
+			switch (return_code)
 			{
-				wait4(pid, &state, 0, &ruse);
-				int new_used_memory;
-				new_used_memory = get_proc_status(pid, "VmPeak:") << 10;
-				if(new_used_memory > now_used_memory)
-				{
-					now_used_memory = new_used_memory;
-				}
-				if(now_used_memory > memory_limit)
-				{
-					now_result = OUT_OF_MEMORY;
-					ptrace(PTRACE_KILL, pid, NULL, NULL);
-					break;
-				}
-				if (WIFEXITED(state))
-							break;
-				if(get_file_size(now_error.c_str()))
-				{
-					now_result = RUNTIME_ERROR;
-					ptrace(PTRACE_KILL, pid, NULL, NULL);
-					break;
-				}
-				return_code = WEXITSTATUS(state);
-				if(return_code != 0x05 && return_code != 0)
-				{
-					switch (return_code)
-					{
-					case SIGCHLD:
-					case SIGALRM:
-						alarm(0);
-					case SIGKILL:
-					case SIGXCPU:
-						now_result = TIME_OUT;
-						break;
-					case SIGXFSZ:
-					default:
-						now_result = RUNTIME_ERROR;
-					}
-					ptrace(PTRACE_KILL, pid, NULL, NULL);
-					break;
-				}
-				if (WIFSIGNALED(state))
-				{
-					sig = WTERMSIG(state);
-					switch (sig)
-					{
-					case SIGCHLD:
-					case SIGALRM:
-						alarm(0);
-					case SIGKILL:
-					case SIGXCPU:
-						now_result = TIME_OUT;
-						break;
-					case SIGXFSZ:
-					default:
-						now_result = RUNTIME_ERROR;
-					}
-					break;
-				}
-				ptrace(PTRACE_GETREGS, pid, NULL, &reg);
-				if (!call_counter[reg.REG_SYSCALL])
-				{
-					now_result = RUNTIME_ERROR;
-					ptrace(PTRACE_KILL, pid, NULL, NULL);
-					break;
-				}
-				ptrace(PTRACE_SYSCALL, pid, NULL, NULL);
+			case SIGCHLD:
+			case SIGALRM:
+				alarm(0);
+			case SIGKILL:
+			case SIGXCPU:
+				now_result = TIME_OUT;
+				break;
+			case SIGXFSZ:
+			default:
+				now_result = RUNTIME_ERROR;
 			}
-			now_used_time += (ruse.ru_utime.tv_sec * 1000 + ruse.ru_utime.tv_usec / 1000);
-			now_used_time += (ruse.ru_stime.tv_sec * 1000 + ruse.ru_stime.tv_usec / 1000);
-			result.push_back(now_result);
-			used_memory.push_back(now_used_memory >> 10);
-			used_time.push_back(now_used_time);
+			ptrace(PTRACE_KILL, pid, NULL, NULL);
+			break;
+		}
+		if(WIFSIGNALED(state))
+		{
+			sig = WTERMSIG(state);
+			switch (sig)
+			{
+			case SIGCHLD:
+			case SIGALRM:
+				alarm(0);
+			case SIGKILL:
+			case SIGXCPU:
+				now_result = TIME_OUT;
+				break;
+			case SIGXFSZ:
+			default:
+				now_result = RUNTIME_ERROR;
+			}
+			break;
+		}
+		ptrace(PTRACE_GETREGS, pid, NULL, &reg);
+		if(!call_counter[reg.REG_SYSCALL])
+		{
+			now_result = RUNTIME_ERROR;
+			write_error(NOT_ALLOWED, "A forbidden system call %d when running.\n");
+			ptrace(PTRACE_KILL, pid, NULL, NULL);
+			break;
+		}
+		ptrace(PTRACE_SYSCALL, pid, NULL, NULL);
+	}
+	now_used_time += (ruse.ru_utime.tv_sec * 1000 + ruse.ru_utime.tv_usec / 1000);
+	now_used_time += (ruse.ru_stime.tv_sec * 1000 + ruse.ru_stime.tv_usec / 1000);
+	result.push_back(now_result);
+	used_memory.push_back(now_used_memory >> 10);
+	used_time.push_back(now_used_time);
 }
 
 void run(int lang, int time_limit, int memory_limit, int test_turn) // 本函数部分代码来自hustoj
@@ -329,7 +337,7 @@ void run(int lang, int time_limit, int memory_limit, int test_turn) // 本函数
 	vector<int> result, used_time, used_memory;
 	struct rlimit CPU_LIMIT, THREAD_LIMIT;
 	CPU_LIMIT.rlim_cur = CPU_LIMIT.rlim_max = time_limit;
-	THREAD_LIMIT.rlim_cur = THREAD_LIMIT.rlim_max = 1;
+	THREAD_LIMIT.rlim_cur = THREAD_LIMIT.rlim_max = 0;
 	init_syscalls_limits(lang);
 	for(int i = 0; i < test_turn; ++i)
 	{
