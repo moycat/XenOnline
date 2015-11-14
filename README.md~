@@ -49,5 +49,4 @@ MoyOJ（将）可以美观而实用地实现Online Judge的功能，并且完全
 -----------
 
 [PyMySQL](https://github.com/PyMySQL/PyMySQL)：提供Python环境下的MySQL访问支持
-
 [hustoj](https://github.com/zhblue/hustoj)：使用了部分代码，借鉴了数据库结构
