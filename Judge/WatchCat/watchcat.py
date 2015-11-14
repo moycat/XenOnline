@@ -65,6 +65,8 @@ def exit(signum, frame):
 def db_op(query):
 	global db_host, db_port, db_base, db_user, db_pass
 	global conn, has_conn
+	while not has_conn
+		time.sleep(5)
 	while not exiting:
 		try:
 			if has_conn == True:
@@ -138,7 +140,7 @@ def heart_beat():
 			"', `memory` = '" + mem_ratio + "', `last_ping` = '" + timestamp + "' WHERE `mo_judge_client`.`hash` = '" + client_hash + "';")
 		db_op(query)
 		time.sleep(60)
-		while(has_conn == False):
+		while not has_conn:
 			time.sleep(5)
 
 def init():
@@ -212,6 +214,7 @@ class Judge(object):
 		os.system("mv /judge/stdout/test* /judge/inside/in/")
 		os.system("rm /judge/downlist")
 	def run(self):
+		
 		return True
 		pass
 	def judge(self):
