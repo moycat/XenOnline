@@ -21,6 +21,8 @@ import time
 import threading
 
 SYSTEM_ERROR = '-1'
+COMPILING = '-2'
+JUDGING = '-3'
 AC = '10'
 CE = '1'
 MLE = '2'
@@ -43,7 +45,7 @@ client_hash = ''
 client_name = ''
 web_url = ''
 
-conn = 0
+conn = None
 has_conn = False
 has_mounted = False
 exiting = False
@@ -65,6 +67,7 @@ def mount():
 def exit(signum, frame):
 	global exiting
 	exiting = True
+	log.write("\n")
 	if has_conn:
 		conn.close()
 	if has_mounted:
@@ -101,10 +104,9 @@ def db_op(query):
 		else:
 			op.close()
 			return op.fetchall()
-			break
 
 def has_new():
-	query = "SELECT `id`, `pid`, `uid`, `state`, `language` FROM `mo_judge_solution` WHERE `client` = " + client_id + " AND `state` = 0 ORDER BY `post_time` ASC"
+	query = "SELECT `id`, `pid`, `uid`, `state`, `language` FROM `mo_judge_solution` WHERE `client` = " + client_id + " AND `state` = 0 ORDER BY `post_time` ASC;"
 	get = db_op(query)
 	if len(get) > 0:
 		return get[0][0], get[0][1], get[0][2], get[0][4]
@@ -129,13 +131,21 @@ def clean():
 def docker_run():
 	os.system("docker run -u nobody -v /judge/inside:/judge -t --net none -i moyoj:cell /judge/Cell")
 
+def status_update():
+	query = "UPDATE `mo_judge_solution` SET `state` = '-3' WHERE `mo_judge_solution`.`id` = " + judge.sid + ";"
+	while not os.path.exists('/judge/inside/out/compile'):
+		time.sleep(1)
+	db_op(query)
+
 def docker():
 	_docker2 = threading.Thread(target=docker_run, name='DockerRun')
 	_docker2.setDaemon(True)
+	_status_update = threading.Thread(target=status_update, name='StatusUpdate')
+	_status_update.setDaemon(True)
+	_status_update.start()
 	_docker2.start()
 	_docker2.join(60)
 	get = os.popen("docker ps | grep /judge").read()
-	print(get)
 	if get == '':
 		return
 	get = get.split(" ")
@@ -143,26 +153,25 @@ def docker():
 
 def heart_beat():
 	while not exiting:
-		loadavg = {} 
-		get_load = open("/proc/loadavg") 
-		get = get_load.read().split() 
-		get_load.close() 
-		loadavg['lavg_1'] = get[0] 
-		loadavg['lavg_5'] = get[1] 
+		loadavg = {}
+		get_load = open("/proc/loadavg")
+		get = get_load.read().split()
+		get_load.close()
+		loadavg['lavg_1'] = get[0]
+		loadavg['lavg_5'] = get[1]
 		loadavg['lavg_15'] = get[2]
-		mem = {}  
+		mem = {}
 		get_mem = open("/proc/meminfo")
 		get = get_mem.readlines()
 		get_mem.close()
 		for line in get:
-			if len(line) < 2: continue
-			name = line.split(':')[0]
-			var = line.split(':')[1].split()[0]
-			mem[name] = long(var) * 1024.0
+			if len(line) > 1:
+				name = line.split(':')[0]
+				var = line.split(':')[1].split()[0]
+				mem[name] = long(var) * 1024.0
 		mem_ratio = str(round((mem['MemTotal'] - mem['MemAvailable']) / mem['MemTotal'] * 100, 1))
-		timestamp = get_time()
 		query = ("UPDATE `mo_judge_client` SET `load_1` = '" + loadavg['lavg_1'] + "', `load_5` = '" + loadavg['lavg_5'] + "', `load_15` = '" + loadavg['lavg_15'] +
-			"', `memory` = '" + mem_ratio + "', `last_ping` = '" + timestamp + "' WHERE `mo_judge_client`.`hash` = '" + client_hash + "';")
+			"', `memory` = '" + mem_ratio + "', `last_ping` = '" + get_time() + "' WHERE `mo_judge_client`.`hash` = '" + client_hash + "';")
 		db_op(query)
 		time.sleep(60)
 		while not has_conn:
@@ -195,7 +204,7 @@ def init():
 		sys.exit(1)
 	conn.autocommit(True)
 	has_conn = True
-	query = "SELECT name FROM mo_judge_client WHERE id = " + client_id + " AND hash = \"" + client_hash + "\""
+	query = "SELECT name FROM mo_judge_client WHERE id = " + client_id + " AND hash = \"" + client_hash + "\"" + ";"
 	info = db_op(query)
 	if len(info) != 1:
 		write_log("Error Getting client_name from the Database\n" 
@@ -221,7 +230,7 @@ class Judge(object):
 		self.pid = str(pid)
 		self.uid = str(uid)
 		self.lang = str(lang)
-		write_log("Got a new request! SID = " + self.sid + ", PID = " + self.pid + ", UID = " + self.uid + "Lang = " + self.lang)
+		write_log("Got a new request! SID = " + self.sid + ", PID = " + self.pid + ", UID = " + self.uid + ", Lang = " + self.lang + ";")
 		self.result = AC
 		self.error = False
 		self.used_time = 0
@@ -231,13 +240,13 @@ class Judge(object):
 		self.detail_time = ''
 		self.detail_memory = ''
 	def prepare(self):
-		query = "SELECT * FROM `mo_judge_code` WHERE `sid` = " + self.sid
+		query = "SELECT * FROM `mo_judge_code` WHERE `sid` = " + self.sid + ";"
 		get = db_op(query)
 		post_code = base64.decodestring(get[0][1])
 		out = open("/judge/inside/post." + ext[int(self.lang)], "w", 0)
 		out.write(post_code)
 		out.close()
-		query = "SELECT `hash`, `time_limit`, `memory_limit`, `test_turn` FROM `mo_judge_problem` WHERE `id` = " + self.pid
+		query = "SELECT `hash`, `time_limit`, `memory_limit`, `test_turn` FROM `mo_judge_problem` WHERE `id` = " + self.pid + ";"
 		get = db_op(query)
 		self.p_hash = get[0][0]
 		self.time_limit = str(get[0][1])
@@ -258,6 +267,8 @@ class Judge(object):
 		os.system("rm /judge/downlist")
 	def run(self):
 		write_log("Now starting to compile & run...")
+		query = "UPDATE `mo_judge_solution` SET `state` = '-2' WHERE `mo_judge_solution`.`id` = " + self.sid + ";"
+		db_op(query)
 		_docker = threading.Thread(target=docker, name='Docker')
 		_docker.start()
 		_docker.join()
@@ -305,9 +316,26 @@ class Judge(object):
 		self.detail = error_log.read()
 		query = ("UPDATE `mo_judge_solution` SET `state` = " + self.result + ", `used_time` = '" + str(self.used_time) + "', `used_memory` = '" + 
 			str(self.used_memory) + "', `detail` = \"" + self.detail + "\", `detail_result` = '" + self.detail_result + "', `detail_time` = '" + self.detail_time +
-			"', `detail_memory` = '" + self.detail_memory + "' WHERE `mo_judge_solution`.`id` = " + self.sid)
-		#update user info
+			"', `detail_memory` = '" + self.detail_memory + "' WHERE `mo_judge_solution`.`id` = " + self.sid + ";")
 		db_op(query)
+		if self.result == AC:
+			query = "SELECT `ac`, `solved` FROM `mo_judge_problem` WHERE `id` = " + self.pid + ";"
+			get = db_op(query)
+			ac = int(get[0][0])
+			solved = int(get[0][1])
+			query = "UPDATE `mo_judge_problem` SET `ac` = '" + str(ac + 1) + "' WHERE `mo_judge_problem`.`id` = " + self.pid + ";"
+			db_op(query)
+			query = "SELECT `ac_problem` FROM `mo_user` WHERE `id` = " + self.uid + ";"
+			get = db_op(query)
+			ac_problem = get[0][0]
+			ac_list = ac_problem.split(" ")
+			if not self.pid in ac_list:
+				ac_problem += self.pid + " "
+				query = "UPDATE `mo_user` SET `ac_problem` = '" + ac_problem + "' WHERE `mo_user`.`id` = " + self.uid + ";"
+				db_op(query)
+				query = "UPDATE `mo_judge_problem` SET `solved` = '" + str(solved + 1) + "' WHERE `mo_judge_problem`.`id` = " + self.pid + ";"
+				db_op(query)
+		write_log("The request (SID = " + self.sid + ") has been dealt.")
 	
 
 signal.signal(signal.SIGINT, exit)

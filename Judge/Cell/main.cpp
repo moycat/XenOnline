@@ -221,6 +221,10 @@ void compile(int lang)
 	{
 		write_error(COMPILE_ERROR, "AN ERROR OCCURED WHEN COMPILING", true);
 	}
+	string c_flag = output_folder + "compile";
+	FILE * flag;
+	flag = fopen(c_flag.c_str(), "w");
+	fclose(flag);
 }
 
 void run_post(int lang)
