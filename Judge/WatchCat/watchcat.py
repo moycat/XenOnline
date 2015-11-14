@@ -20,6 +20,15 @@ import signal
 import time
 import threading
 
+SYSTEM_ERROR = '-1'
+AC = '10'
+CE = '1'
+MLE = '2'
+TLE = '3'
+RE = '4'
+FORBIDDEN = '5'
+WA = '6'
+
 config_file = '/etc/judge.conf'
 log = open("/var/log/judge.log", "a+", 0)
 ext = (None, 'cpp', 'pas', 'java')
@@ -65,7 +74,7 @@ def exit(signum, frame):
 def db_op(query):
 	global db_host, db_port, db_base, db_user, db_pass
 	global conn, has_conn
-	while not has_conn
+	while not has_conn:
 		time.sleep(5)
 	while not exiting:
 		try:
@@ -113,8 +122,24 @@ def clean():
 		mount()
 	os.system("rm /judge/inside/* -R")
 	os.system("rm /judge/stdout/* -R")
+	os.system("cp /judge/Cell /judge/inside/Cell")
 	os.system("mkdir /judge/inside/in /judge/inside/out")
 	os.system("chmod 777 /judge/inside/out")
+
+def docker_run():
+	os.system("docker run -u nobody -v /judge/inside:/judge -t --net none -i moyoj:cell /judge/Cell")
+
+def docker():
+	_docker2 = threading.Thread(target=docker_run, name='DockerRun')
+	_docker2.setDaemon(True)
+	_docker2.start()
+	_docker2.join(60)
+	get = os.popen("docker ps | grep /judge").read()
+	print(get)
+	if get == '':
+		return
+	get = get.split(" ")
+	os.system("docker stop " + get[0])
 
 def heart_beat():
 	while not exiting:
@@ -181,12 +206,30 @@ def init():
 	clean()
 	write_log("Now the judge client <" + client_name + "> has started successfully.\nWaiting for judge requests...")
 
+def compare(now):
+	stdout = "/judge/stdout/std" + str(now) + ".out "
+	userout = "/judge/inside/out/out" + str(now) + ".out"
+	result = os.popen("diff -q -B -b --strip-trailing-cr " + stdout + userout).read()
+	if result == '':
+		return True
+	else:
+		return False
+
 class Judge(object):
 	def __init__(self, sid, pid, uid, lang):
 		self.sid = str(sid)
 		self.pid = str(pid)
 		self.uid = str(uid)
 		self.lang = str(lang)
+		write_log("Got a new request! SID = " + self.sid + ", PID = " + self.pid + ", UID = " + self.uid + "Lang = " + self.lang)
+		self.result = AC
+		self.error = False
+		self.used_time = 0
+		self.used_memory = 0
+		self.detail = ''
+		self.detail_result = ''
+		self.detail_time = ''
+		self.detail_memory = ''
 	def prepare(self):
 		query = "SELECT * FROM `mo_judge_code` WHERE `sid` = " + self.sid
 		get = db_op(query)
@@ -210,17 +253,62 @@ class Judge(object):
 			out.write(web_url + "/data/" + self.p_hash + "/std" + str(i) + ".out\n")
 			i += 1
 		out.close()
-		os.system("wget -P /judge/stdout/ -i /judge/downlist --no-check-certificate")
+		os.system("wget -P /judge/stdout/ -i /judge/downlist -q --no-check-certificate")
 		os.system("mv /judge/stdout/test* /judge/inside/in/")
 		os.system("rm /judge/downlist")
 	def run(self):
-		
-		return True
-		pass
+		write_log("Now starting to compile & run...")
+		_docker = threading.Thread(target=docker, name='Docker')
+		_docker.start()
+		_docker.join()
 	def judge(self):
-		pass
+		if not os.path.exists('/judge/inside/out/summary.out'):
+			self.error = True
+			return
+		summary = open("/judge/inside/out/summary.out")
+		result = summary.read()
+		summary.close()
+		result = result.split("\n")
+		if int(result[0]) < 0 or result[0] == CE:
+			self.error = True
+			self.result = result[0]
+			return
+		i = 0
+		for row in result:
+			if len(row) < 3:
+				continue
+			now = row
+			now = now.split(" ")
+			if now[0] == RE:
+				self.result = RE
+			elif now[0] == MLE and self.result != RE:
+				self.result = MLE
+			elif now[0] == TLE and self.result != RE and self.result != MLE:
+				self.result = TLE
+			self.detail_time += now[1] + " "
+			self.detail_memory += now[2] + " "
+			self.used_time += int(now[1])
+			if int(now[2]) > self.used_memory:
+				self.used_memory = int(now[2])
+			if now[0] == '0':
+				if not compare(i):
+					self.detail_result += " " + WA
+				else:
+					self.detail_result += " " + AC
+			elif int(now[0]) < 0:
+				self.detail_result += " 0"
+			else:
+				self.detail_result += " " + now[0]
+			i += 1
 	def update(self):
-		pass
+		error_log = open("/judge/inside/out/error.log")
+		self.detail = error_log.read()
+		query = ("UPDATE `mo_judge_solution` SET `state` = " + self.result + ", `used_time` = '" + str(self.used_time) + "', `used_memory` = '" + 
+			str(self.used_memory) + "', `detail` = \"" + self.detail + "\", `detail_result` = '" + self.detail_result + "', `detail_time` = '" + self.detail_time +
+			"', `detail_memory` = '" + self.detail_memory + "' WHERE `mo_judge_solution`.`id` = " + self.sid)
+		#update user info
+		db_op(query)
+	
 
 signal.signal(signal.SIGINT, exit)
 signal.signal(signal.SIGTERM, exit)
@@ -232,16 +320,13 @@ _hb.start()
 while not exiting:
 	get = has_new()
 	if get != False:
-		print(get)
 		judge = Judge(get[0], get[1], get[2], get[3])
 		judge.prepare()
-		if judge.run() == True:
-			judge.judge()
+		judge.run()
+		judge.judge()
 		judge.update()
-		time.sleep(10)
 		clean()
 	else:
-		time.sleep(1)
-	time.sleep(1)
+		time.sleep(2)
 
 
