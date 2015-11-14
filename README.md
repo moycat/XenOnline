@@ -44,3 +44,9 @@ MoyOJ（将）可以美观而实用地实现Online Judge的功能，并且完全
 4. 容器中的程序对选手源码进行编译/运行/控制，结果写入镜像后结束容器
 5. 判题/通信程序进行判题，然后将结果存入数据库
 6. 网页端可以看到评测结果
+
+本程序使用/借鉴的开源项目
+-----------
+
+[PyMySQL](https://github.com/PyMySQL/PyMySQL)：提供Python环境下的MySQL访问支持
+[hustoj](https://github.com/zhblue/hustoj)：使用了部分代码，借鉴了数据库结构
