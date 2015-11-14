@@ -27,7 +27,7 @@ MoyOJ（将）可以美观而实用地实现Online Judge的功能，并且完全
     
     - [ ] 判题/通信程序 `Python`
     
-    - [ ] 沙盒环境 `Docker`
+    - [X] 沙盒环境 `Docker`
     
     - [X] 编译/运行/控制程序 `C++`
     
