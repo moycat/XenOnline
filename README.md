@@ -1,7 +1,7 @@
 MoyOJ - 开源的信息学竞赛在线评测系统
 ======================
 
-![MoyOJ](https://github.com/moycat/MoyOJ/MoyOJ.png)
+![MoyOJ](https://raw.githubusercontent.com/moycat/MoyOJ/master/MoyOJ.png)
 
 MoyOJ（将）可以美观而实用地实现Online Judge的功能，并且完全开源。
 
