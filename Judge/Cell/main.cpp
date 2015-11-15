@@ -9,9 +9,6 @@
  *			授权：	GNU GENERAL PUBLIC LICENSE
  */
 
-#include <iostream>
-#include <vector>
-#include <string>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -24,6 +21,9 @@
 #include <sys/types.h>
 #include <sys/user.h>
 #include <sys/wait.h>
+#include <iostream>
+#include <vector>
+#include <string>
 #include "okcalls.h" // 系统call调用判别来自hustoj
 
 #ifdef __i386
@@ -67,7 +67,7 @@ string input_folder, output_folder;
 string code_file, exe_file;
 int call_counter[BUFFER_SIZE] = {0};
 
-void write_error(int code, string detail, bool stop = false)
+void WriteError(int code, string detail, bool stop = false)
 {
 	if(stop)
 	{
@@ -85,7 +85,7 @@ void write_error(int code, string detail, bool stop = false)
 	}
 }
 
-void write_result(int state, int test_turn, vector<int> result, vector<int> used_time, vector<int> used_memory)
+void WriteResult(int state, int test_turn, vector<int> result, vector<int> used_time, vector<int> used_memory)
 {
 	freopen(summary_file.c_str(), "w", stdout);
 	printf("%d\n", NORMAL);
@@ -95,7 +95,7 @@ void write_result(int state, int test_turn, vector<int> result, vector<int> used
 	}
 }
 
-int get_proc_status(int pid, const char * mark) // 本函数来自hustoj
+int GetProcStatus(int pid, const char * mark) // 本函数来自hustoj
 {
 	FILE * pf;
 	char fn[BUFFER_SIZE], buf[BUFFER_SIZE];
@@ -115,7 +115,7 @@ int get_proc_status(int pid, const char * mark) // 本函数来自hustoj
 	return ret;
 }
 
-long get_file_size(const char * filename) // 本函数来自hustoj
+long GetFileSize(const char * filename) // 本函数来自hustoj
 {
 	struct stat f_stat;
 	if(stat(filename, &f_stat) == -1)
@@ -159,11 +159,11 @@ void init(int &time_limit, int &memory_limit, int &test_turn, int &lang)
 	summary_file = output_folder + "summary.out";
 	if((config = fopen(config_file.c_str(), "r")) == NULL)
 	{
-		write_error(FILE_ERROR, "CONFIG FILE ERROR", true);
+		WriteError(FILE_ERROR, "CONFIG FILE ERROR", true);
 	}
 	if(fscanf(config, "%d%d%d%d", &time_limit, &memory_limit, &test_turn, &lang) != 4)
 	{
-		write_error(CONFIG_ERROR, "CONFIG ERROR", true);
+		WriteError(CONFIG_ERROR, "CONFIG ERROR", true);
 	}
 	memory_limit <<= 20;
 	if(lang == JAVA)
@@ -174,7 +174,7 @@ void init(int &time_limit, int &memory_limit, int &test_turn, int &lang)
 	error_log = output_folder + "error.log";
 }
 
-int compile_cpp()
+int Compile_cpp()
 {
 	int pid, state;
 	exe_file = output_folder + "post.out";
@@ -185,7 +185,7 @@ int compile_cpp()
 	pid = fork();
 	if(pid < 0)
 	{
-		write_error(FORK_ERROR, "FORK FAIL WHEN COMPILING", true);
+		WriteError(FORK_ERROR, "FORK FAIL WHEN COMPILING", true);
 	}
 	if(!pid)
 	{
@@ -203,23 +203,23 @@ int compile_cpp()
 	return state;
 }
 
-void compile(int lang)
+void Compile(int lang)
 {
 	int result;
 	switch(lang)
 	{
 	case CPP:
 		code_file += ".cpp";
-		result = compile_cpp();
+		result = Compile_cpp();
 		break;
 //	case PASCAL:
 
 //	case JAVA:
 
 	}
-	if(!WIFEXITED(result) || get_file_size(error_log.c_str()))
+	if(!WIFEXITED(result) || GetFileSize(error_log.c_str()))
 	{
-		write_error(COMPILE_ERROR, "AN ERROR OCCURED WHEN COMPILING", true);
+		WriteError(COMPILE_ERROR, "AN ERROR OCCURED WHEN COMPILING", true);
 	}
 	string c_flag = output_folder + "compile";
 	FILE * flag;
@@ -227,17 +227,17 @@ void compile(int lang)
 	fclose(flag);
 }
 
-void run_post(int lang)
+void RunPost(int lang)
 {
-	const char * run_cpp[] = {exe_file.c_str()};
-//	const char * run_pascal
-//	const char * run_java
+	const char * Run_cpp[] = {exe_file.c_str()};
+//	const char * Run_pascal
+//	const char * Run_java
 	alarm(0);
 	ptrace(PTRACE_TRACEME, 0, NULL, NULL);
 	switch(lang)
 	{
 	case CPP:
-		execl(run_cpp[0], run_cpp[0], (char *)NULL);
+		execl(Run_cpp[0], Run_cpp[0], (char *)NULL);
 		break;
 //	case PASCAL:
 
@@ -248,7 +248,7 @@ void run_post(int lang)
 	exit(0);
 }
 
-void watch_post(int pid, int time_limit, int memory_limit, vector<int> &used_time, vector<int> &used_memory,
+void WatchPost(int pid, int time_limit, int memory_limit, vector<int> &used_time, vector<int> &used_memory,
 				vector<int> &result, string now_error)
 {
 	int now_used_time = 0, now_used_memory = 0;
@@ -256,12 +256,12 @@ void watch_post(int pid, int time_limit, int memory_limit, vector<int> &used_tim
 	int state, sig, return_code;
 	struct user_regs_struct reg;
 	struct rusage ruse;
-	now_used_memory = get_proc_status(pid, "VmRSS:") << 10;
+	now_used_memory = GetProcStatus(pid, "VmRSS:") << 10;
 	while(true)
 	{
 		wait4(pid, &state, 0, &ruse);
 		int new_used_memory;
-		new_used_memory = get_proc_status(pid, "VmPeak:") << 10;
+		new_used_memory = GetProcStatus(pid, "VmPeak:") << 10;
 		if(new_used_memory > now_used_memory)
 		{
 			now_used_memory = new_used_memory;
@@ -274,7 +274,7 @@ void watch_post(int pid, int time_limit, int memory_limit, vector<int> &used_tim
 		}
 		if(WIFEXITED(state))
 					break;
-		if(get_file_size(now_error.c_str()))
+		if(GetFileSize(now_error.c_str()))
 		{
 			now_result = RUNTIME_ERROR;
 			ptrace(PTRACE_KILL, pid, NULL, NULL);
@@ -321,7 +321,7 @@ void watch_post(int pid, int time_limit, int memory_limit, vector<int> &used_tim
 		if(!call_counter[reg.REG_SYSCALL])
 		{
 			now_result = RUNTIME_ERROR;
-			write_error(NOT_ALLOWED, "A forbidden system call %d when running.\n");
+			WriteError(NOT_ALLOWED, "A forbidden system call %d when running.\n");
 			ptrace(PTRACE_KILL, pid, NULL, NULL);
 			break;
 		}
@@ -334,7 +334,7 @@ void watch_post(int pid, int time_limit, int memory_limit, vector<int> &used_tim
 	used_time.push_back(now_used_time);
 }
 
-void run(int lang, int time_limit, int memory_limit, int test_turn) // 本函数部分代码来自hustoj
+void Run(int lang, int time_limit, int memory_limit, int test_turn) // 本函数部分代码来自hustoj
 {
 	string input = input_folder + "test";
 	string output = output_folder + "out";
@@ -354,7 +354,7 @@ void run(int lang, int time_limit, int memory_limit, int test_turn) // 本函数
         pid = fork();
 		if(pid < 0)
 		{
-			write_error(FORK_ERROR, "FORK FAIL WHEN RUNNING", true);
+			WriteError(FORK_ERROR, "FORK FAIL WHEN RUNNING", true);
 		}
 		if(!pid)
 		{
@@ -363,21 +363,21 @@ void run(int lang, int time_limit, int memory_limit, int test_turn) // 本函数
 			freopen(now_error.c_str(), "w", stderr);
 			setrlimit(RLIMIT_CPU, &CPU_LIMIT);
 			setrlimit(RLIMIT_NPROC, &THREAD_LIMIT);
-			run_post(lang);
+			RunPost(lang);
 		}
 		else
 		{
-			watch_post(pid, time_limit, memory_limit, used_time, used_memory, result, now_error);
+			WatchPost(pid, time_limit, memory_limit, used_time, used_memory, result, now_error);
 		}
 	}
-	write_result(NORMAL, test_turn, result, used_time, used_memory);
+	WriteResult(NORMAL, test_turn, result, used_time, used_memory);
 }
 
 int main(int argc, char** argv)
 {
 	int time_limit = 1000, memory_limit =  256 << 20, test_turn = 10, lang = CPP;
 	init(time_limit, memory_limit, test_turn, lang);
-	compile(lang);
-	run(lang, time_limit, memory_limit, test_turn);
+	Compile(lang);
+	Run(lang, time_limit, memory_limit, test_turn);
 	return 0;
 }
