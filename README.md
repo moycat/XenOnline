@@ -25,7 +25,7 @@ MoyOJ（将）是一个美观而实用的Online Judge，并且完全开源。
  1. 整理数据库
  1. 优化已编写的程序
  1. 编写前台程序
- 1. 评测端日志输出到数据库
+ 1. 单个评测端多线程评测
 
 未来的Feature
 -----------
@@ -64,3 +64,5 @@ MoyOJ（将）是一个美观而实用的Online Judge，并且完全开源。
 [PyMySQL](https://github.com/PyMySQL/PyMySQL)：提供Python环境下的MySQL访问支持
 
 [hustoj](https://github.com/zhblue/hustoj)：使用了部分代码，借鉴了数据库结构
+
+[WordPress](https://wordpress.org/)：WP的网站结构不错～

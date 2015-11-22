@@ -17,12 +17,13 @@ import base64
 import ConfigParser
 import pymysql
 import signal
+import subprocess
 import time
 import threading
 
 SYSTEM_ERROR = '-1'
 COMPILING = '-2'
-JUDGING = '-3'
+RUNNING = '-3'
 AC = '10'
 CE = '1'
 MLE = '2'
@@ -75,7 +76,7 @@ def Exit(signum, frame):
 		os.system("losetup -d /dev/loop20")
 
 def db(query):
-	print(query)
+#	print(query)
 	global db_host, db_port, db_base, db_user, db_pass
 	global conn, has_conn
 	while not has_conn:
@@ -178,11 +179,13 @@ def Clean():
 	os.system("chmod 777 /judge/inside/out")
 
 def DockerRun():
-	os.system("docker run -u nobody -v /judge/inside:/judge -t --net none -i moyoj:cell /judge/Cell")
+	run = subprocess.Popen(["docker", "run", "-u", "nobody", "-v", "/judge/inside:/judge", "-t" ,"--net", "none", "-i", "moyoj:cell", "/judge/Cell"])
 	query = "UPDATE `mo_judge_solution` SET `state` = '-3' WHERE `mo_judge_solution`.`id` = " + judge.sid + ";"
 	while not os.path.exists('/judge/inside/out/compile'):
 		time.sleep(0.5)
 	db(query)
+	while os.popen("docker ps | grep /judge").read() != '':
+		pass
 
 def Docker():
 	_docker2 = threading.Thread(target=DockerRun, name='DockerRun')
