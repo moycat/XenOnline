@@ -217,14 +217,14 @@ void Compile(int lang)
 //	case JAVA:
 
 	}
-	if(!WIFEXITED(result) || GetFileSize(error_log.c_str()))
-	{
-		WriteError(COMPILE_ERROR, "AN ERROR OCCURED WHEN COMPILING", true);
-	}
 	string c_flag = output_folder + "compile";
 	FILE * flag;
 	flag = fopen(c_flag.c_str(), "w");
 	fclose(flag);
+	if(!WIFEXITED(result) || GetFileSize(error_log.c_str()))
+	{
+		WriteError(COMPILE_ERROR, "AN ERROR OCCURED WHEN COMPILING", true);
+	}
 }
 
 void RunPost(int lang)
