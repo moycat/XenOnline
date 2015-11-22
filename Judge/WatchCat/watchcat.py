@@ -76,7 +76,7 @@ def Exit(signum, frame):
 		os.system("losetup -d /dev/loop20")
 
 def db(query):
-	print(query)
+#	print(query)
 	global db_host, db_port, db_base, db_user, db_pass
 	global conn, has_conn
 	while not has_conn:
