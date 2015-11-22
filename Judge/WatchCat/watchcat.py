@@ -75,6 +75,7 @@ def Exit(signum, frame):
 		os.system("losetup -d /dev/loop20")
 
 def db(query):
+	print(query)
 	global db_host, db_port, db_base, db_user, db_pass
 	global conn, has_conn
 	while not has_conn:
@@ -104,78 +105,6 @@ def db(query):
 		else:
 			op.close()
 			return op.fetchall()
-
-def HasNew():
-	query = "SELECT `id`, `pid`, `uid`, `state`, `language` FROM `mo_judge_solution` WHERE `client` = " + client_id + " AND `state` = 0 ORDER BY `post_time` ASC;"
-	get = db(query)
-	if len(get) > 0:
-		return get[0][0], get[0][1], get[0][2], get[0][4]
-	return False
-
-def Clean():
-	if not os.path.exists('/judge/judge.img'):
-		os.system("dd if=/dev/zero of=/judge/judge.img bs=10M count=15")
-		Mount()
-		os.system("mkfs.ext3 -F /dev/loop20")
-	if os.popen("losetup | grep /judge/judge.img").read() != '':
-		if os.popen("mount -l | grep /judge/inside").read() != '':
-			os.system("umount /judge/inside")
-	else:
-		Mount()
-	os.system("rm /judge/inside/* -R")
-	os.system("rm /judge/stdout/* -R")
-	os.system("cp /judge/Cell /judge/inside/Cell")
-	os.system("mkdir /judge/inside/in /judge/inside/out")
-	os.system("chmod 777 /judge/inside/out")
-
-def DockerRun():
-	os.system("docker run -u nobody -v /judge/inside:/judge -t --net none -i moyoj:cell /judge/Cell")
-
-def StatusUpdate():
-	query = "UPDATE `mo_judge_solution` SET `state` = '-3' WHERE `mo_judge_solution`.`id` = " + judge.sid + ";"
-	while not os.path.exists('/judge/inside/out/compile'):
-		time.sleep(1)
-	db(query)
-
-def Docker():
-	_docker2 = threading.Thread(target=DockerRun, name='DockerRun')
-	_docker2.setDaemon(True)
-	_StatusUpdate = threading.Thread(target=StatusUpdate, name='StatusUpdate')
-	_StatusUpdate.setDaemon(True)
-	_StatusUpdate.start()
-	_docker2.start()
-	_docker2.join(60)
-	get = os.popen("docker ps | grep /judge").read()
-	if get == '':
-		return
-	get = get.split(" ")
-	os.system("docker stop " + get[0])
-
-def HeartBeat():
-	while not exiting:
-		loadavg = {}
-		get_load = open("/proc/loadavg")
-		get = get_load.read().split()
-		get_load.close()
-		loadavg['lavg_1'] = get[0]
-		loadavg['lavg_5'] = get[1]
-		loadavg['lavg_15'] = get[2]
-		mem = {}
-		get_mem = open("/proc/meminfo")
-		get = get_mem.readlines()
-		get_mem.close()
-		for line in get:
-			if len(line) > 1:
-				name = line.split(':')[0]
-				var = line.split(':')[1].split()[0]
-				mem[name] = long(var) * 1024.0
-		mem_ratio = str(round((mem['MemTotal'] - mem['MemAvailable']) / mem['MemTotal'] * 100, 1))
-		query = ("UPDATE `mo_judge_client` SET `load_1` = '" + loadavg['lavg_1'] + "', `load_5` = '" + loadavg['lavg_5'] + "', `load_15` = '" + loadavg['lavg_15'] +
-			"', `memory` = '" + mem_ratio + "', `last_ping` = '" + GetTime() + "' WHERE `mo_judge_client`.`hash` = '" + client_hash + "';")
-		db(query)
-		time.sleep(60)
-		while not has_conn:
-			time.sleep(5)
 
 def init():
 	if os.geteuid() != 0:
@@ -223,6 +152,74 @@ def Compare(now):
 		return True
 	else:
 		return False
+
+
+def HasNew():
+	query = "SELECT `id`, `pid`, `uid`, `state`, `language` FROM `mo_judge_solution` WHERE `client` = " + client_id + " AND `state` = 0 ORDER BY `post_time` ASC LIMIT 1;"
+	get = db(query)
+	if len(get) > 0:
+		return get[0][0], get[0][1], get[0][2], get[0][4]
+	return False
+
+def Clean():
+	if not os.path.exists('/judge/judge.img'):
+		os.system("dd if=/dev/zero of=/judge/judge.img bs=10M count=15")
+		Mount()
+		os.system("mkfs.ext3 -F /dev/loop20")
+	if os.popen("losetup | grep /judge/judge.img").read() != '':
+		if os.popen("mount -l | grep /judge/inside").read() != '':
+			os.system("umount /judge/inside")
+	else:
+		Mount()
+	os.system("rm /judge/inside/* -R")
+	os.system("rm /judge/stdout/* -R")
+	os.system("cp /judge/Cell /judge/inside/Cell")
+	os.system("mkdir /judge/inside/in /judge/inside/out")
+	os.system("chmod 777 /judge/inside/out")
+
+def DockerRun():
+	os.system("docker run -u nobody -v /judge/inside:/judge -t --net none -i moyoj:cell /judge/Cell")
+	query = "UPDATE `mo_judge_solution` SET `state` = '-3' WHERE `mo_judge_solution`.`id` = " + judge.sid + ";"
+	while not os.path.exists('/judge/inside/out/compile'):
+		time.sleep(0.5)
+	db(query)
+
+def Docker():
+	_docker2 = threading.Thread(target=DockerRun, name='DockerRun')
+	_docker2.setDaemon(True)
+	_docker2.start()
+	_docker2.join(60)
+	get = os.popen("docker ps | grep /judge").read()
+	if get == '':
+		return
+	get = get.split(" ")
+	os.system("docker stop " + get[0])
+
+def HeartBeat():
+	while not exiting:
+		loadavg = {}
+		get_load = open("/proc/loadavg")
+		get = get_load.read().split()
+		get_load.close()
+		loadavg['lavg_1'] = get[0]
+		loadavg['lavg_5'] = get[1]
+		loadavg['lavg_15'] = get[2]
+		mem = {}
+		get_mem = open("/proc/meminfo")
+		get = get_mem.readlines()
+		get_mem.close()
+		for line in get:
+			if len(line) > 1:
+				name = line.split(':')[0]
+				var = line.split(':')[1].split()[0]
+				mem[name] = long(var) * 1024.0
+		mem_ratio = str(round((mem['MemTotal'] - mem['MemAvailable']) / mem['MemTotal'] * 100, 1))
+		query = ("UPDATE `mo_judge_client` SET `load_1` = '" + loadavg['lavg_1'] + "', `load_5` = '" + loadavg['lavg_5'] + "', `load_15` = '" + loadavg['lavg_15'] +
+			"', `memory` = '" + mem_ratio + "', `last_ping` = '" + GetTime() + "' WHERE `mo_judge_client`.`hash` = '" + client_hash + "';")
+		db(query)
+		time.sleep(60)
+		while not has_conn:
+			time.sleep(5)
 
 class Judge(object):
 	def __init__(self, sid, pid, uid, lang):
@@ -325,13 +322,13 @@ class Judge(object):
 			solved = int(get[0][1])
 			query = "UPDATE `mo_judge_problem` SET `ac` = '" + str(ac + 1) + "' WHERE `mo_judge_problem`.`id` = " + self.pid + ";"
 			db(query)
-			query = "SELECT `ac_problem` FROM `mo_user` WHERE `id` = " + self.uid + ";"
+			query = "SELECT `ac_problem` FROM `mo_user_record` WHERE `uid` = " + self.uid + ";"
 			get = db(query)
 			ac_problem = get[0][0]
 			ac_list = ac_problem.split(" ")
 			if not self.pid in ac_list:
 				ac_problem += self.pid + " "
-				query = "UPDATE `mo_user` SET `ac_problem` = '" + ac_problem + "' WHERE `mo_user`.`id` = " + self.uid + ";"
+				query = "UPDATE `mo_user_record` SET `ac_problem` = '" + ac_problem + "' WHERE `mo_user_record`.`uid` = " + self.uid + ";"
 				db(query)
 				query = "UPDATE `mo_judge_problem` SET `solved` = '" + str(solved + 1) + "' WHERE `mo_judge_problem`.`id` = " + self.pid + ";"
 				db(query)
