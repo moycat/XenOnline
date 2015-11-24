@@ -7,6 +7,16 @@
 	 * 
 	 */
 	 
+	 function add_action($hook, $func, $priority = 100)
+	 {
+		 
+	 }
+	 
+	 function do_action($hook, $arg)
+	 {
+		 
+	 }
+	 
 	 function mo_write_note($note)
 	 {
 		echo "\n<!-- Note: ". $note. " -->\n";
