@@ -6,5 +6,8 @@
 	 * It do nothing but to require other files.
 	 * 
 	 */
-	 
+	
+	// Whether to output normally.
+	define( 'OUTPUT', True);
+	
 	require( dirname( __FILE__ ) . '/mo-loader.php' );

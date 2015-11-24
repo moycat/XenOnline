@@ -7,9 +7,4 @@
 	 * 
 	 */
 	 
-	 class action
-	 {
-		 
-	 }
-	 
 ?>

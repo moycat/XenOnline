@@ -6,8 +6,25 @@
 	 * Others can be found in their related files.
 	 * 
 	 */
+	
+	function init()
+	{
+		if ( DEBUG == True )
+		{
+			error_reporting( E_ALL );
+			mo_write_note('DEBUG ENABLED');
+		}
+		else
+		{
+			error_reporting( E_ERROR | E_WARNING | E_PARSE );
+		}
+		$mo_basic = array();
+		
+		// TODO: Timer
+		// TODO: Check if closed
+	}
 	 
-	 function add_action($hook, $func, $priority = 100)
+	 function add_action($hook, $func, $arg = 0, $priority = 100)
 	 {
 		 
 	 }
@@ -19,7 +36,8 @@
 	 
 	 function mo_write_note($note)
 	 {
-		echo "\n<!-- Note: ". $note. " -->\n";
+		if ( defined( 'DEBUG' ) && DEBUG == True )
+			echo "\n<!-- Note: ". $note. " -->\n";
 	 }
 	 
 	 function mo_get_url()
