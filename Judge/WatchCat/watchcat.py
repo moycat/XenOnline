@@ -32,6 +32,8 @@ RE = '4'
 FORBIDDEN = '5'
 WA = '6'
 
+DEBUG = False
+
 config_file = '/etc/judge.conf'
 log = open("/var/log/judge.log", "a+", 0)
 ext = (None, 'cpp', 'pas', 'java')
@@ -56,7 +58,10 @@ def GetTime():
 
 def WriteLog(message):
 	global log
-	log.write(GetTime() + " " + message + "\n")
+	to_write = GetTime() + " " + message + "\n"
+	if DEBUG:
+		print(to_write)
+	log.write(to_write)
 
 def Mount():
 	sig = os.system("losetup /dev/loop20 /judge/judge.img")
@@ -76,7 +81,8 @@ def Exit(signum, frame):
 		os.system("losetup -d /dev/loop20")
 
 def db(query):
-#	print(query)
+	if DEBUG:
+		print(query)
 	global db_host, db_port, db_base, db_user, db_pass
 	global conn, has_conn
 	while not has_conn:
