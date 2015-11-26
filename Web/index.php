@@ -8,6 +8,6 @@
 	 */
 	
 	// Whether to output normally.
-	define( 'OUTPUT', True);
+	define( 'OUTPUT', True );
 	
 	require( dirname( __FILE__ ). '/mo-loader.php' );

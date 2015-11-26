@@ -36,11 +36,11 @@
 		 
 	}
 	
-	function mo_time( $p = 3 )
+	function mo_runTime( $p = 3 )
 	{
-		global $time;
+		global $mo_time;
 		$t = microtime();
-		list( $m0, $s0 ) = explode( ' ', $time );
+		list( $m0, $s0 ) = explode( ' ', $mo_time );
 		list( $m1, $s1 ) = explode( ' ', $t );
 		return round( ( $s1 + $m1 - $s0 - $m0 ) * 1000, 3 );
 	}

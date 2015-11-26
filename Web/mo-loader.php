@@ -24,9 +24,9 @@
 		exit(0);
 	}
 	
-	$setting = array();
-	$action = array();
-	$time = microtime();
+	$mo_settings = array();
+	$mo_actions = array();
+	$mo_time = microtime();
 	
 	// Just init
 	init();
