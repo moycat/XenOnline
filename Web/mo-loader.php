@@ -30,7 +30,12 @@
 	// TODO: Load plugin hooks
 	// TODO: Load theme hooks
 	
-	require_once( MOINC. 'load.php' );
+	// Init & Load Basic Settings
+	require_once( MOINC. 'load-basic.php' );
+	// Load Data of Requests
+	//require_once( MOINC. 'load-request.php' );
+	// Load Theme & Output
+	//require_once( MOINC. 'load-theme.php' );
 	
 	if ( DEBUG == True )
 		mo_write_note('The page has been processed successfully.');

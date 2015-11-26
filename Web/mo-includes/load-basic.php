@@ -10,5 +10,5 @@
 	require_once( MOINC. 'class-db.php' );
 	// To connect to the database
 	$db = new DB();
-	$db->init( DB_HOST, DB_NAME, DB_USER, DB_PASS );
+	$db->init( DB_HOST, DB_USER, DB_PASS, DB_NAME );
 	$db->connect();

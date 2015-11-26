@@ -15,7 +15,7 @@
 		
 		private $conn;
 		
-		function init($db_host, $db_name, $db_user, $db_pass)
+		function init( $db_host, $db_user, $db_pass, $db_name )
 		{
 			$this->host = $db_host;
 			$this->name = $db_name;
@@ -24,7 +24,7 @@
 		}
 		function connect()
 		{
-			$this->conn = mysqli_connect($this->host, $this->user,
+			$this->conn = mysqli_connect( $this->host, $this->user,
 								$this->pass, $this->name );
 			if ( !$this->conn )
 			{
@@ -39,5 +39,10 @@
 
 	class Query
 	{
+		private $sql;
 		
+		function __construct( $query )
+		{
+			$this->sql = $query;
+		}
 	}
