@@ -19,7 +19,11 @@
 			error_reporting( E_ERROR | E_WARNING | E_PARSE );
 		}
 		
-		// TODO: Check if closed
+		// Check if closed
+		if ( file_exists( MOCON. 'closed.lock' ) )
+		{
+			die( '<h1>Site Closed Temporarily</h1>' );
+		}
 	}
 	 
 	function add_action( $hook, $func, $priority = 100, $arg )

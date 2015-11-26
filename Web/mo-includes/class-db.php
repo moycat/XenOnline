@@ -49,21 +49,21 @@
 			{
 				$input[$i] = &$input[$i];
 			}
-			call_user_func_array( array($this->query, 'bind_param'), $input );
+			call_user_func_array( array( $this->query, 'bind_param'), $input );
 		}
 		function execute()
 		{
 			$this->query->execute();
 			$result = array();
 			$meta = $this->query->result_metadata();   
-			while ($field = $meta->fetch_field())
+			while ( $field = $meta->fetch_field() )
 			{
 				$params[] = &$row[$field->name];
 			}
 			call_user_func_array(array($this->query, 'bind_result'), $params);
-			while ($this->query->fetch())
+			while ( $this->query->fetch() )
 			{
-				foreach($row as $key => $val)
+				foreach( $row as $key => $val )
 				{
 					$c[$key] = $val;
 				}

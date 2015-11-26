@@ -13,7 +13,7 @@
 	require_once( MOINC. 'functions.php' );
 	require_once( MOINC. 'class-basic.php' );
 	
-	if ( file_exists( ABSPATH . 'mo-config.php' ) )
+	if ( file_exists( ABSPATH. 'mo-config.php' ) )
 	{
 		require_once( 'mo-config.php' );
 	}
