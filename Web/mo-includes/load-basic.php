@@ -12,3 +12,4 @@
 	$db = new DB();
 	$db->init( DB_HOST, DB_USER, DB_PASS, DB_NAME );
 	$db->connect();
+	echo mo_time();

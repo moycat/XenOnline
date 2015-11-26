@@ -6,7 +6,7 @@
 	 * It also check if the site has been installed.
 	 * 
 	 */
-	 
+	
 	define( 'ABSPATH', dirname( __FILE__ ). '/' );
 	define( 'MOINC', ABSPATH. 'mo-includes/' );
 	define( 'MOCON', ABSPATH. 'mo-content/' );
@@ -24,6 +24,10 @@
 		exit(0);
 	}
 	
+	$setting = array();
+	$action = array();
+	$time = microtime();
+	
 	// Just init
 	init();
 	
@@ -37,6 +41,6 @@
 	// Load Theme & Output
 	//require_once( MOINC. 'load-theme.php' );
 	
-
+	
 	mo_write_note('The page has been processed successfully.');
 ?>
