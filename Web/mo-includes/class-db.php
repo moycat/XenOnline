@@ -24,16 +24,16 @@
 		}
 		function connect()
 		{
-			mysql_connect($this->host, $this->user, $this->pass);
-			if ( !$conn )
+			$this->conn = mysqli_connect($this->host, $this->user,
+								$this->pass, $this->name );
+			if ( !$this->conn )
 			{
-				die( '<h1>Error Connecting to the database</h1>' );
+				die( '<h1>Error Connecting to the Database</h1>' );
 			}
-			mysql_select_db( $this->name );
 		}
-		function __construct()
+		function getConn()
 		{
-			mysql_close($this->conn);
+			return $this->conn;
 		}
 	}
 
