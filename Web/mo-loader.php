@@ -37,6 +37,6 @@
 	// Load Theme & Output
 	//require_once( MOINC. 'load-theme.php' );
 	
-	if ( DEBUG == True )
-		mo_write_note('The page has been processed successfully.');
+
+	mo_write_note('The page has been processed successfully.');
 ?>

@@ -45,4 +45,3 @@
 		 $url = MO_URL. '/'. $_SERVER['PHP_SELF'];
 		 return $url;
 	 }
-?>
