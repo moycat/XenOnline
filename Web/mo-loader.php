@@ -34,17 +34,14 @@
 	// Just init
 	mo_init();
 	
-	// TODO: Load plugin hooks
-	// TODO: Load theme hooks
-	
 	// Init & Load Basic Settings
 	require_once( MOINC. 'load-basic.php' );
 	// Load Data of Requests
-//	require_once( MOINC. 'load-request.php' );
+	require_once( MOINC. 'load-request.php' );
 	// Load Theme & Output
 //	if ( defined('OUTPUT') && OUTPUT == True )
 //		require_once( MOINC. 'load-theme.php' );
 	
 	
-	mo_write_note( 'The page has been processed successfully.'. mo_debugTime() );
+	mo_write_note( 'The page has been processed successfully.' );
 ?>

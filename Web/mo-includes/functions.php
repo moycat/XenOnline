@@ -12,7 +12,7 @@
 		if ( DEBUG == True )
 		{
 			error_reporting( E_ALL );
-			mo_write_note('DEBUG ENABLED');
+			mo_write_note( 'DEBUG ENABLED' );
 		}
 		else
 		{
@@ -24,6 +24,30 @@
 		{
 			die( '<h1>Site Closed Temporarily</h1>' );
 		}
+	}
+	
+	function mo_analyze()
+	{
+		$request = array();
+		if ( !isset( $_GET['r'] ) || !$_GET['r'] )
+		{
+			$request[] = 'index';
+			return $request;
+		}
+		$arg = explode( '/', $_GET['r'] );
+		array_filter( $arg );
+		$arg = array_merge( $arg );
+		if ( !$arg[0] )
+		{
+			$request[] = 'index';
+			return $request;
+		}
+		if ( !file_exists( MOINC. 'load-request-'. $arg[0]. '.php' ) )
+		{
+			$arg[0] = '404';
+		}
+		// TODO: Request pages of themes and plugins
+		return $arg;
 	}
 	
 	function mo_runTime( $p = 3 )
@@ -43,7 +67,7 @@
 	function mo_write_note( $note )
 	{
 		if ( defined( 'DEBUG' ) && DEBUG == True )
-			echo "\n<!-- Note: ". $note. " -->\n";
+			echo "\n<!-- Note: ". $note. mo_debugTime(). " -->\n";
 	}
 	
 	function mo_get_url()

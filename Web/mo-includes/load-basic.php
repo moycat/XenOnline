@@ -14,4 +14,6 @@
 	$db->connect();
 	$mo_settings = mo_load_settings();
 	
-	print_r($mo_settings);
+	// TODO: Load plugin hooks
+	// TODO: Load theme hooks
+	

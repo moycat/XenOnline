@@ -16,7 +16,7 @@
 		$rt = array();
 		foreach ( $result as $value )
 		{
-			$rt[$value['name']] = $value['value'];
+			$rt[$value['item']] = $value['value'];
 		}
 		return $rt;
 	}

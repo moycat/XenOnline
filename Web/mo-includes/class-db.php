@@ -32,7 +32,7 @@
 				die( '<h1>Error Connecting to the Database</h1>' );
 			}
 			$this->mysqli->set_charset( 'utf8' );
-			mo_write_note( 'Connected to the database successfully.'. mo_debugTime() );
+			mo_write_note( 'Connected to the database successfully.' );
 		}
 		function prepare( $sql )
 		{
