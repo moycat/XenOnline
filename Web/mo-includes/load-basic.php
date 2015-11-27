@@ -12,4 +12,6 @@
 	$db = new DB();
 	$db->init( DB_HOST, DB_USER, DB_PASS, DB_NAME );
 	$db->connect();
+	$mo_settings = mo_load_settings();
 	
+	print_r($mo_settings);

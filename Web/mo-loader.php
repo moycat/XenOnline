@@ -20,7 +20,7 @@
 	// mo-config.php doesn't exist
 	else
 	{
-		require_once( MOINC. 'setup.php' );
+//		require_once( MOINC. 'setup.php' );
 		exit(0);
 	}
 	
@@ -28,8 +28,11 @@
 	$mo_actions = array();
 	$mo_time = microtime();
 	
+	require_once( MOINC. 'function-action.php' );
+	require_once( MOINC. 'function-load.php' );
+	
 	// Just init
-	init();
+	mo_init();
 	
 	// TODO: Load plugin hooks
 	// TODO: Load theme hooks
@@ -37,10 +40,11 @@
 	// Init & Load Basic Settings
 	require_once( MOINC. 'load-basic.php' );
 	// Load Data of Requests
-	//require_once( MOINC. 'load-request.php' );
+//	require_once( MOINC. 'load-request.php' );
 	// Load Theme & Output
-	//require_once( MOINC. 'load-theme.php' );
+//	if ( defined('OUTPUT') && OUTPUT == True )
+//		require_once( MOINC. 'load-theme.php' );
 	
 	
-	mo_write_note('The page has been processed successfully.');
+	mo_write_note( 'The page has been processed successfully.'. mo_debugTime() );
 ?>

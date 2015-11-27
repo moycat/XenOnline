@@ -7,7 +7,7 @@
 	 * 
 	 */
 	
-	function init()
+	function mo_init()
 	{
 		if ( DEBUG == True )
 		{
@@ -25,16 +25,6 @@
 			die( '<h1>Site Closed Temporarily</h1>' );
 		}
 	}
-	 
-	function add_action( $hook, $func, $priority = 100, $arg )
-	{
-		 
-	}
-	
-	function do_action( $hook, $arg )
-	{
-		 
-	}
 	
 	function mo_runTime( $p = 3 )
 	{
@@ -43,6 +33,11 @@
 		list( $m0, $s0 ) = explode( ' ', $mo_time );
 		list( $m1, $s1 ) = explode( ' ', $t );
 		return round( ( $s1 + $m1 - $s0 - $m0 ) * 1000, 3 );
+	}
+	
+	function mo_debugTime()
+	{
+		return ' Time:'. mo_runTime();
 	}
 	
 	function mo_write_note( $note )
