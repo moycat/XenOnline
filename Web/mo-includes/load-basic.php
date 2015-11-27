@@ -17,3 +17,4 @@
 	// TODO: Load plugin hooks
 	// TODO: Load theme hooks
 	
+	$user = new User();

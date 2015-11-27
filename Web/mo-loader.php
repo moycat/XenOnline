@@ -30,6 +30,7 @@
 	
 	require_once( MOINC. 'function-action.php' );
 	require_once( MOINC. 'function-load.php' );
+	require_once( MOINC. 'class-user.php' );
 	
 	// Just init
 	mo_init();

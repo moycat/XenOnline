@@ -10,4 +10,4 @@
 	
 	$mo_request = mo_analyze();
 	// TODO: Request pages of themes and plugins
-//	require_once( WPINC. 'load-request-'. $mo_request[0]. '.php' );
+	require_once( MOINC. 'load-request-'. $mo_request[0]. '.php' );
