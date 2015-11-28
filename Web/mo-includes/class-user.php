@@ -9,6 +9,7 @@
 	class User
 	{
 		// Basic information
+		public $uid = '';
 		public $info = array();
 		
 		// Problem information
@@ -66,6 +67,7 @@
 				$this->loadAll( $uid );
 				mo_write_note( 'Logged in with a cookie.' );
 				$_SESSION['uid'] = $this->info['id'];
+				// TODO: Write log
 				return True;
 			}
 			return False;
@@ -94,14 +96,21 @@
 				return False;
 			}
 			$this->loadAll( $result[0]['id'] );
-			$_SESSION['uid'] = $this->info['id'];
+			$_SESSION['uid'] = $this->uid;
 			if ( $_POST['auto_login'] )
 			{
 				$random = (string)rand( 10000, 99999 );
-				$cookie_to_write = $this->info['uid']. '&'. $random. '&'. md5( $this->info['password']. $random );
+				$cookie_to_write = $this->uid. '&'. $random. '&'. md5( $this->info['password']. $random );
 				setcookie( 'mo_auth', $cookie_to_write, time() + 31536000 );
 			}
+			// TODO: Write log
 			mo_write_note( 'Logged in with a password.' );
+		}
+		public function logout()
+		{
+			setcookie( 'mo_auth', '', time() - 3600 );
+			unset( $_SESSION['uid'] );
+			$this->uid = '';
 		}
 		
 		// Functions related to loading information
@@ -122,7 +131,7 @@
 			{
 				$this->info[$key] = $value;
 			}
-			$this->info['uid'] = $this->info['id'];
+			$this->uid = $this->info['id'];
 		}
 		private function loadPrefer( $uid )
 		{
