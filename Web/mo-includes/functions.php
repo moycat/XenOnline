@@ -51,7 +51,7 @@
 		return $arg;
 	}
 	
-	function mo_runTime( $p = 3 )
+	function mo_time( $p = 3 )
 	{
 		global $mo_time;
 		$t = microtime();
@@ -62,7 +62,7 @@
 	
 	function mo_debugTime()
 	{
-		return ' Time:'. mo_runTime();
+		return ' Time:'. mo_time();
 	}
 	
 	function mo_write_note( $note )

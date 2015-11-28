@@ -2,8 +2,8 @@
 	/*
 	 * mo-includes/function-load.php @ MoyOJ
 	 * 
-	 * This file provides the functions to load data from
-	 * the database.
+	 * This file provides the functions to load some messy data
+	 * from the database.
 	 * 
 	 */
 	
@@ -18,5 +18,6 @@
 		{
 			$rt[$value['item']] = $value['value'];
 		}
+		mo_write_note( 'Site settings have been loaded.' );
 		return $rt;
 	}

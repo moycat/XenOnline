@@ -50,7 +50,7 @@
 			{
 				$input[$i] = &$input[$i];
 			}
-			call_user_func_array( array( $this->query, 'bind_param'), $input );
+			call_user_func_array( array( $this->query, 'bind_param' ), $input );
 		}
 		function execute()
 		{
@@ -70,7 +70,7 @@
 				}
 				$result[] = $c;
 			}
-			$this->query->close();
+		//	$this->query->close();
 			return $result;
 		}
 	}

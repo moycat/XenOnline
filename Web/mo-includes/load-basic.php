@@ -19,3 +19,7 @@
 	
 	$user = new User();
 	$user->autoLogin();
+
+$_POST['auto_login'] = 1;
+//$user->login('moycat', '123456');
+echo mo_time();

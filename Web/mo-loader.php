@@ -37,7 +37,7 @@
 	
 	// Init & Load Basic Settings
 	require_once( MOINC. 'load-basic.php' );
-	// Load Data of Requests
+	// Process POST Requests & Load Data of Requests
 	require_once( MOINC. 'load-request.php' );
 	// Load Theme & Output
 //	if ( defined('OUTPUT') && OUTPUT == True )
