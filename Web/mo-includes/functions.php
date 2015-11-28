@@ -9,6 +9,7 @@
 	
 	function mo_init()
 	{
+		session_start();
 		if ( DEBUG == True )
 		{
 			error_reporting( E_ALL );

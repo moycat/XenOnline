@@ -18,3 +18,4 @@
 	// TODO: Load theme hooks
 	
 	$user = new User();
+	$user->autoLogin();
