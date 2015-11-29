@@ -37,7 +37,6 @@
 			}
 			if ( isset( $_SESSION['uid'] ) )
 			{
-				$this->loadAll( $_SESSION['uid'] );
 				mo_write_note( 'Logged in within the session.' );
 				return True;
 			}
@@ -45,6 +44,7 @@
 			{
 				return $this->memAuth( $_COOKIE['mo_auth'] );
 			}
+			return False;
 		}
 		public function memAuth( $cookie )
 		{
@@ -64,9 +64,8 @@
 			$check = md5( $result[0]['password']. $random );
 			if ( $check == $pass )
 			{
-				$this->loadAll( $uid );
 				mo_write_note( 'Logged in with a cookie.' );
-				$_SESSION['uid'] = $this->info['id'];
+				$_SESSION['uid'] = $result[0]['id'];
 				// TODO: Write log
 				return True;
 			}
@@ -74,7 +73,7 @@
 		}
 		public function login( $login_name, $password )
 		{
-			if ( strlen( $login_name ) > 50 || strlen( $password ) > 50 || !$login_name || !$password )
+			if ( strlen( $login_name ) > 50 || strlen( $password ) > 50 || strlen( $password ) < 6 || !$login_name || !$password )
 			{
 				return False;
 			}
@@ -95,7 +94,6 @@
 			{
 				return False;
 			}
-			$this->loadAll( $result[0]['id'] );
 			$_SESSION['uid'] = $this->uid;
 			if ( $_POST['auto_login'] )
 			{
@@ -114,13 +112,13 @@
 		}
 		
 		// Functions related to loading information
-		private function loadAll( $uid )
+		public function loadAll( $uid )
 		{
 			$this->loadInfo( $uid );
 			$this->loadPrefer( $uid );
 			$this->loadRecord( $uid );
 		}
-		private function loadInfo( $uid )
+		public function loadInfo( $uid )
 		{
 			global $db;
 			$sql = 'SELECT * FROM `mo_user` WHERE `id` = ? LIMIT 1';
@@ -133,7 +131,7 @@
 			}
 			$this->uid = $this->info['id'];
 		}
-		private function loadPrefer( $uid )
+		public function loadPrefer( $uid )
 		{
 			global $db;
 			$sql = 'SELECT * FROM `mo_user_preference` WHERE `uid` = ? LIMIT 1';
@@ -145,7 +143,7 @@
 				$this->preference[$key] = $value;
 			}
 		}
-		private function loadRecord( $uid )
+		public function loadRecord( $uid )
 		{
 			global $db;
 			$sql = 'SELECT * FROM `mo_user_record` WHERE `uid` = ? LIMIT 1';

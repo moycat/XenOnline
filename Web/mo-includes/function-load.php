@@ -9,15 +9,19 @@
 	
 	function mo_load_settings()
 	{
-		global $db;
-		$sql = 'SELECT * FROM `mo_site_options`';
-		$db->prepare( $sql );
-		$result = $db->execute();
-		$rt = array();
-		foreach ( $result as $value )
+		$settings = mo_read_cache( 'mo_cache_settings' );
+		if ( !$settings )
 		{
-			$rt[$value['item']] = $value['value'];
+			global $db;
+			$sql = 'SELECT * FROM `mo_site_options`';
+			$db->prepare( $sql );
+			$result = $db->execute();
+			foreach ( $result as $value )
+			{
+				$settings[$value['item']] = $value['value'];
+			}
+			mo_write_cache( 'mo_cache_settings', $settings );
 		}
 		mo_write_note( 'Site settings have been loaded.' );
-		return $rt;
+		return $settings;
 	}

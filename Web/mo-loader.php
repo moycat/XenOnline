@@ -10,6 +10,7 @@
 	define( 'ABSPATH', dirname( __FILE__ ). '/' );
 	define( 'MOINC', ABSPATH. 'mo-includes/' );
 	define( 'MOCON', ABSPATH. 'mo-content/' );
+	define( 'MOCACHE', MOCON. 'cache/' );
 	require_once( MOINC. 'functions.php' );
 	
 	if ( file_exists( ABSPATH. 'mo-config.php' ) )

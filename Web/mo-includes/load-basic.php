@@ -18,8 +18,14 @@
 	// TODO: Load theme hooks
 	
 	$user = new User();
-	$user->autoLogin();
+	if ( $user->autoLogin() )
+	{
+		$user->loadAll( $_SESSION['uid'] );
+	}
 
 $_POST['auto_login'] = 1;
 //$user->login('moycat', '123456');
+//var_dump($user);
+//echo password_hash('123456', PASSWORD_DEFAULT, ['cost' => 5 ] ) . "<br>";
+//echo serialize( $mo_settings );
 echo mo_time();

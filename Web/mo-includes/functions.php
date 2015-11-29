@@ -51,6 +51,29 @@
 		return $arg;
 	}
 	
+	function mo_read_cache( $cache )
+	{
+		$cache_file = MOCACHE. $cache. '.php';
+		if ( file_exists( $cache_file ) )
+		{
+			require_once( $cache_file );
+			return unserialize( $mo_cache[$cache] );
+		}
+		else
+		{
+			return False;
+		}
+	}
+	
+	function mo_write_cache( $cache, $data )
+	{
+		$cache_file = MOCACHE. $cache. '.php';
+		$to_cache = "<?php\n" . "\$mo_cache['$cache'] = '". serialize( $data ). "';\n";
+		$file = fopen( $cache_file, 'w' );
+		fwrite( $file, $to_cache );
+		fclose( $file );
+	}
+	
 	function mo_time( $p = 3 )
 	{
 		global $mo_time;
