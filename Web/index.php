@@ -7,6 +7,8 @@
 	 * 
 	 */
 	
+	// Whether to run
+	define( 'RUN', True );
 	// Whether to output normally.
 	define( 'OUTPUT', True );
 	

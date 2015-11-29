@@ -8,6 +8,12 @@
 	 *
 	 */
 	
-	$mo_request = mo_analyze();
-	// TODO: Request pages of themes and plugins
-	require_once( MOINC. 'load-request-'. $mo_request[0]. '.php' );
+	$mo_request = NULL;
+	
+	function loadRequest()
+	{
+		global $mo_request;
+		$mo_request = mo_analyze();
+		// TODO: Request pages of themes and plugins
+		require_once( MOINC. 'load-request-'. $mo_request[0]. '.php' );
+	}

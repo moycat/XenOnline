@@ -99,3 +99,11 @@
 		$url = MO_URL. '/'. $_SERVER['PHP_SELF'];
 		return $url;
 	}
+	
+	function mo_in_check()
+	{
+		if ( !defined( 'RUN' ) )
+		{
+			exit(0);
+		}
+	}

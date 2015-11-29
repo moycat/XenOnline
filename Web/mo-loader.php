@@ -13,6 +13,8 @@
 	define( 'MOCACHE', MOCON. 'cache/' );
 	require_once( MOINC. 'functions.php' );
 	
+	mo_in_check();
+	
 	if ( file_exists( ABSPATH. 'mo-config.php' ) )
 	{
 		require_once( 'mo-config.php' );
@@ -30,7 +32,6 @@
 	
 	require_once( MOINC. 'function-action.php' );
 	require_once( MOINC. 'function-load.php' );
-	require_once( MOINC. 'class-user.php' );
 	
 	// Just init
 	mo_init();
@@ -43,6 +44,9 @@
 //	if ( defined('OUTPUT') && OUTPUT == True )
 //		require_once( MOINC. 'load-theme.php' );
 	
+	loadBasic();
+	loadRequest();
+//	loadTheme();
 	
 	mo_write_note( 'The page has been processed successfully.' );
 ?>

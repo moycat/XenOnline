@@ -8,24 +8,35 @@
 	 */
 
 	require_once( MOINC. 'class-db.php' );
-	// To connect to the database
+	require_once( MOINC. 'class-user.php' );
 	$db = new DB();
-	$db->init( DB_HOST, DB_USER, DB_PASS, DB_NAME );
-	$db->connect();
-	$mo_settings = mo_load_settings();
+	$user = new User();
+	$mo_settings = array();
 	
 	// TODO: Load plugin hooks
 	// TODO: Load theme hooks
 	
-	$user = new User();
-	if ( $user->autoLogin() )
+	function loadBasic()
 	{
-		$user->loadAll( $_SESSION['uid'] );
-	}
+		global $db, $user, $mo_settings;
+		
+		// To connect to the database
+		$db->init( DB_HOST, DB_USER, DB_PASS, DB_NAME );
+		$db->connect();
+		$mo_settings = mo_load_settings();
+		
+		if ( $user->autoLogin() )
+		{
+			$user->loadAll( $_SESSION['uid'] );
+		}
+		
+		
+		
+		$_POST['auto_login'] = 1;
+		//$user->login('moycat', '123456');
+		//var_dump($user);
+		//echo password_hash('123456', PASSWORD_DEFAULT, ['cost' => 5 ] ) . "<br>";
+		//echo serialize( $mo_settings );
+		echo mo_time();
 
-$_POST['auto_login'] = 1;
-//$user->login('moycat', '123456');
-//var_dump($user);
-//echo password_hash('123456', PASSWORD_DEFAULT, ['cost' => 5 ] ) . "<br>";
-//echo serialize( $mo_settings );
-echo mo_time();
+	}
