@@ -24,9 +24,9 @@
 		exit(0);
 	}
 	
+	$mo_time = microtime();
 	$mo_settings = array();
 	$mo_actions = array();
-	$mo_time = microtime();
 	
 	require_once( MOINC. 'function-action.php' );
 	require_once( MOINC. 'function-load.php' );

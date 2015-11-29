@@ -8,21 +8,26 @@
 	
 	class User
 	{
-		// Basic information
-		public $uid = '';
-		public $info = array();
+		private $uid;
+		private $status;
 		
-		// Problem information
-		public $record = array();
-		
-		// User preferance
-		public $preference = array();
-		
-		// Other things used not in all occasions
-		public $message;
-		public $solution;
-		public $topic;
-		public $reply;
+		// Functions ralated to operate information
+		public function get( $category, $key )
+		{
+			if ( isset( $this->status[$category][$key] ) )
+			{
+				return $this->status[$category][$key];
+			}
+			else
+			{
+				return False;
+			}
+		}
+		public function setUID( $uid )
+		{
+			$this->uid = $uid;
+			$this->status = array();
+		}
 		
 		// Functions related to login & logout
 		public function autoLogin()
@@ -35,16 +40,19 @@
 				}
 				return $this->login( $_POST['login_name'], $_POST['password'] );
 			}
-			if ( isset( $_SESSION['uid'] ) )
+			else if ( isset( $_SESSION['uid'] ) && is_numeric( $_SESSION['uid'] ) )
 			{
 				mo_write_note( 'Logged in within the session.' );
-				return True;
+				return $_SESSION['uid'];
 			}
-			if ( isset( $_COOKIE['mo_auth'] ) )
+			else if ( isset( $_COOKIE['mo_auth'] ) )
 			{
 				return $this->memAuth( $_COOKIE['mo_auth'] );
 			}
-			return False;
+			else
+			{
+				return False;
+			}
 		}
 		public function memAuth( $cookie )
 		{
@@ -67,7 +75,7 @@
 				mo_write_note( 'Logged in with a cookie.' );
 				$_SESSION['uid'] = $result[0]['id'];
 				// TODO: Write log
-				return True;
+				return $_SESSION['uid'];
 			}
 			return False;
 		}
@@ -94,11 +102,12 @@
 			{
 				return False;
 			}
+			$this->uid = $result[0]['id'];
 			$_SESSION['uid'] = $this->uid;
 			if ( $_POST['auto_login'] )
 			{
 				$random = (string)rand( 10000, 99999 );
-				$cookie_to_write = $this->uid. '&'. $random. '&'. md5( $this->info['password']. $random );
+				$cookie_to_write = $this->uid. '&'. $random. '&'. md5( $this->status['info']['password']. $random );
 				setcookie( 'mo_auth', $cookie_to_write, time() + 31536000 );
 			}
 			// TODO: Write log
@@ -109,6 +118,7 @@
 			setcookie( 'mo_auth', '', time() - 3600 );
 			unset( $_SESSION['uid'] );
 			$this->uid = '';
+			$this->status = array();
 		}
 		
 		// Functions related to loading information
@@ -127,9 +137,10 @@
 			$result = $db->execute();
 			foreach ( $result[0] as $key => $value )
 			{
-				$this->info[$key] = $value;
+				$this->status['info'][$key] = $value;
 			}
-			$this->uid = $this->info['id'];
+			$this->uid = $this->status['info']['id'];
+			$this->status['info']['password'] = '';
 		}
 		public function loadPrefer( $uid )
 		{
@@ -140,7 +151,7 @@
 			$result = $db->execute();
 			foreach ( $result[0] as $key => $value )
 			{
-				$this->preference[$key] = $value;
+				$this->status['preference'][$key] = $value;
 			}
 		}
 		public function loadRecord( $uid )
@@ -152,7 +163,7 @@
 			$result = $db->execute();
 			foreach ( $result[0] as $key => $value )
 			{
-				$this->record[$key] = $value;
+				$this->status['record'][$key] = $value;
 			}
 		}
 	}

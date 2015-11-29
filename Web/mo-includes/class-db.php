@@ -16,6 +16,8 @@
 		private $mysqli;
 		private $query;
 		
+		private $count = 0;
+		
 		function init( $db_host, $db_user, $db_pass, $db_name )
 		{
 			$this->host = $db_host;
@@ -70,7 +72,13 @@
 				}
 				$result[] = $c;
 			}
-		//	$this->query->close();
+			$this->query->close();
+			$this->count ++;
 			return $result;
+		}
+		
+		public function getCount()
+		{
+			return $this->count;
 		}
 	}
