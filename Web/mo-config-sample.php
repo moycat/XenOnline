@@ -16,8 +16,9 @@
 	// The password of the account
 	define( 'DB_PASS' , 'the_db_pass' );
 	
-	// The salt to encrypt some secret data
-	define( 'SALT', 'a_random_salt_the_longger_the_better_well_just_kidding' );
+	// The cost used when crypting password
+	// At least 4, and 5 is recommond
+	define( 'CRYPT_COST', 5 );
 	
-	// If debugging, set it to True to output details.
+	// If debugging, set it to True to output details
 	define( 'DEBUG', False );
