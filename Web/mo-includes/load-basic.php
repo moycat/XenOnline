@@ -25,6 +25,7 @@
 		$db->connect();
 		$mo_settings = mo_load_settings();
 		
+		// Check if logged in or trying to
 		if ( $user->autoLogin() )
 		{
 			$user->loadAll( $_SESSION['uid'] );
@@ -38,8 +39,6 @@
 		//echo password_hash('123456', PASSWORD_DEFAULT, ['cost' => 5 ] ) . "<br>";
 		//echo serialize( $mo_settings );
 		echo mo_time();
-		add_action( 'a', 'mo_time' );
-		add_action( 'a', 'mo_debugTime', 50 );
-		do_action( 'a' );
+		
 
 	}

@@ -41,8 +41,11 @@
 //		require_once( MOINC. 'load-theme.php' );
 	
 	loadBasic();
+	do_action( 'loadBasic' );
 	loadRequest();
+	do_action( 'loadRequest' );
 //	loadTheme();
+	do_action( 'loadTheme' );
 	
 	mo_write_note( 'The page has been processed successfully.' );
 ?>

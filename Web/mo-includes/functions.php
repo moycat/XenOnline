@@ -83,7 +83,7 @@
 		$t = microtime();
 		list( $m0, $s0 ) = explode( ' ', $mo_time );
 		list( $m1, $s1 ) = explode( ' ', $t );
-		return round( ( $s1 + $m1 - $s0 - $m0 ) * 1000, 3 );
+		return round( ( $s1 + $m1 - $s0 - $m0 ) * 1000, $p );
 	}
 	
 	function mo_write_note( $note )
