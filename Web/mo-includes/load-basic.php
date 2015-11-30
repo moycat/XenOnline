@@ -38,5 +38,8 @@
 		//echo password_hash('123456', PASSWORD_DEFAULT, ['cost' => 5 ] ) . "<br>";
 		//echo serialize( $mo_settings );
 		echo mo_time();
+		add_action( 'a', 'mo_time' );
+		add_action( 'a', 'mo_debugTime', 50 );
+		do_action( 'a' );
 
 	}

@@ -7,6 +7,9 @@
 	 * 
 	 */
 	
+	$mo_time = microtime();
+	$mo_settings = array();
+	
 	function mo_init()
 	{
 		session_start();
@@ -83,15 +86,10 @@
 		return round( ( $s1 + $m1 - $s0 - $m0 ) * 1000, 3 );
 	}
 	
-	function mo_debugTime()
-	{
-		return ' Time:'. mo_time();
-	}
-	
 	function mo_write_note( $note )
 	{
 		if ( defined( 'DEBUG' ) && DEBUG == True )
-			echo "\n<!-- Note: ". $note. mo_debugTime(). " -->\n";
+			echo "\n<!-- Note: ". $note. ' Time:'. mo_time(). " -->\n";
 	}
 	
 	function mo_get_url()
