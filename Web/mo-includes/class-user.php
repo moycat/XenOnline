@@ -20,8 +20,12 @@
 			}
 			else
 			{
-				return False;
+				return '';
 			}
+		}
+		public function getUID()
+		{
+			return $this->uid;
 		}
 		public function setUID( $uid )
 		{
