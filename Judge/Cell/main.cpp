@@ -18,6 +18,7 @@
 #include <sys/resource.h>
 #include <sys/stat.h>
 #include <sys/syscall.h>
+#include <sys/time.h>
 #include <sys/types.h>
 #include <sys/user.h>
 #include <sys/wait.h>
@@ -217,14 +218,14 @@ void Compile(int lang)
 //	case JAVA:
 
 	}
-	string c_flag = output_folder + "compile";
-	FILE * flag;
-	flag = fopen(c_flag.c_str(), "w");
-	fclose(flag);
 	if(!WIFEXITED(result) || GetFileSize(error_log.c_str()))
 	{
 		WriteError(COMPILE_ERROR, "AN ERROR OCCURED WHEN COMPILING", true);
 	}
+	string c_flag = output_folder + "compile";
+	FILE * flag;
+	flag = fopen(c_flag.c_str(), "w");
+	fclose(flag);
 }
 
 void RunPost(int lang)
@@ -339,8 +340,14 @@ void Run(int lang, int time_limit, int memory_limit, int test_turn) // 本函数
 	string input = input_folder + "test";
 	string output = output_folder + "out";
 	vector<int> result, used_time, used_memory;
-	struct rlimit CPU_LIMIT, THREAD_LIMIT;
-	CPU_LIMIT.rlim_cur = CPU_LIMIT.rlim_max = time_limit;
+	int time_limit_second = time_limit / 1000;
+	int time_limit_microsecond = time_limit % 1000 * 1000;
+	struct rlimit THREAD_LIMIT;
+	struct itimerval CPU_LIMIT_TICK;
+    CPU_LIMIT_TICK.it_value.tv_sec = time_limit_second;
+    CPU_LIMIT_TICK.it_value.tv_usec = time_limit_microsecond + 10000;
+    CPU_LIMIT_TICK.it_interval.tv_sec  =0;
+    CPU_LIMIT_TICK.it_interval.tv_usec = 50000;
 	THREAD_LIMIT.rlim_cur = THREAD_LIMIT.rlim_max = 0;
 	init_syscalls_limits(lang);
 	for(int i = 0; i < test_turn; ++i)
@@ -361,8 +368,8 @@ void Run(int lang, int time_limit, int memory_limit, int test_turn) // 本函数
 			freopen(now_input.c_str(), "r", stdin);
 			freopen(now_output.c_str(), "w", stdout);
 			freopen(now_error.c_str(), "w", stderr);
-			setrlimit(RLIMIT_CPU, &CPU_LIMIT);
 			setrlimit(RLIMIT_NPROC, &THREAD_LIMIT);
+			setitimer(ITIMER_PROF, &CPU_LIMIT_TICK, NULL);
 			RunPost(lang);
 		}
 		else
