@@ -28,3 +28,20 @@
 		$db->execute();
 		return $uid;
 	}
+	function mo_del_user( $uid )
+	{
+		global $db;
+		$sql = 'DELETE FROM `mo_user` WHERE `id` = ?';
+		$db->prepare( $sql );
+		$db->bind( 'i', $uid );
+		$db->execute();
+		$sql = 'DELETE FROM `mo_user_info` WHERE `uid` = ?';
+		$db->prepare( $sql );
+		$db->bind( 'i', $uid );
+		$db->execute();
+		$sql = 'DELETE FROM `mo_user_record` WHERE `uid` = ?';
+		$db->prepare( $sql );
+		$db->bind( 'i', $uid );
+		$db->execute();
+		return True;
+	}
