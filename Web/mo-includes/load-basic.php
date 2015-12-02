@@ -38,6 +38,7 @@
 		//var_dump($user);
 		//echo password_hash('123456', PASSWORD_DEFAULT, ['cost' => 5 ] ) . "<br>";
 		//echo serialize( $mo_settings );
+		//$user->save('status');
 		echo mo_time();
 		
 
