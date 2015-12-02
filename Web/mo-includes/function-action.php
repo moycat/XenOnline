@@ -42,7 +42,7 @@
 	}
 	
 	// Process all functions on the hook
-	function do_action( $hook, $arg = array() )
+	function do_action( $hook, $arg = '' )
 	{
 		global $mo_actions;
 		if ( !isset( $mo_actions[$hook] ) )
@@ -55,24 +55,18 @@
 			ksort( $mo_actions[$hook] );
 			$mo_actions_sorted[$hook] = true;
 		}
+		$all_args = func_get_args();
 		foreach ( $mo_actions[$hook] as $priority )
 		{
 			foreach ( $priority as $func => $value )
 			{
-				if ( isset( $arg[$func] ) && count( $arg[$func] ) == $value )
-				{
-					$rt[$func] = call_user_func_array( $func, $arg[$func] );
-				}
-				elseif ( $value == 0 )
-				{
-					$rt[$func] = call_user_func( $func );
-				}
+					$rt[$func] = call_user_func_array( $func, array_slice( $arg, 1, $value ) );
 			}
 		}
 		mo_write_note( 'Hook "'. $hook. '" has been run.' );
 		return $rt;
 	}
-	function apply_filter( $hook, $content, $assist = array() )
+	function apply_filter( $hook, $content )
 	{
 		global $mo_actions;
 		if ( !isset( $mo_actions[$hook] ) )
@@ -84,20 +78,17 @@
 			ksort( $mo_actions[$hook] );
 			$mo_actions_sorted[$hook] = true;
 		}
+		$all_args = func_get_args();
 		foreach ( $mo_actions[$hook] as $priority )
 		{
 			foreach ( $priority as $func => $value )
 			{
-				if ( $value == 1 )
-				{
-					$content = call_user_func( $func, $content );
-				}
-				elseif ( isset( $assist[$func] ) && $value == count( $assist[$func] ) + 1 )
-				{
 					$arg[] = $content;
-					$arg = array_merge( $arg, $assist[$func] );
+					if ( $value > 1 )
+					{
+						$arg = array_merge( $arg, array_slice( $all_args, 2, $value ) );
+					}
 					$content = call_user_func_array( $func , $arg );
-				}
 			}
 		}
 		mo_write_note( 'Hook "'. $hook. '" has been run as a filter.' );
