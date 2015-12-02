@@ -58,6 +58,7 @@
 		{
 			$this->query->execute();
 			$this->count ++;
+			$this->insID = $this->query->insert_id;
 			if ( !$this->query->field_count )
 			{
 				$this->query->close();
@@ -69,7 +70,8 @@
 			{
 				$params[] = &$row[$field->name];
 			}
-			call_user_func_array(array($this->query, 'bind_result'), $params);
+			$this->query->store_result();
+			call_user_func_array( array( $this->query, 'bind_result' ), $params );
 			while ( $this->query->fetch() )
 			{
 				foreach( $row as $key => $val )
@@ -78,6 +80,7 @@
 				}
 				$result[] = $c;
 			}
+			$this->query->free_result();
 			$this->query->close();
 			return $result;
 		}
@@ -85,5 +88,9 @@
 		public function getCount()
 		{
 			return $this->count;
+		}
+		public function getInsID()
+		{
+			return $this->insID;
 		}
 	}

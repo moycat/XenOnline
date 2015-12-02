@@ -15,12 +15,12 @@
 		$db->prepare( $sql );
 		$db->bind( 'ssssi', $username, $password, $email, $nickname, $ip );
 		$db->execute();
-		$sql = 'SELECT `id` FROM `mo_user` WHERE `username` = ? LIMIT 1';
-		$db->prepare( $sql );
-		$db->bind( 's', $username );
-		$result = $db->execute();
-		$uid = $result[0]['id'];
-		$sql = 'INSERT INTO `mo_user_info` (`uid`) VALUES (\''. $uid. '\')';
+		$uid = $db->getInsID();
+		if( $uid == 0 )
+		{
+			return False;
+		}
+		$sql = 'INSERT INTO `mo_user_info` (`uid`, `info`, `preference`) VALUES (\''. $uid. '\', \'a:0:{}\', \'a:0:{}\')';
 		$db->prepare( $sql );
 		$db->execute();
 		$sql = 'INSERT INTO `mo_user_record` (`uid`) VALUES (\''. $uid. '\')';

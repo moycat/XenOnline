@@ -12,7 +12,6 @@
 	define( 'MOCON', ABSPATH. 'mo-content/' );
 	define( 'MOCACHE', MOCON. 'cache/' );
 	require_once( MOINC. 'functions.php' );
-	require_once( MOINC. 'function-action.php' );
 	
 	mo_in_check();
 	
@@ -26,7 +25,6 @@
 //		require_once( MOINC. 'setup.php' );
 		exit(0);
 	}
-	
 	
 	// Just init
 	mo_init();
