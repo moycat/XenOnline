@@ -92,6 +92,11 @@
 			echo "\n<!-- Note: ". $note. ' Time:'. mo_time(). " -->\n";
 	}
 	
+	function mo_get_user_ip()
+	{
+		return ip2long( $_SERVER["REMOTE_ADDR"] );
+	}
+	
 	function mo_get_url()
 	{
 		$url = MO_URL. '/'. $_SERVER['PHP_SELF'];
@@ -102,6 +107,7 @@
 	{
 		if ( !defined( 'RUN' ) )
 		{
+			mo_write_note( 'Invaild entrance.' );
 			exit(0);
 		}
 	}

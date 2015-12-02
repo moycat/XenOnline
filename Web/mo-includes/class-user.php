@@ -274,13 +274,11 @@
 						$sql .= '`mo_user_info` SET `info` = ? WHERE `uid` = '. $this->uid;
 						$db->prepare( $sql );
 						$db->bind( 's', serialize( $this->info ) );
-						$db->execute( True );
 						break;
 					case 'preference':
 						$sql .= '`mo_user_info` SET `preference` = ? WHERE `uid` = '. $this->uid;
 						$db->prepare( $sql );
 						$db->bind( 's', serialize( $this->preference ) );
-						$db->execute( True );
 						break;
 					case 'record':
 						$sql .= '`mo_user_record` SET `uid` = '. $this->uid;
@@ -299,7 +297,7 @@
 					default:
 						return False;
 				}
-			$db->execute( True );
+			$db->execute();
 			return True;
 		}
 	}
