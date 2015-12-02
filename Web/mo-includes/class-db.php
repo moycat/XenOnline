@@ -54,11 +54,11 @@
 			}
 			call_user_func_array( array( $this->query, 'bind_param' ), $input );
 		}
-		function execute( $noReturn = False )
+		function execute()
 		{
 			$this->query->execute();
 			$this->count ++;
-			if ( $noReturn )
+			if ( !$this->query->field_count )
 			{
 				$this->query->close();
 				return True;
