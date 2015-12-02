@@ -54,9 +54,15 @@
 			}
 			call_user_func_array( array( $this->query, 'bind_param' ), $input );
 		}
-		function execute()
+		function execute( $noReturn = False )
 		{
 			$this->query->execute();
+			$this->count ++;
+			if ( $noReturn )
+			{
+				$this->query->close();
+				return True;
+			}
 			$result = array();
 			$meta = $this->query->result_metadata();   
 			while ( $field = $meta->fetch_field() )
@@ -73,7 +79,6 @@
 				$result[] = $c;
 			}
 			$this->query->close();
-			$this->count ++;
 			return $result;
 		}
 		
