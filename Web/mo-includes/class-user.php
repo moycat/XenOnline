@@ -13,7 +13,7 @@
 		private $status = array();
 		private $info = array();
 		private $preference = array();
-		private $record;
+		private $record = array();
 		private $other = array();
 		
 		// Functions ralated to operate information
@@ -149,7 +149,7 @@
 			$random = $input[1];
 			$pass = $input[2];
 			global $db;
-			$sql = 'SELECT `id`, `password` FROM `mo_user` WHERE `id` = ?';
+			$sql = 'SELECT `id`, `password`, `mask` FROM `mo_user` WHERE `id` = ?';
 			$db->prepare( $sql );
 			$db->bind( 'i', $uid );
 			$result = $db->execute();
@@ -158,6 +158,7 @@
 			{
 				mo_write_note( 'Logged in with a cookie.' );
 				$_SESSION['uid'] = $result[0]['id'];
+				$_SESSION['mask'] = $result[0]['mask'];
 				mo_log_login( $uid, 1 );
 				return $_SESSION['uid'];
 			}
@@ -171,7 +172,7 @@
 				return False;
 			}
 			global $db;
-			$sql = 'SELECT `id`, `password` FROM `mo_user` WHERE ';
+			$sql = 'SELECT `id`, `password`, `mask`FROM `mo_user` WHERE ';
 			if ( strstr( $login_name , '@' ) )
 			{
 				$sql .= '`email` = ? LIMIT 1';
@@ -190,6 +191,7 @@
 			}
 			$this->uid = $result[0]['id'];
 			$_SESSION['uid'] = $this->uid;
+			$_SESSION['mask'] = $result[0]['mask'];
 			if ( $_POST['auto_login'] )
 			{
 				$random = (string)rand( 10000, 99999 );
@@ -199,12 +201,29 @@
 			mo_log_login( $this->uid, 0 );
 			mo_write_note( 'Logged in with a password.' );
 		}
+		public function check()
+		{
+			if ( $_SESSION['mask'] != $this->status['mask'] )
+			{
+				$this->logout();
+			}
+			else
+			{
+				do_action( 'login' );
+			}
+		}
 		public function logout()
 		{
 			setcookie( 'mo_auth', '', time() - 3600 );
 			unset( $_SESSION['uid'] );
+			unset( $_SESSION['mask'] );
 			$this->uid = '';
 			$this->status = array();
+			$this->info = array();
+			$this->preference = array();
+			$this->record = array();
+			$this->other = array();
+			do_action( 'logout' );
 		}
 		
 		// Functions related to loading information
@@ -226,8 +245,6 @@
 				$this->status[$key] = $value;
 			}
 			$this->uid = $this->status['id'];
-			unset( $this->status['password'] );
-			unset( $this->status['id'] );
 		}
 		public function loadInfo( $uid )
 		{
@@ -251,6 +268,7 @@
 				$this->record[$key] = $value;
 			}
 		}
+		
 		// Functions related to saving information
 		public function save( $category )
 		{
@@ -301,5 +319,16 @@
 				}
 			$db->execute();
 			return True;
+		}
+		public function refresh_login()
+		{
+			global $db;
+			//var_dump($this->status);
+			$this->status['mask'] = (int)$this->status['mask'] + 1;
+			$this->status['mask'] = (string)$this->status['mask'];
+			$sql = 'UPDATE `mo_user` SET `mask` = ? WHERE `mo_user`.`id` = ?';
+			$db->prepare( $sql );
+			$db->bind( 'ii', $this->status['mask'], $this->uid );
+			$db->execute();
 		}
 	}

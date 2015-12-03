@@ -34,6 +34,7 @@
 		if ( $user->autoLogin() )
 		{
 			$user->loadAll( $_SESSION['uid'] );
+			$user->check();
 		}
 		
 		
@@ -46,8 +47,9 @@
 		//echo serialize( $mo_settings );
 		//mo_del_user( 21 );
 		//mo_add_user('asdf553', 'dsfdffdff', 'g24g234g');
-		//$user->save('status');
+		//$user->refresh_login();
 		//mo_set_option( '123', array());
+		//mo_list_problems(2,2,'u148');
 		echo mo_time();
 		
 
