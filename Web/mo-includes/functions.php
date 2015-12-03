@@ -81,6 +81,67 @@
 		fclose( $file );
 	}
 	
+	function mo_del_cache( $cache )
+	{
+		$cache_file = MOCACHE. $cache. '.php';
+		if ( file_exists( $cache_file ) )
+		{
+			return unlink( $cache_file );
+		}
+		return False;
+	}
+	
+	function is_serialized( $data, $strict = true ) // From WordPress
+	{ 
+			// if it isn't a string, it isn't serialized 
+			if ( ! is_string( $data ) ) 
+					return false; 
+			$data = trim( $data ); 
+			 if ( 'N;' == $data ) 
+					return true; 
+			$length = strlen( $data ); 
+			if ( $length < 4 ) 
+					return false; 
+			if ( ':' !== $data[1] ) 
+					return false; 
+			if ( $strict ) {//output 
+					$lastc = $data[ $length - 1 ]; 
+					if ( ';' !== $lastc && '}' !== $lastc ) 
+							return false; 
+			} else {//input 
+					$semicolon = strpos( $data, ';' ); 
+					$brace     = strpos( $data, '}' ); 
+					// Either ; or } must exist. 
+					if ( false === $semicolon && false === $brace ) 
+							return false; 
+					// But neither must be in the first X characters. 
+					if ( false !== $semicolon && $semicolon < 3 ) 
+							return false; 
+					if ( false !== $brace && $brace < 4 ) 
+							return false; 
+			} 
+			$token = $data[0]; 
+			switch ( $token ) { 
+					case 's' : 
+							if ( $strict ) { 
+									if ( '"' !== $data[ $length - 2 ] ) 
+											return false; 
+							} elseif ( false === strpos( $data, '"' ) ) { 
+									return false; 
+							} 
+					case 'a' : 
+					case 'O' : 
+							echo "a"; 
+							return (bool) preg_match( "/^{$token}:[0-9]+:/s", $data ); 
+					case 'b' : 
+					case 'i' : 
+					case 'd' : 
+							$end = $strict ? '$' : ''; 
+							return (bool) preg_match( "/^{$token}:[0-9.E-]+;$end/", $data ); 
+			} 
+			return false; 
+	}
+	
 	function mo_time( $p = 3 )
 	{
 		global $mo_time;
@@ -107,11 +168,19 @@
 		return $url;
 	}
 	
-	function mo_in_check()
+	function mo_in_check( $autoExit = True )
 	{
 		if ( !defined( 'RUN' ) )
 		{
 			mo_write_note( 'Invaild entrance.' );
-			exit(0);
+			if ($autoExit)
+			{
+				exit(0);
+			}
+			else
+			{
+				return False;
+			}
 		}
+		return True;
 	}

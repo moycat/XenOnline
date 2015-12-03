@@ -124,12 +124,12 @@
 				}
 				return $this->login( $_POST['login_name'], $_POST['password'] );
 			}
-			else if ( isset( $_SESSION['uid'] ) && is_numeric( $_SESSION['uid'] ) )
+			elseif ( isset( $_SESSION['uid'] ) && is_numeric( $_SESSION['uid'] ) )
 			{
 				mo_write_note( 'Logged in within the session.' );
 				return $_SESSION['uid'];
 			}
-			else if ( isset( $_COOKIE['mo_auth'] ) )
+			elseif ( isset( $_COOKIE['mo_auth'] ) )
 			{
 				return $this->memAuth( $_COOKIE['mo_auth'] );
 			}
@@ -158,9 +158,10 @@
 			{
 				mo_write_note( 'Logged in with a cookie.' );
 				$_SESSION['uid'] = $result[0]['id'];
-				// TODO: Write log
+				mo_log_login( $uid, 1 );
 				return $_SESSION['uid'];
 			}
+			mo_log_login( $uid, 1, False );
 			return False;
 		}
 		public function login( $login_name, $password )
@@ -185,6 +186,7 @@
 			if ( !$result || !password_verify( $password, $result[0]['password'] ) )
 			{
 				return False;
+				mo_log_login( $this->uid, 0, False );
 			}
 			$this->uid = $result[0]['id'];
 			$_SESSION['uid'] = $this->uid;
@@ -194,7 +196,7 @@
 				$cookie_to_write = $this->uid. '&'. $random. '&'. md5( $result[0]['password']. $random );
 				setcookie( 'mo_auth', $cookie_to_write, time() + 31536000 );
 			}
-			// TODO: Write log
+			mo_log_login( $this->uid, 0 );
 			mo_write_note( 'Logged in with a password.' );
 		}
 		public function logout()
