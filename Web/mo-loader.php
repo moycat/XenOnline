@@ -35,7 +35,7 @@
 	require_once( MOINC. 'load-request.php' );
 	// Load Theme & Output
 //	if ( defined('OUTPUT') && OUTPUT == True )
-//		require_once( MOINC. 'load-theme.php' );
+		require_once( MOINC. 'load-theme.php' );
 	
 	loadBasic();
 	do_action( 'loadBasic' );
