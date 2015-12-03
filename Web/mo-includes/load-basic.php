@@ -43,7 +43,7 @@
 		//echo password_hash('123456', PASSWORD_DEFAULT, ['cost' => 5 ] ) . "<br>";
 		//echo serialize( $mo_settings );
 		//mo_del_user( 21 );
-		mo_add_user('asdf553', 'dsfdffdff', 'g24g234g');
+		//mo_add_user('asdf553', 'dsfdffdff', 'g24g234g');
 		//$user->save('status');
 		echo mo_time();
 		

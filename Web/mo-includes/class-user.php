@@ -191,7 +191,7 @@
 			if ( $_POST['auto_login'] )
 			{
 				$random = (string)rand( 10000, 99999 );
-				$cookie_to_write = $this->uid. '&'. $random. '&'. md5( $this->status['info']['password']. $random );
+				$cookie_to_write = $this->uid. '&'. $random. '&'. md5( $result[0]['password']. $random );
 				setcookie( 'mo_auth', $cookie_to_write, time() + 31536000 );
 			}
 			// TODO: Write log
