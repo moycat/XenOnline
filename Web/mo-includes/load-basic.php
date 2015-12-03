@@ -10,6 +10,7 @@
 	require_once( MOINC. 'class-db.php' );
 	require_once( MOINC. 'class-user.php' );
 	require_once( MOINC. 'function-action.php' );
+	require_once( MOINC. 'function-data.php' );
 	require_once( MOINC. 'function-problem.php' );
 	require_once( MOINC. 'function-user.php' );
 	$db = new DB();
@@ -47,23 +48,4 @@
 		echo mo_time();
 		
 
-	}
-	
-	function mo_load_settings()
-	{
-		$settings = mo_read_cache( 'mo_cache_settings' );
-		if ( !$settings )
-		{
-			global $db;
-			$sql = 'SELECT * FROM `mo_site_options`';
-			$db->prepare( $sql );
-			$result = $db->execute();
-			foreach ( $result as $value )
-			{
-				$settings[$value['item']] = $value['value'];
-			}
-			mo_write_cache( 'mo_cache_settings', $settings );
-		}
-		mo_write_note( 'Site settings have been loaded.' );
-		return $settings;
 	}
