@@ -50,8 +50,12 @@
 		{
 			$arg[0] = '404';
 		}
-		// TODO: Request pages of themes and plugins
 		return $arg;
+	}
+	
+	function loadPT()
+	{
+		
 	}
 	
 	function mo_read_cache( $cache )
