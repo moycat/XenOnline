@@ -8,7 +8,5 @@
 	
 	function loadTheme()
 	{
-		$plugin_floder = MOCON. 'plugin/';
-		$theme_floder = MOCON. 'theme/';
 		
 	}

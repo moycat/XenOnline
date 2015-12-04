@@ -53,9 +53,29 @@
 		return $arg;
 	}
 	
-	function loadPT()
+	function getPT()
 	{
-		
+		global $mo_plugin, $mo_theme;
+		$plugin_floder = MOCON. 'plugin/';
+		$theme_floder = MOCON. 'theme/';
+		$plugin = dir( $plugin_floder );
+		$theme = dir( $theme_floder );
+		while( $get = $plugin->read() )
+		{
+			if( is_dir( "$plugin_floder/$get" ) && $get != "." && $get!=".."
+				&& file_exists( "$plugin_floder$get/$get.php" ) )
+			{
+				$mo_plugin[] = "$plugin_floder$get/$get.php";
+			}
+		}
+		while( $get = $theme->read() )
+		{
+			if( is_dir( "$theme_floder/$get" ) && $get != "." && $get!=".."
+				&& file_exists( "$theme_floder$get/$get.php" ) )
+			{
+				$mo_theme[] = "$theme_floder$get/$get.php";
+			}
+		}
 	}
 	
 	function mo_read_cache( $cache )

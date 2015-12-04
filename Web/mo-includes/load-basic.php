@@ -17,12 +17,11 @@
 	$db = new DB();
 	$user = new User();
 	$mo_settings = array();
+	$mo_plugin = array();
+	$mo_theme = array();
 	
 	function loadBasic()
 	{
-		// TODO: Load plugin hooks
-		// TODO: Load theme hooks
-		
 		global $db, $user, $mo_settings;
 		
 		// To connect to the database
@@ -30,13 +29,14 @@
 		$db->connect();
 		mo_load_settings();
 		
+		getPT()
+		
 		// Check if logged in or trying to
 		if ( $user->autoLogin() )
 		{
 			$user->loadAll( $_SESSION['uid'] );
 			$user->check();
 		}
-		
 		
 		
 		$_POST['auto_login'] = 1;

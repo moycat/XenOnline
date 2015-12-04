@@ -19,7 +19,6 @@
 	{
 		require_once( 'mo-config.php' );
 	}
-	// mo-config.php doesn't exist
 	else
 	{
 //		require_once( MOINC. 'setup.php' );
@@ -39,9 +38,26 @@
 	
 	loadBasic();
 	do_action( 'loadBasic' );
+	if ( count( $mo_plugin ) )
+	{
+		foreach ( $mo_plugin as $plugin )
+		{
+			require_once( $plugin );
+		}
+	}
+	if ( count( $mo_theme ) )
+	{
+		foreach ( $mo_theme as $theme )
+		{
+			require_once( $theme );
+		}
+	}
+	
 	loadRequest();
 	do_action( 'loadRequest' );
-//	loadTheme();
+	
+//	if ( defined('OUTPUT') && OUTPUT == True )
+//		loadTheme();
 	do_action( 'loadTheme' );
 	
 	mo_write_note( 'The page has been processed successfully.' );
