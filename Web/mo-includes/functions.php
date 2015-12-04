@@ -55,11 +55,11 @@
 	
 	function getPT()
 	{
-		global $mo_plugin, $mo_theme;
+		global $mo_plugin, $mo_theme, $mo_theme_file;
+		$mo_theme = mo_get_option( 'theme' );
 		$plugin_floder = MOCON. 'plugin/';
-		$theme_floder = MOCON. 'theme/';
+		$theme_file = MOCON. 'theme/$mo_theme/$mo_theme.php';
 		$plugin = dir( $plugin_floder );
-		$theme = dir( $theme_floder );
 		while( $get = $plugin->read() )
 		{
 			if( is_dir( "$plugin_floder/$get" ) && $get != "." && $get!=".."
@@ -68,13 +68,9 @@
 				$mo_plugin[] = "$plugin_floder$get/$get.php";
 			}
 		}
-		while( $get = $theme->read() )
+		if( !file_exists( $theme_file ) )
 		{
-			if( is_dir( "$theme_floder/$get" ) && $get != "." && $get!=".."
-				&& file_exists( "$theme_floder$get/$get.php" ) )
-			{
-				$mo_theme[] = "$theme_floder$get/$get.php";
-			}
+			$theme_file = '';
 		}
 	}
 	
@@ -94,17 +90,22 @@
 	
 	function mo_write_cache( $cache, $data )
 	{
+		if ( !is_writable( MOCACHE ) )
+		{
+			return False;
+		}
 		$cache_file = MOCACHE. $cache. '.php';
 		$to_cache = "<?php\n" . "\$mo_cache['$cache'] = '". serialize( $data ). "';\n";
 		$file = fopen( $cache_file, 'w' );
 		fwrite( $file, $to_cache );
 		fclose( $file );
+		return True;
 	}
 	
 	function mo_del_cache( $cache )
 	{
 		$cache_file = MOCACHE. $cache. '.php';
-		if ( file_exists( $cache_file ) )
+		if ( file_exists( $cache_file ) && is_writable( MOCACHE ) )
 		{
 			return unlink( $cache_file );
 		}

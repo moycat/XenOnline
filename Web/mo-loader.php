@@ -30,14 +30,10 @@
 	
 	// Init & Load Basic Settings
 	require_once( MOINC. 'load-basic.php' );
-	// Process POST Requests & Load Data of Requests
-	require_once( MOINC. 'load-request.php' );
-	// Load Theme & Output
-//	if ( defined('OUTPUT') && OUTPUT == True )
-		require_once( MOINC. 'load-theme.php' );
 	
 	loadBasic();
 	do_action( 'loadBasic' );
+	
 	if ( count( $mo_plugin ) )
 	{
 		foreach ( $mo_plugin as $plugin )
@@ -45,20 +41,17 @@
 			require_once( $plugin );
 		}
 	}
-	if ( count( $mo_theme ) )
+	if ( $mo_theme_file )
 	{
-		foreach ( $mo_theme as $theme )
-		{
-			require_once( $theme );
-		}
+		require_once( $mo_theme_file );
 	}
 	
-	loadRequest();
-	do_action( 'loadRequest' );
-	
-//	if ( defined('OUTPUT') && OUTPUT == True )
-//		loadTheme();
 	do_action( 'loadTheme' );
+	
+//	if ( defined('OUTPUT') && OUTPUT == True && $mo_theme_file )
+		//call_user_func( $mo_theme );
+	
+	do_action( 'loadDone' );
 	
 	mo_write_note( 'The page has been processed successfully.' );
 ?>
