@@ -15,6 +15,7 @@
 		
 		private $mysqli;
 		private $query;
+		private $insID;
 		
 		private $count = 0;
 		

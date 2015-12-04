@@ -127,6 +127,7 @@
 			elseif ( isset( $_SESSION['uid'] ) && is_numeric( $_SESSION['uid'] ) )
 			{
 				mo_write_note( 'Logged in within the session.' );
+				$this->uid = $_SESSION['uid'];
 				return $_SESSION['uid'];
 			}
 			elseif ( isset( $_COOKIE['mo_auth'] ) )
@@ -159,6 +160,7 @@
 				mo_write_note( 'Logged in with a cookie.' );
 				$_SESSION['uid'] = $result[0]['id'];
 				$_SESSION['mask'] = $result[0]['mask'];
+				$this->uid = $result[0]['id'];
 				mo_log_login( $uid, 1 );
 				return $_SESSION['uid'];
 			}

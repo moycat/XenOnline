@@ -9,6 +9,7 @@
 
 	require_once( MOINC. 'class-db.php' );
 	require_once( MOINC. 'class-user.php' );
+	require_once( MOINC. 'class-problem.php' );
 	require_once( MOINC. 'function-action.php' );
 	require_once( MOINC. 'function-data.php' );
 	require_once( MOINC. 'function-log.php' );
@@ -46,7 +47,6 @@
 		$_POST['auto_login'] = 1;
 		//mo_log_user( 1, 1, 'adsdfa' );
 		//$user->login('moycat', '123456');
-		//var_dump($user);
 		//echo password_hash('123456', PASSWORD_DEFAULT, ['cost' => 5 ] ) . "<br>";
 		//echo serialize( $mo_settings );
 		//mo_del_user( 21 );
@@ -54,6 +54,8 @@
 		//$user->refresh_login();
 		//mo_set_option( '123', array());
 		//mo_list_problems(2,2,'u148');
+		//mo_add_new_solution( 1, 1, '123');
+		//$p = new Problem(1);
 		echo mo_time();
 		
 
