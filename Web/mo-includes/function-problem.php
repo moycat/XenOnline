@@ -14,22 +14,41 @@
 		$sql = 'SELECT `id`, `title`, `tag`, `extra`, `solved`, `try` FROM `mo_judge_problem` WHERE `state` = 1 ';
 		if ( $tag )
 		{
-			$sql .= "AND (MATCH (tag) AGAINST (?)) LIMIT $start,$end";
+			$sql .= "AND (MATCH (tag) AGAINST (?)) ORDER BY `id` DESC LIMIT $start,$end";
 			$db->prepare( $sql );
 			$db->bind( 's', $tag );
 		}
 		else
 		{
-			$sql .= "LIMIT $start,$end";
+			$sql .= "ORDER BY `id` DESC LIMIT $start,$end";
 			$db->prepare( $sql );
 		}
 		$result = $db->execute();
 		return $result;
 	}
 	
-	function mo_list_solutions( $start, $end, $pid = 0, $uid = 0, $state = 'all' )
+	function mo_list_solutions( $start, $end, $pid = 'all', $uid = 'all', $state = 'all' )
 	{
-		
+		global $db;
+		$start -= 1;
+		$sql = 'SELECT `id`, `pid`, `uid`, `post_time`, `state`, `language`, `code_length`, `used_time`, `used_memory` FROM `mo_judge_solution` WHERE 1=1 ';
+		if ( is_numeric( $pid ) )
+		{
+			$sql .= " AND `pid` = $pid";
+		}
+		if ( is_numeric( $uid ) )
+		{
+			$sql .= " AND `uid` = $uid";
+		}
+		if ( is_numeric( $state ) )
+		{
+			$sql .= " AND `uid` = $state";
+		}
+		$sql .= " ORDER BY `id` DESC LIMIT $start,$end";
+		echo $sql;
+		$db->prepare( $sql );
+		$result = $db->execute();
+		return $result;
 	}
 	
 	function mo_add_new_solution( $pid, $lang, $post, $uid = 0 )
@@ -71,6 +90,7 @@
 		$db->prepare( $sql );
 		$db->bind( 'is', $sid, $post );
 		$db->execute();
+		mo_write_note( 'A new solution has been added.' );
 	}
 	
 	function mo_get_client() // TODO

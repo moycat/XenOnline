@@ -325,7 +325,6 @@
 		public function refresh_login()
 		{
 			global $db;
-			//var_dump($this->status);
 			$this->status['mask'] = (int)$this->status['mask'] + 1;
 			$this->status['mask'] = (string)$this->status['mask'];
 			$sql = 'UPDATE `mo_user` SET `mask` = ? WHERE `mo_user`.`id` = ?';

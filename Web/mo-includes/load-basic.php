@@ -56,9 +56,11 @@
 		//mo_add_user('asdf553', 'dsfdffdff', 'g24g234g');
 		//$user->refresh_login();
 		//mo_set_option( '123', array());
-		//mo_list_problems(2,2,'u148');
-		//mo_add_new_solution( 1, 1, '123');
-		//$p = new Problem(1);
+		//$p = mo_list_problems(1, 2, 'qwertyuio');
+		//mo_add_new_discussion( 4, 'cha', 'dsfsdfg发发', $pid = 0 );
+		//$p = mo_list_solutions(1, 2);
+		//var_dump($p);
+		//echo mo_get_problem_count('qwertyuio');
 		echo mo_time();
 		
 

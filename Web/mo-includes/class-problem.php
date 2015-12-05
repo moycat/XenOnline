@@ -53,6 +53,7 @@
 			{
 				$this->info[$key] = $value;
 			}
+			$this->info['extra'] = unserialize( $this->info['extra'] );
 		}
 	}
 	
@@ -79,11 +80,11 @@
 			return $this->sid;
 		}
 		
-		public function getInfo( $category )
+		public function getInfo( $info )
 		{
-			if ( isset( $this->info[$category] ) )
+			if ( isset( $this->info[$info] ) )
 			{
-				$content = apply_filter( "solution_$category", $this->info[$category] );
+				$content = apply_filter( "solution_$category", $this->info[$info] );
 				return $content;
 			}
 			else

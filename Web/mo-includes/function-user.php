@@ -26,6 +26,7 @@
 		$sql = 'INSERT INTO `mo_user_record` (`uid`) VALUES (\''. $uid. '\')';
 		$db->prepare( $sql );
 		$db->execute();
+		mo_write_note( "A new user (ID = $uid) has been added." );
 		return $uid;
 	}
 	function mo_del_user( $uid )
@@ -43,5 +44,6 @@
 		$db->prepare( $sql );
 		$db->bind( 'i', $uid );
 		$db->execute();
+		mo_write_note( "The user (ID = $uid) has been deleted." );
 		return True;
 	}
