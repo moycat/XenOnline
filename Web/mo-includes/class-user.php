@@ -207,6 +207,7 @@
 		{
 			if ( $_SESSION['mask'] != $this->status['mask'] )
 			{
+				mo_log_user( 'The user (ID = '. $_SESSION['uid']. ') has logged out by force.' );
 				$this->logout();
 			}
 			else
@@ -225,6 +226,7 @@
 			$this->preference = array();
 			$this->record = array();
 			$this->other = array();
+			mo_log_user( 'The user (ID = '. $_SESSION['uid']. ')has logged out manually.' );
 			do_action( 'logout' );
 		}
 		
@@ -320,6 +322,7 @@
 						return False;
 				}
 			$db->execute();
+			mo_log_user( 'Information of the user (ID = '. $_SESSION['uid']. ') has been updated.' );
 			return True;
 		}
 		public function refresh_login()
@@ -331,5 +334,6 @@
 			$db->prepare( $sql );
 			$db->bind( 'ii', $this->status['mask'], $this->uid );
 			$db->execute();
+			mo_log_user( 'The user (ID = '. $_SESSION['uid']. ') has refreshed the saved password.' );
 		}
 	}

@@ -42,6 +42,8 @@
 		$db->prepare( $sql );
 		$db->bind( 'iisissi', $uid, $parent, $title, $category, $content, serialize($extra), mo_get_user_ip() );
 		$db->execute();
+		$did = $db->getInsID();
 		mo_write_note( 'A new discussion has been added.' );
+		mo_log_user( "User added a new discussion (DID = $did)." );
 		return True;
 	}

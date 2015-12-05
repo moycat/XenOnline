@@ -25,11 +25,16 @@
 		$db->bind( 'si', $timestamp, $uid );
 		$db->execute();
 	 }
-	 function mo_log_user( $uid, $op, $detail )
+	 function mo_log_user( $detail, $uid = 0 )
 	 {
 		 global $db;
-		 $sql = 'INSERT INTO `mo_log_user` (`uid`, `ip`, `time`, `op`, `detail`) VALUES (?, ?, CURRENT_TIMESTAMP, ?, ?)';
+		 if ( !$uid )
+		 {
+			global $user;
+			$uid = $user->getUID();
+		 }
+		 $sql = 'INSERT INTO `mo_log_user` (`uid`, `ip`, `time`, `detail`) VALUES (?, ?, CURRENT_TIMESTAMP, ?)';
 		 $db->prepare( $sql );
-		 $db->bind( 'iiis', $uid, mo_get_user_ip(), $op, $detail );
+		 $db->bind( 'iis', $uid, mo_get_user_ip(), $detail );
 		 $db->execute();
 	 }

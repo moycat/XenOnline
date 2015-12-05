@@ -91,6 +91,7 @@
 		$db->bind( 'is', $sid, $post );
 		$db->execute();
 		mo_write_note( 'A new solution has been added.' );
+		mo_log_user( "User added a new solution (DID = $sid)." );
 	}
 	
 	function mo_get_client() // TODO

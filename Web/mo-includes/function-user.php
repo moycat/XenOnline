@@ -45,5 +45,6 @@
 		$db->bind( 'i', $uid );
 		$db->execute();
 		mo_write_note( "The user (ID = $uid) has been deleted." );
+		mo_log_user( "The user (ID = $uid) has been deleted." );
 		return True;
 	}
