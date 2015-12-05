@@ -14,7 +14,10 @@
 		function __construct( $pid = 0 )
 		{
 			$this->pid = $pid;
-			$this->load();
+			if ( $pid )
+			{
+				$this->load();
+			}
 		}
 		public function setPID( $pid )
 		{
@@ -61,7 +64,10 @@
 		function __construct( $sid = 0 )
 		{
 			$this->sid = $sid;
-			$this->load();
+			if ( $sid )
+			{
+				$this->load();
+			}
 		}
 		public function setSID( $sid )
 		{

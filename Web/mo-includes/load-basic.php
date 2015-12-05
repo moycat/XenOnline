@@ -8,9 +8,11 @@
 	 */
 
 	require_once( MOINC. 'class-db.php' );
+	require_once( MOINC. 'class-discussion.php' );
 	require_once( MOINC. 'class-user.php' );
 	require_once( MOINC. 'class-problem.php' );
 	require_once( MOINC. 'function-action.php' );
+	require_once( MOINC. 'function-discussion.php' );
 	require_once( MOINC. 'function-data.php' );
 	require_once( MOINC. 'function-log.php' );
 	require_once( MOINC. 'function-problem.php' );
@@ -45,6 +47,7 @@
 		
 		
 		$_POST['auto_login'] = 1;
+		//mo_list_discussions( 1, 1 );
 		//mo_log_user( 1, 1, 'adsdfa' );
 		//$user->login('moycat', '123456');
 		//echo password_hash('123456', PASSWORD_DEFAULT, ['cost' => 5 ] ) . "<br>";
