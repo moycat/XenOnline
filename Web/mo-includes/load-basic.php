@@ -23,6 +23,7 @@
 	$mo_request = '';
 	$mo_plugin = array();
 	$mo_theme = '';
+	$mo_theme_floder = '';
 	$mo_theme_file = '';
 	
 	function loadBasic()
@@ -44,27 +45,4 @@
 		}
 		
 		$mo_request = mo_analyze();
-		
-		add_action( 'loadDone', 'buggy');
-	}
-	
-	function buggy()
-	{
-		//mo_list_discussions( 1, 1 );
-		//mo_log_user( 1, 1, 'adsdfa' );
-		//$user->login('moycat', '123456');
-		//echo password_hash('123456', PASSWORD_DEFAULT, ['cost' => 5 ] ) . "<br>";
-		//echo serialize( $mo_settings );
-		//mo_del_user( 21 );
-		//mo_add_user('asdf553', 'dsfdffdff', 'g24g234g');
-		//$user->refresh_login();
-		//mo_set_option( '123', array());
-		//$p = mo_list_problems(1, 2, 'qwertyuio');
-		//mo_add_new_discussion( 4, 'cha', 'dsfsdfg发发', $pid = 0 );
-		//$p = mo_list_solutions(1, 2);
-		//var_dump($p);
-		//echo mo_get_problem_count('qwertyuio');
-		global $mo_request;
-		print_r($mo_request);
-		echo "\n<br>". mo_time();
 	}

@@ -51,11 +51,12 @@
 	
 	function getPT()
 	{
-		global $mo_plugin, $mo_theme, $mo_theme_file;
+		global $mo_plugin, $mo_theme, $mo_theme_floder, $mo_theme_file;
 		$mo_theme = mo_get_option( 'theme' );
 		$plugin = mo_get_option( 'plugin' );;
 		$plugin_floder = MOCON. 'plugin/';
-		$mo_theme_file = MOCON. "theme/$mo_theme/$mo_theme.php";
+		$mo_theme_floder = MOCON. "theme/$mo_theme/";
+		$mo_theme_file = $mo_theme_floder. "$mo_theme.php";
 		if ( $plugin )
 		{
 			foreach ( $plugin as $now )
