@@ -48,8 +48,8 @@
 	
 	do_action( 'loadTheme' );
 	
-//	if ( defined('OUTPUT') && OUTPUT == True && $mo_theme_file )
-		//call_user_func( $mo_theme );
+	if ( defined('OUTPUT') && OUTPUT == True && $mo_theme_file )
+		call_user_func( $mo_theme );
 	
 	do_action( 'loadDone' );
 	

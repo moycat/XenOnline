@@ -45,8 +45,11 @@
 		
 		$mo_request = mo_analyze();
 		
-		
-		$_POST['auto_login'] = 1;
+		add_action( 'loadDone', 'buggy');
+	}
+	
+	function buggy()
+	{
 		//mo_list_discussions( 1, 1 );
 		//mo_log_user( 1, 1, 'adsdfa' );
 		//$user->login('moycat', '123456');
@@ -61,7 +64,7 @@
 		//$p = mo_list_solutions(1, 2);
 		//var_dump($p);
 		//echo mo_get_problem_count('qwertyuio');
-		echo mo_time();
-		
-
+		global $mo_request;
+		print_r($mo_request);
+		echo "\n<br>". mo_time();
 	}

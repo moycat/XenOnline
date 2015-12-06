@@ -46,10 +46,6 @@
 			$request[] = 'index';
 			return $request;
 		}
-		if ( !file_exists( MOINC. 'load-request-'. $arg[0]. '.php' ) )
-		{
-			$arg[0] = '404';
-		}
 		return $arg;
 	}
 	
@@ -59,7 +55,7 @@
 		$mo_theme = mo_get_option( 'theme' );
 		$plugin = mo_get_option( 'plugin' );;
 		$plugin_floder = MOCON. 'plugin/';
-		$theme_file = MOCON. "theme/$mo_theme/$mo_theme.php";
+		$mo_theme_file = MOCON. "theme/$mo_theme/$mo_theme.php";
 		if ( $plugin )
 		{
 			foreach ( $plugin as $now )
@@ -70,9 +66,9 @@
 				}
 			}
 		}
-		if( !file_exists( $theme_file ) )
+		if( !file_exists( $mo_theme_file ) )
 		{
-			$theme_file = '';
+			$mo_theme_file = '';
 		}
 	}
 	

@@ -13,7 +13,7 @@
 	// Add or remove a function in a hook
 	function add_action( $hook, $func, $priority = 100, $arg = 0 )
 	{
-		global $mo_actions;
+		global $mo_actions, $mo_actions_sorted;
 		$mo_actions[$hook][$priority][$func] = $arg;
 		$mo_actions_sorted[$hook] = false;
 		mo_write_note( 'Function "'. $func. '" has been added to Hook "'. $hook. '".' );
@@ -44,7 +44,7 @@
 	// Process all functions on the hook
 	function do_action( $hook, $arg = '' )
 	{
-		global $mo_actions;
+		global $mo_actions, $mo_actions_sorted;
 		if ( !isset( $mo_actions[$hook] ) )
 		{
 			return False;
@@ -60,7 +60,7 @@
 		{
 			foreach ( $priority as $func => $value )
 			{
-					$rt[$func] = call_user_func_array( $func, array_slice( $arg, 1, $value ) );
+					$rt[$func] = call_user_func_array( $func, array_slice( $all_args, 1, $value ) );
 			}
 		}
 		mo_write_note( 'Hook "'. $hook. '" has been run.' );
@@ -68,7 +68,7 @@
 	}
 	function apply_filter( $hook, $content )
 	{
-		global $mo_actions;
+		global $mo_actions, $mo_actions_sorted;
 		if ( !isset( $mo_actions[$hook] ) )
 		{
 			return False;
