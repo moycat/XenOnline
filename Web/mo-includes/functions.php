@@ -57,15 +57,17 @@
 	{
 		global $mo_plugin, $mo_theme, $mo_theme_file;
 		$mo_theme = mo_get_option( 'theme' );
+		$plugin = mo_get_option( 'plugin' );;
 		$plugin_floder = MOCON. 'plugin/';
-		$theme_file = MOCON. 'theme/$mo_theme/$mo_theme.php';
-		$plugin = dir( $plugin_floder );
-		while( $get = $plugin->read() )
+		$theme_file = MOCON. "theme/$mo_theme/$mo_theme.php";
+		if ( $plugin )
 		{
-			if( is_dir( "$plugin_floder/$get" ) && $get != "." && $get!=".."
-				&& file_exists( "$plugin_floder$get/$get.php" ) )
+			foreach ( $plugin as $now )
 			{
-				$mo_plugin[] = "$plugin_floder$get/$get.php";
+				if( is_dir( file_exists( "$plugin_floder$now/$now.php" ) ) )
+				{
+					$mo_plugin[] = "$plugin_floder$now/$now.php";
+				}
 			}
 		}
 		if( !file_exists( $theme_file ) )
