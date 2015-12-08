@@ -11,7 +11,15 @@
 		if( isset( $_POST['lang'] ) && isset( $_POST['code'] ) && $user->getUID() )
 		{
 			// 提交solution
-			echo 123;
+			if ( !b_check_code() )
+			{
+				echo '提交错误！请检查格式以及是否已经登录！';
+			}
+			else
+			{
+				$new_sid = mo_add_new_solution( $mo_request[1], $_POST['lang'], $_POST['code'] );
+				echo '提交成功！<a href="/?r=solution/'. $new_sid. '">点此</a>查看详情！';
+			}
 		}
 		echo '<h2>'. $problem->getInfo( 'title' ). '</h2>';
 		echo '<em>标签：'. $problem->getInfo( 'tag' ). '<br>';

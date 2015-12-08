@@ -47,6 +47,7 @@
 			$cnt = count( $input );
 			if ( $cnt < 2 )
 			{
+				throw new Exception('Wrong Binding!');
 				return;
 			}
 			for( $i = 1; $i < $cnt; ++$i )

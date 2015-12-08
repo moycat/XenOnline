@@ -45,7 +45,6 @@
 			$sql .= " AND `uid` = $state";
 		}
 		$sql .= " ORDER BY `id` DESC LIMIT $start,$end";
-		echo $sql;
 		$db->prepare( $sql );
 		$result = $db->execute();
 		return $result;
@@ -75,6 +74,7 @@
 		{
 			$result[0]['submit_problem'] .= "$pid ";
 			$result[0]['try'] = (int)$result[0]['try'] + 1;
+			mo_problem_add_try( $pid );
 		}
 		$result[0]['submit'] = (int)$result[0]['submit'] + 1;
 		$sql = 'UPDATE `mo_user_record` SET `submit` = ?, `try` = ?, `submit_problem` = ? WHERE `uid` = ?';
@@ -92,9 +92,29 @@
 		$db->execute();
 		mo_write_note( 'A new solution has been added.' );
 		mo_log_user( "User added a new solution (DID = $sid)." );
+		return $sid;
 	}
 	
 	function mo_get_client() // TODO
 	{
 		return 1;
+	}
+	
+	function mo_problem_add_try( $pid )
+	{
+		global $db;
+		$sql = 'SELECT `try` FROM `mo_judge_problem` WHERE `id` = ?';
+		$db->prepare( $sql );
+		$db->bind( 'i', $pid );
+		$result = $db->execute();
+		if ( !$result )
+		{
+			return False;
+		}
+		$new_try = (int)$result[0]['try'] + 1;
+		$sql = 'UPDATE `mo_judge_problem` SET `try` = ? WHERE `id` = ?';
+		$db->prepare( $sql );
+		$db->bind( 'ii', $new_try, $pid );
+		$db->execute();
+		return True;
 	}

@@ -89,7 +89,7 @@
 		{
 			if ( isset( $this->info[$info] ) )
 			{
-				$content = apply_filter( "solution_$category", $this->info[$info] );
+				$content = apply_filter( "solution_$info", $this->info[$info] );
 				return $content;
 			}
 			else
@@ -116,8 +116,8 @@
 			}
 			$sql = 'SELECT `code` FROM `mo_judge_code` WHERE `sid` = ?';
 			$db->prepare( $sql );
-			$db->bind( $this->sid );
+			$db->bind( 'i', $this->sid );
 			$result = $db->execute();
-			$this->info['code'] = $result[0]['code'];
+			$this->info['code'] = base64_decode( $result[0]['code'] );
 		}
 	}

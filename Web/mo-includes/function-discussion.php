@@ -45,5 +45,5 @@
 		$did = $db->getInsID();
 		mo_write_note( 'A new discussion has been added.' );
 		mo_log_user( "User added a new discussion (DID = $did)." );
-		return True;
+		return $did;
 	}

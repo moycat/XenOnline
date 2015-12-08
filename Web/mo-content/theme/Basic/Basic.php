@@ -47,8 +47,7 @@
 	{
 		echo '<br>DEBUG INFO:<br>';
 		global $mo_request, $user;
-		//mo_list_discussions( 1, 1 );
-		//mo_log_user( 1, 1, 'adsdfa' );
+		//$_POST['auto_login'] = True;
 		//$user->login('moycat', '123456');
 		//echo password_hash('123456', PASSWORD_DEFAULT, ['cost' => 5 ] ) . "<br>";
 		//echo serialize( $mo_settings );
@@ -61,6 +60,8 @@
 		//$p = mo_list_solutions(1, 2);
 		//var_dump($p);
 		//echo mo_get_problem_count('qwertyuio');
+		var_dump($_POST);
+		//var_dump($user);
 		print_r($mo_request);
 		echo "\n<br>". mo_time();
 	}
