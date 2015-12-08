@@ -7,7 +7,9 @@
 	 * Just for test.
 	 * 
 	 */
-	 
+	
+	require_once( $mo_theme_floder. 'functions.php' );
+	
 	function Basic()
 	{
 		global $mo_request, $mo_theme_floder;

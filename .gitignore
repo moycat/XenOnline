@@ -2,3 +2,4 @@
 *.o
 mo-config.php
 Web/mo-content/cache/*.php
+_notes

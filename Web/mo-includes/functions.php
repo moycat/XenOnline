@@ -173,7 +173,7 @@
 	
 	function mo_write_note( $note )
 	{
-		if ( defined( 'DEBUG' ) && DEBUG == True )
+		if ( defined( 'DEBUG' ) && DEBUG && defined( 'OUTPUT' ) && OUTPUT )
 			echo "\n<!-- Note: ". $note. ' Time:'. mo_time(). " -->\n";
 	}
 	
