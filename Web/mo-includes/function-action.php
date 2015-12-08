@@ -71,7 +71,7 @@
 		global $mo_actions, $mo_actions_sorted;
 		if ( !isset( $mo_actions[$hook] ) )
 		{
-			return False;
+			return $content;
 		}
 		if ( $mo_actions_sorted[$hook] == false )
 		{

@@ -49,6 +49,11 @@
 			$db->prepare( $sql );
 			$db->bind( 'i', $this->pid );
 			$result = $db->execute();
+			if ( !$result || !$result[0]['state'] )
+			{
+				$this->pid = 0;
+				return;
+			}
 			foreach ( $result[0] as $key => $value )
 			{
 				$this->info[$key] = $value;
@@ -95,11 +100,16 @@
 		
 		public function load()
 		{
-			global $db;
+			global $db, $user;
 			$sql = 'SELECT * FROM `mo_judge_solution` WHERE `id` = ?';
 			$db->prepare( $sql );
 			$db->bind( 'i', $this->sid );
 			$result = $db->execute();
+			if ( !$result || $result[0]['uid'] != $user->getUID() )
+			{
+				$this->pid = 0;
+				return;
+			}
 			foreach ( $result[0] as $key => $value )
 			{
 				$this->info[$key] = $value;

@@ -49,6 +49,11 @@
 			$db->prepare( $sql );
 			$db->bind( 'i', $this->pid );
 			$result = $db->execute();
+			if ( !$result )
+			{
+				$this->pid = 0;
+				return;
+			}
 			foreach ( $result[0] as $key => $value )
 			{
 				$this->info[$key] = $value;

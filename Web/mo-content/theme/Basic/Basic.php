@@ -46,6 +46,7 @@
 	function buggy()
 	{
 		echo '<br>DEBUG INFO:<br>';
+		global $mo_request, $user;
 		//mo_list_discussions( 1, 1 );
 		//mo_log_user( 1, 1, 'adsdfa' );
 		//$user->login('moycat', '123456');
@@ -60,7 +61,6 @@
 		//$p = mo_list_solutions(1, 2);
 		//var_dump($p);
 		//echo mo_get_problem_count('qwertyuio');
-		global $mo_request;
 		print_r($mo_request);
 		echo "\n<br>". mo_time();
 	}
