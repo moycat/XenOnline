@@ -118,11 +118,10 @@
 		{
 			if ( isset( $_POST['login'] ) )
 			{
-				if ( !isset( $_POST['login_name'] ) && !isset( $_POST['password'] ) )
+				if ( isset( $_POST['login_name'] ) && isset( $_POST['password'] ) )
 				{
-					return False;
+					return $this->login( $_POST['login_name'], $_POST['password'] );
 				}
-				return $this->login( $_POST['login_name'], $_POST['password'] );
 			}
 			elseif ( isset( $_SESSION['uid'] ) && is_numeric( $_SESSION['uid'] ) )
 			{
@@ -202,6 +201,7 @@
 			}
 			mo_log_login( $this->uid, 0 );
 			mo_write_note( 'Logged in with a password.' );
+			return True;
 		}
 		public function check()
 		{
@@ -218,6 +218,11 @@
 		public function logout()
 		{
 			setcookie( 'mo_auth', '', time() - 3600 );
+			if ( !$this->uid )
+			{
+				return False;
+			}
+			$uid = $_SESSION['uid'];
 			unset( $_SESSION['uid'] );
 			unset( $_SESSION['mask'] );
 			$this->uid = '';
@@ -226,8 +231,9 @@
 			$this->preference = array();
 			$this->record = array();
 			$this->other = array();
-			mo_log_user( 'The user (ID = '. $_SESSION['uid']. ')has logged out manually.' );
+			mo_log_user( 'The user (ID = '. $uid. ')has logged out manually.' );
 			do_action( 'logout' );
+			return True;
 		}
 		
 		// Functions related to loading information
@@ -249,6 +255,10 @@
 				$this->status[$key] = $value;
 			}
 			$this->uid = $this->status['id'];
+			if ( !$this->status['nickname'] )
+			{
+				$this->status['nickname'] = $this->status['username'];
+			}
 		}
 		public function loadInfo( $uid )
 		{

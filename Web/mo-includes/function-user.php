@@ -8,6 +8,11 @@
 	
 	function mo_add_user( $username, $password, $email, $nickname = '' )
 	{
+		if ( !filter_var( $email, FILTER_VALIDATE_EMAIL ) || strlen( $username ) > 32 || strlen( $username ) < 3 ||
+			strlen( $password ) < 6 || strlen( $password ) > 50 )
+		{
+			return False;
+		}
 		global $db;
 		$password = password_hash( $password, PASSWORD_DEFAULT, ['cost' => CRYPT_COST] );
 		$ip = mo_get_user_ip();

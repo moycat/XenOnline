@@ -55,10 +55,11 @@
 			echo '<table width="100%" border="1"><tbody>
 				<tr>
 				  <td width="8%"><strong>问题ID</strong></td>
-				  <td width="12%"><strong>用户ID</strong></td>
-				  <td width="20%"><strong>提交时间</strong></td>
+				  <td width="8%"><strong>用户ID</strong></td>
+				  <td width="16%"><strong>提交时间</strong></td>
 				  <td width="11%"><strong>语言ID</strong></td>
-				  <td width="12%"><strong>状态ID</strong></td>
+				  <td width="9%"><strong>代码长度</strong></td>
+				  <td width="11%"><strong>状态ID</strong></td>
 				  <td width="14%"><strong>运行时间</strong></td>
 				  <td width="17%"><strong>使用内存</strong></td>
 				  <td width="6%"><strong></strong></td>
@@ -71,6 +72,7 @@
 				  <td><a href="/?r=user/'. $solution['uid']. '">'. $solution['uid']. '</a></td>
 				  <td>'. $solution['post_time']. '</td>
 				  <td>'. $solution['language']. '</td>
+				  <td>'. $solution['code_length']. '字节</td>
 				  <td>'. $solution['state']. '</td>
 				  <td>'. ( $solution['used_time'] != -1 ? $solution['used_time']. 'MS' : '' ). '</td>
 				  <td>'. ( $solution['used_memory'] != -1 ? $solution['used_memory']. 'KB' : '' ). '</td>';
