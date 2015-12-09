@@ -2,4 +2,5 @@
 *.o
 mo-config.php
 Web/mo-content/cache/*.php
+Web/mo-content/data/*
 _notes
