@@ -32,7 +32,7 @@
 			$detail_memory = explode( ' ', $solution->getInfo( 'detail_memory' ) );
 			$detail_result = explode( ' ', $solution->getInfo( 'detail_result' ) );
 			$turn = count( $detail_result );
-			for ( $i = 0; $i < $turn; ++$i )
+			for ( $i = 0; $i < $turn && $detail_result[$i]; ++$i )
 			{
 				echo '    <tr>
 						  <td>#'. $i. '</td>
