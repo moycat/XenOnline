@@ -309,13 +309,13 @@ class Judge(object):
 				self.used_memory = int(now[2])
 			if now[0] == '0':
 				if not Compare(i):
-					self.detail_result += WA + " "
+					self.detail_result += " " + WA
 				else:
-					self.detail_result += AC + " "
+					self.detail_result += " " + AC
 			elif int(now[0]) < 0:
-				self.detail_result += "0 "
+				self.detail_result += " 0"
 			else:
-				self.detail_result += now[0] + " "
+				self.detail_result += " " + now[0]
 			i += 1
 	def Update(self):
 		error_log = open("/judge/inside/out/error.log")
