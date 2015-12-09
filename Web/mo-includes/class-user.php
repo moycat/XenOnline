@@ -187,8 +187,8 @@
 			$result = $db->execute();
 			if ( !$result || !password_verify( $password, $result[0]['password'] ) )
 			{
-				return False;
 				mo_log_login( $this->uid, 0, False );
+				return False;
 			}
 			$this->uid = $result[0]['id'];
 			$_SESSION['uid'] = $this->uid;

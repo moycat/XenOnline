@@ -20,9 +20,10 @@
 		 $db->bind( 'iiiis', $uid, $mode, $seccess, mo_get_user_ip(), $_SERVER['HTTP_USER_AGENT'] );
 		 $db->execute();
 		$timestamp = date('Y-m-d G:i:s');
-		$sql = 'UPDATE `mo_user` SET `last_time` = ? WHERE `mo_user`.`id` = ?';
+		$ip = mo_get_user_ip();
+		$sql = 'UPDATE `mo_user` SET `last_time` = ?, `last_ip` = ? WHERE `id` = ?';
 		$db->prepare( $sql );
-		$db->bind( 'si', $timestamp, $uid );
+		$db->bind( 'sii', $timestamp, $ip, $uid );
 		$db->execute();
 	 }
 	 function mo_log_user( $detail, $uid = 0 )
