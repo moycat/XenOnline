@@ -69,7 +69,7 @@
 			if ( !$this->query->field_count )
 			{
 				$this->query->close();
-				return True;
+				return 0;
 			}
 			$result = array();
 			$meta = $this->query->result_metadata();   

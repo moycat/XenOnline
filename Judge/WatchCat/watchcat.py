@@ -27,7 +27,7 @@ socket_host = ''
 socket_port = 6666
 client_id = 0
 client_hash = ''
-client_info = ''
+client_name = ''
 web_url = ''
 
 config_file = '/etc/judge.conf'
@@ -35,26 +35,26 @@ log = open("/var/log/judge.log", "a+", 0)
 ext = (None, 'cpp', 'pas', 'java')
 
 sock = None
-has_conn = False
+connected = False
 has_mounted = False
 exiting = False
 deadline = 0
 
-def GetTime():
-	return time.strftime("%Y-%m-%d %X", time.localtime())
-
-def WriteLog(message):
-	global log
-	to_write = GetTime() + " " + message
+def p(message, over = False):
+	global log, exiting
+	to_write = time.strftime("[%Y-%m-%d %X] ", time.localtime()) + message
 	print to_write
 	log.write(to_write + "\n")
+	if over:
+		log.write("\n")
+		exiting = True
+		sys.exit(1)
 
 def init():
 	if os.geteuid() != 0:
-		WriteLog("Not run by root. Exiting\n")
-		sys.exit(1)
+		p("Not run by root. Exiting", True)
 	global socket_host, socket_port, client_id, client_hash, client_name, web_url
-	global sock, has_conn
+	global sock, connected
 	config = ConfigParser.ConfigParser()
 	config.read(config_file)
 	try:
@@ -64,35 +64,72 @@ def init():
 		client_hash = config.get("client", "client_hash")
 		web_url = config.get("judge", "web_url")
 	except:
-		WriteLog("Error Reading the Config File\n")
-		sys.exit(1)
+		p("Error Reading the Config File", True)
 	try:
-		sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-		socket_host = socket.gethostbyname( socket_host )
-		sock.connect((socket_host , socket_port))
+		socket_host = socket.gethostbyname(socket_host)
 	except:
-		WriteLog("Failed to connect to the server\n")
-		sys.exit(1)
-	has_conn = True
-	WriteLog("Connected to the server")
+		p("Error Resolving the Domain", True)
+	connect_socket()
+
+def connect_socket():
+	global connected, sock
+	while not connected:
+		try:
+			sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+			sock.connect((socket_host , socket_port))
+			connected = True
+		except:
+			p("Failed to connect to the server")
+			time.sleep(3)
+	start_deamon()
+	p("Connected to the server")
+	login()
+
+def heart_beat():
+	while not connected:
+		time.sleep(1)
+	while not exiting:
+		loadavg = {}
+		get_load = open("/proc/loadavg")
+		get = get_load.read().split()
+		get_load.close()
+		loadavg['lavg_1'] = get[0]
+		loadavg['lavg_5'] = get[1]
+		loadavg['lavg_15'] = get[2]
+		mem = {}
+		get_mem = open("/proc/meminfo")
+		get = get_mem.readlines()
+		get_mem.close()
+		for line in get:
+			if len(line) > 1:
+				name = line.split(':')[0]
+				var = line.split(':')[1].split()[0]
+				mem[name] = long(var) * 1024.0
+		mem_ratio = str(round((mem['MemTotal'] - mem['MemAvailable']) / mem['MemTotal'] * 100, 1))
+		data = {'action': 'heartbeat', 'loadavg': loadavg, 'mem_ratio': mem_ratio}
+		send(data)
+		time.sleep(60)
+		while not connected:
+			time.sleep(5)
 
 def login():
-	global sock, client_id, client_hash, client_info, exiting
 	login_request = {'action': 'login', 'client_id': client_id, 'client_hash': client_hash}
 	send(login_request)
-	while client_info == '':
+	while client_name == '':
 		if exiting:
 			sys.exit(1)
 		time.sleep(1)
-	WriteLog("Now the judge client <" + client_info['name'] + "> has started successfully.\nWaiting for judge requests...")
+	p("Now the judge client <" + client_name + "> has started successfully.Waiting for judge requests...")
 #	Clean()
 
 def send(msg):
+	while not connected:
+		time.sleep(1)
 	global sock
 	sock.sendall(json.dumps(msg) + "\n")
 
 def receiver():
-	global sock, deadline, exiting
+	global sock, deadline, client_name
 	buf = ''
 	tmp = ''
 	while not exiting:
@@ -104,36 +141,42 @@ def receiver():
 				tmp = buf[loc + 1: len(tmp)]
 				break
 		buf = json.loads(buf)
-		if buf == 'online':
+		action = buf['action']
+		if action == 'online':
 			deadline = 0
 			continue
-		elif buf == 'refuse':
-			WriteLog("Client ID or hash refused by the server.\n")
-			exiting = True
-			sys.exit(1)
-		if buf['action'] == 'admit':
-			pass
+		elif action == 'refuse':
+			p("Client ID or hash refused by the server.", True)
+		elif action == 'admit':
+			client_name = buf['client_name']
 		else:
-			WriteLog("Unknown Action")
+			p("Unknown Action")
+		while not connected:
+			sleep(1)
 
 def killer():
-	global deadline, has_conn, exiting
+	global deadline, connected, exiting
 	while not exiting:
 		while deadline < 10:
 			deadline = deadline + 1
 			time.sleep(1)
-		has_conn = False
-		init()
+		connected = False
+		p("Lost the connection with the server.")
+		connect_socket()
 		deadline = 0
 
-WriteLog("MoyOJ Judge Client Starting...")
+def start_deamon():
+	_Receiver = threading.Thread(target=receiver, name='Receiver')
+	_Receiver.setDaemon(True)
+	_Receiver.start()
+	_Killer = threading.Thread(target=killer, name='Killer')
+	_Killer.setDaemon(True)
+	_Killer.start()
+	_hb = threading.Thread(target=heart_beat, name='heart_beat')
+	_hb.setDaemon(True)
+	_hb.start()
+
+p("MoyOJ Judge Client Starting...")
 init()
-Receiver = threading.Thread(target=receiver, name='Receiver')
-Receiver.setDaemon(True)
-Receiver.start()
-Killer = threading.Thread(target=killer, name='Killer')
-Killer.setDaemon(True)
-Killer.start()
-login()
 while not exiting:
 	time.sleep(1)

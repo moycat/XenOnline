@@ -22,23 +22,24 @@ $worker->onWorkerStart = function($worker)
 	Timer::add(3, function()use($worker) // 每3秒，自动发送心跳包
 	{
 		foreach($worker->connections as $connection)
-			$connection->send("online\n");
+			sendMsg($connection, array('action' => 'online'));
 	});
  };
 
 $worker->onConnect = function($connection)
 {
 	$connection->IP = $connection->getRemoteIp();
-	$connection->auth = False;
 	$connection->cid = 0;
 	$connection->name = '';
 	$connection->deadline = Timer::add(5, function()use($connection) // 登录限时5秒，超时断开连接
 	{
 		Timer::del($connection->deadline);
-		$connection->destroy();
-		echo "A client timeout logging in. ( IP = $connection->IP )\n";
+		$connection->deadline = 0;
+		sendMsg($connection, array('action' => 'refuse'));
+		$connection->close();
+		p("A client timeout logging in. ( IP = $connection->IP )");
 	});
-	echo "A new client has joined. ( IP = $connection->IP )\n";
+	p("A new client has joined. ( IP = $connection->IP )");
 };
 
 $worker->onMessage = function($connection, $data)
@@ -46,36 +47,30 @@ $worker->onMessage = function($connection, $data)
 	$data = json_decode($data, True);
 	if ($data == NULL || !isset($data['action']))
 	{
-		echo "Json decoding failed or in bad format. ( cid = $connection->cid, IP = $connection->IP )\n";
+		p("Json decoding failed or in bad format. ( cid = $connection->cid, IP = $connection->IP )");
 		return;
 	}
 	switch ($data['action'])
 	{
+		case 'heartbeat': // 评测端信息更新
+			heartbeat($connection, $data);
+			break;
 		case 'login': // 评测端登录
-			if (isset($data['client_id'], $data['client_hash'] ) && !isset($cid[$data['client_id']]) && !$connection->auth)
-			{
-		#		$result = login($connection, $data['client_id'], $data['client_hash']);
-		#		sendMsg($connection, $result);
-			}
-			else
-				echo "Bad Login Action ( IP = $connection->IP )\n";
-			return;
+			login($connection, $data);
+			break;
 		default:
-			echo "Unknown Action ( cid = $connection->cid, IP = $connection->IP )\n";
+			p("Unknown Action ( cid = $connection->cid, IP = $connection->IP )");
 	}
-	
-	sendMsg($connection, 'refuse');
-};
-
-function sendMsg($connection, $msg)
-{
-	$msg = json_encode($msg);
-	$connection->send($msg);
 };
 
 $worker->onClose = function($connection)
 {
-    echo "A client closed the connection. ( cid = $connection->cid, IP = $connection->IP )\n";
+	global $cid;
+	if($connection->deadline)
+		Timer::del($connection->deadline);
+	else
+		unset($cid[$connection->cid]);
+    p("A client closed the connection. ( cid = $connection->cid, IP = $connection->IP )");
 };
 
 Worker::runAll();
