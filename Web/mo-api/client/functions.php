@@ -4,13 +4,12 @@ use Workerman\Lib\Timer;
 
 function heartbeat($connection, $data)
 {
-	if(!$connection->cid)
-		return False;
-	if(!isset($data['mem_ratio'], $data['loadavg']['lavg_1'], $data['loadavg']['lavg_5'], $data['loadavg']['lavg_15']))
+	if(!$connection->cid || !isset($data['mem_ratio'], $data['loadavg']['lavg_1'], $data['loadavg']['lavg_5'], $data['loadavg']['lavg_15'], $data['timestamp']))
 	{
-		p("Heartbeat in bad format. ( cid = $connection->cid, IP = $connection->IP )");
+		p("Bad heartbeat. ( cid = $connection->cid, IP = $connection->IP )");
 		return False;
 	}
+	$connection->last_ping = (int)$data['timestamp'];
 	global $db;
 	$timestamp = date('Y-m-d G:i:s');
 	$sql = 'UPDATE `mo_judge_client` SET `load_1` = ?, `load_5` = ?, `load_15` = ?, `memory` = ?, `last_ping` = ? WHERE `id` = ?';
@@ -18,6 +17,32 @@ function heartbeat($connection, $data)
 	$db->bind('sssssi', $data['loadavg']['lavg_1'], $data['loadavg']['lavg_5'], $data['loadavg']['lavg_15'], $data['mem_ratio'], $timestamp, $connection->cid);
 	$db->execute();
 	p("Get a heartbeat. ( cid = $connection->cid, IP = $connection->IP )");
+	
+	debuggy();
+	
+	return True;
+}
+
+function update_state($connection, $data)
+{
+	global $db, $task;
+	if (!$connection->cid || !isset($data['timestamp'], $data['sid'], $data['state']))
+		return False;
+	$sid = (int)$data['sid'];
+	if (!isset($task[$sid]) || $task[$sid]->cid != $connection->cid || $task[$sid]->last_time > (int)$data['timestamp'])
+		return False;
+	$task[$sid]->last_time = (int)$data['timestamp'];
+	if (MEM)
+	{
+		set('solution-state-'. $sid, $data['state']);
+	}
+	else
+	{
+		$sql = 'UPDATE `mo_judge_solution` SET `state` = ? WHERE `mo_judge_solution`.`id` = ?';
+		$db->prepare($sql);
+		$db->bind('ii', $data['state'], $data['sid']);
+		$db->execute();
+	}
 	return True;
 }
 
@@ -66,7 +91,7 @@ function check_lost()
 {
 	global $task;
 	foreach ($task as $now)
-		if (time() - $now->lasttime > (5 + $now->got * 55))
+		if (time() - $now->last_time > (5 + $now->got * 55))
 			$now->push();
 }
 

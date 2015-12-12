@@ -8,7 +8,7 @@ class Solution
 	public $uid;
 	public $turn = -1;
 	
-	public $lasttime = 0;
+	public $last_time = 0;
 	public $got = False;
 	public $send = array('action' => 'judge');
 	
@@ -21,7 +21,7 @@ class Solution
 	
 	public function __construct($data)
 	{
-		global $db;
+		global $db, $task;
 		if (!isset($data['sid'], $data['pid'], $data['uid'], $data['lang'], $data['code']))
 		{
 			p("Get a bad solution.");
@@ -46,9 +46,9 @@ class Solution
 	public function push()
 	{
 		global $worker_tasker, $cid;
-		if (!$this->sid || time() - $this->lasttime < 60)
+		if (!$this->sid || time() - $this->last_time < 60)
 			return False;
-		$this->lasttime = time();
+		$this->last_time = time();
 		$to_choose_from = array();
 		$client_count = 0;
 		foreach ($cid as $now_client)
@@ -71,12 +71,6 @@ class Solution
 		sendMsg($to_choose_from[$turn], $this->send);
 		p("The solution ( sid = $this->sid ) was sent to the client ( cid = $this->cid )");
 		return True;
-	}
-	
-	public function update_state($data)
-	{
-		$this->got = True;
-		
 	}
 	
 	public function update($data)

@@ -39,7 +39,7 @@ $worker_tasker->onConnect = function($connection)
 	$connection->IP = $connection->getRemoteIp();
 	$connection->cid = 0;
 	$connection->name = '';
-	$connection->timestamp = 0;
+	$connection->last_ping = 0;
 	$connection->deadline = Timer::add(5, function()use($connection) // 登录限时5秒，超时断开连接
 	{
 		Timer::del($connection->deadline);
@@ -59,17 +59,16 @@ $worker_tasker->onMessage = function($connection, $data)
 		p("Json decoding failed or in bad format. ( cid = $connection->cid, IP = $connection->IP )");
 		return;
 	}
-	if (isset($data['timestamp']))
-	{
-		if ((int)$data['timestamp'] < $connection->timestamp)
-			return;
-		else
-			$connection->timestamp = (int)$data['timestamp'];
-	}
 	switch ($data['action'])
 	{
 		case 'heartbeat': // 评测端信息更新
 			heartbeat($connection, $data);
+			break;
+		case 'update_state': // 评测中更新状态
+			update_state($connection, $data);
+			break;
+		case 'update': // 评测完更新结果
+			var_dump($data);
 			break;
 		case 'login': // 评测端登录
 			login($connection, $data);
@@ -77,8 +76,6 @@ $worker_tasker->onMessage = function($connection, $data)
 		default:
 			p("Unknown Action ( cid = $connection->cid, IP = $connection->IP )");
 	}
-	
-	debuggy();
 };
 
 $worker_tasker->onClose = function($connection)
@@ -95,6 +92,7 @@ Worker::runAll();
 
 function debuggy()
 {
-	$s = new Solution(array('sid'=>1, 'pid'=>1, 'uid'=>1, 'lang'=>1, 'code'=>'1234aaa'));
+	sleep(2);
+	$s = new Solution(array('sid'=>1, 'pid'=>1, 'uid'=>1, 'lang'=>1, 'code'=>'I2luY2x1ZGUgPGNzdGRpbz4KaW50IG1haW4oKQp7CiAgICAgICAgaW50IGEsIGI7CndoaWxlKDEpOwogICAgICAgIHNjYW5mKCIlZCVkIiwgJmEsICZiKTsKICAgICAgICBwcmludGYoIiVkIiwgYSArIGIpOwogICAgICAgIHJldHVybiAwOwp9'));
 	$s->push();
 }

@@ -291,6 +291,7 @@ void WatchPost(int pid, int time_limit, int memory_limit, vector<int> &used_time
 				alarm(0);
 			case SIGKILL:
 			case SIGXCPU:
+			case SIGPROF:
 				now_result = TIME_OUT;
 				break;
 			case SIGXFSZ:
@@ -310,6 +311,7 @@ void WatchPost(int pid, int time_limit, int memory_limit, vector<int> &used_time
 				alarm(0);
 			case SIGKILL:
 			case SIGXCPU:
+			case SIGPROF:
 				now_result = TIME_OUT;
 				break;
 			case SIGXFSZ:

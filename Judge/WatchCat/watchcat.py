@@ -15,13 +15,23 @@ import os
 import sys
 import base64
 import ConfigParser
-import pymysql
 import signal
 import socket
 import subprocess
 import time
 import threading
 import json
+
+SYSTEM_ERROR = '-1'
+COMPILING = '-2'
+RUNNING = '-3'
+AC = '10'
+CE = '1'
+MLE = '2'
+TLE = '3'
+RE = '4'
+FORBIDDEN = '5'
+WA = '6'
 
 socket_host = ''
 socket_port = 6666
@@ -32,13 +42,16 @@ web_url = ''
 max_thread = 2
 now_thread = 0
 
+if os.geteuid() != 0:
+	print "Not run by root. Exiting"
+	sys.exit(1)
+
 config_file = '/etc/judge.conf'
 log = open("/var/log/judge.log", "a+", 0)
 ext = (None, 'cpp', 'pas', 'java')
 
 sock = None
 connected = False
-has_mounted = False
 exiting = False
 deadline = 0
 
@@ -53,8 +66,6 @@ def p(message, over = False):
 		sys.exit(1)
 
 def init():
-	if os.geteuid() != 0:
-		p("Not run by root. Exiting", True)
 	global socket_host, socket_port, client_id, client_hash, client_name, web_url
 	global sock, connected
 	config = ConfigParser.ConfigParser()
@@ -68,11 +79,70 @@ def init():
 		max_thread = (int)(config.get("judge", "max_thread"))
 	except:
 		p("Error Reading the Config File", True)
+	mount()
 	try:
 		socket_host = socket.gethostbyname(socket_host)
 	except:
 		p("Error Resolving the Domain", True)
 	connect_socket()
+	start_deamon()
+	login()
+
+def mount():
+	status = os.popen("losetup | grep /judge/judge.img").read()
+	if status != '':
+		status = status.split(" ")
+		os.system("losetup -d " + status[0])
+	status = os.popen("mount | grep /judge/judge.img").read()
+	if status != '':
+		status = status.split(" ")
+		os.system("umount " + status[2])
+	if not os.path.exists('/judge/judge.img'):
+		os.system("dd if=/dev/zero of=/judge/judge.img bs=10M count=" + str(max_thread * 5))
+		os.system("mkfs.ext3 -F /dev/loop20")
+	sig = os.system("losetup /dev/loop20 /judge/judge.img")
+	if sig != 0:
+		global exiting
+		exiting = True
+		p("Error mounting the Image", True)
+	os.system("mount /dev/loop20 /judge/inside")
+
+def clean(path = ""):
+	if path != '':
+		path = path + "/"
+	else:
+		path = "*"
+	os.system("rm /judge/inside/" + path + " -R")
+	os.system("rm /judge/stdout/" + path + " -R")
+
+def compare(sid, now):
+	stdout = "/judge/stdout/" + sid + "/std" + str(now) + ".out "
+	userout = "/judge/inside/" + sid + "/out/out" + str(now) + ".out"
+	result = os.popen("diff -q -B -b --strip-trailing-cr " + stdout + userout).read()
+	if result == '':
+		return True
+	else:
+		return False
+
+def docker_run(sid):
+	run = subprocess.Popen(["docker", "run", "-u", "nobody", "-v", "/judge/inside/" + sid + ":/judge", "-t" ,"--net", "none", "-i", "moyoj:cell", "/judge/Cell", sid + "s"])
+	while not os.path.exists('/judge/inside/' + sid + '/out/compile'):
+		time.sleep(0.5)
+	update = {'action': 'update_state', 'sid': sid, 'state': -3, 'timestamp': (int)(time.time())}
+	send(update)
+	while os.popen("docker ps | grep '/judge/Cell " + sid + "s'").read() != '':
+		time.sleep(0.05)
+
+def docker(sid):
+	_docker2 = threading.Thread(target=docker_run, name='docker_run', args=(sid,))
+	_docker2.setDaemon(True)
+	_docker2.start()
+	_docker2.join(60)
+	get = os.popen("docker ps | grep '/judge/Cell " + sid + "s'").read()
+	if get == '':
+		return
+	get = get.split(" ")
+	os.system("docker stop " + get[0])
 
 def connect_socket():
 	global connected, sock
@@ -84,9 +154,7 @@ def connect_socket():
 		except:
 			p("Failed to connect to the server")
 			time.sleep(3)
-	start_deamon()
 	p("Connected to the server")
-	login()
 
 def heart_beat():
 	while not connected:
@@ -115,11 +183,103 @@ def heart_beat():
 		while not connected:
 			time.sleep(5)
 
-def start_judge(data):
-	while 1:
-		print data
-		time.sleep(1)
-	pass
+def judge(data):
+	global now_thread
+	p("Got a new request! SID = " + str(data['sid']) + ", Lang = " + str(data['lang']))
+	while now_thread >= max_thread:
+		time.sleep(0.5)
+	now_thread = now_thread + 1
+	
+	sid = str(data['sid'])
+	lang = str(data['lang'])
+	test_turn = str(data['test_turn'])
+	time_limit = str(data['time_limit'])
+	memory_limit = str(data['memory_limit'])
+	p_hash = data['hash']
+	code = base64.decodestring(data['code'])
+	result = AC
+	error = False
+	used_time = 0
+	used_memory = 0
+	detail = ''
+	detail_result = ''
+	detail_time = ''
+	detail_memory = ''
+	
+	os.system("mkdir /judge/inside/" + sid + " /judge/inside/" + sid + "/in /judge/inside/" + sid + "/out /judge/stdout/" + sid)
+	os.system("cp /judge/Cell /judge/inside/" + sid + "/Cell")
+	os.system("chmod 777 /judge/inside/" + sid + "/out")
+	os.system("chmod 755 /judge/inside/" + sid + "/Cell")
+	out = open("/judge/inside/" + sid + "/post." + ext[int(lang)], "w", 0)
+	out.write(code)
+	out.close()
+	out = open("/judge/inside/" + sid + "/judge.conf", "w", 0)
+	out.write(time_limit + "\n" + memory_limit + "\n" + test_turn + "\n" + lang)
+	out.close()
+	i = 0
+	out = open("/judge/inside/" + sid + "/downlist", "w", 0)
+	while i < int(test_turn):
+		out.write(web_url + "/data/" + p_hash + "/test" + str(i) + ".in\n")
+		out.write(web_url + "/data/" + p_hash + "/std" + str(i) + ".out\n")
+		i += 1
+	out.close()
+	os.system("wget -P /judge/stdout/" + sid + "/ -i /judge/inside/" + sid + "/downlist -q --no-check-certificate")
+	os.system("mv /judge/stdout/" + sid + "/test* /judge/inside/" + sid + "/in/")
+	os.system("rm /judge/inside/" + sid + "/downlist")
+	
+	p("Now starting to compile & run... ( sid = " + sid + " )")
+	update = {'action': 'update_state', 'sid': sid, 'state': -2, 'timestamp': (int)(time.time())}
+	send(update)
+	_docker = threading.Thread(target=docker, name='Docker', args=(sid,))
+	_docker.start()
+	_docker.join()
+	
+	if not os.path.exists('/judge/inside/' + sid + '/out/summary.out'):
+		error = True
+	summary = open("/judge/inside/" + sid + "/out/summary.out")
+	result = summary.read()
+	summary.close()
+	result = result.split("\n")
+	all_result = 10
+	if int(result[0]) < 0 or result[0] == CE:
+		error = True
+		all_result = result[0]
+	i = 0
+	for row in result:
+		if len(row) < 3:
+			continue
+		now = row
+		now = now.split(" ")
+		if now[0] == RE:
+			all_result = RE
+		elif now[0] == MLE and result != RE:
+			all_result = MLE
+		elif now[0] == TLE and result != RE and result != MLE:
+			all_result = TLE
+		detail_time += now[1] + " "
+		detail_memory += now[2] + " "
+		used_time += int(now[1])
+		if int(now[2]) > used_memory:
+			used_memory = int(now[2])
+		if now[0] == '0':
+			if not compare(sid, i):
+				detail_result += WA + " "
+			else:
+				detail_result += AC + " "
+		elif int(now[0]) < 0:
+			detail_result += "0 "
+		else:
+			detail_result += now[0] + " "
+		i += 1
+	
+	error_log = open("/judge/inside/" + sid + "/out/error.log")
+	detail = error_log.read()
+	update = {'action': 'update', 'sid': sid, 'state': all_result, 'used_time': used_time, 'used_memory': used_memory, 'detail': detail, 'detail_result': detail_result, 
+					'detail_time': detail_time, 'detail_memory': detail_memory}
+	send(update)
+	p("The request (SID = " + sid + ") has been dealt.")
+	clean(sid)
+	now_thread = now_thread - 1
 
 def login():
 	login_request = {'action': 'login', 'client_id': client_id, 'client_hash': client_hash}
@@ -129,7 +289,7 @@ def login():
 			sys.exit(1)
 		time.sleep(0.2)
 	p("Now the judge client <" + client_name + "> has started successfully. Waiting for judge requests...")
-#	Clean()
+	clean()
 
 def send(msg):
 	while not connected:
@@ -154,7 +314,7 @@ def receiver():
 		if action == 'online':
 			deadline = 0
 		elif action == 'judge':
-			new_judge = threading.Thread(target=start_judge, name='JudgeLoader' + (str)(buf['sid']), args=(buf,))
+			new_judge = threading.Thread(target=judge, name='JudgeLoader' + (str)(buf['sid']), args=(buf,))
 			new_judge.setDaemon(True)
 			new_judge.start()
 		elif action == 'refuse':
@@ -164,17 +324,19 @@ def receiver():
 		else:
 			p("Unknown Action")
 		while not connected:
-			sleep(0.5)
+			time.sleep(0.5)
 
 def killer():
 	global deadline, connected, exiting
 	while not exiting:
-		while deadline < 10:
+		while deadline < 15:
 			deadline = deadline + 1
 			time.sleep(1)
 		connected = False
 		p("Lost the connection with the server.")
 		connect_socket()
+		time.sleep(1)
+		login()
 		deadline = 0
 
 def start_deamon():
