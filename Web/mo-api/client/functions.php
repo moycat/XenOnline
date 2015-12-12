@@ -62,6 +62,14 @@ function cut(&$connection, $reason)
 	$connection->close();
 }
 
+function check_lost()
+{
+	global $task;
+	foreach ($task as $now)
+		if (time() - $now->lasttime > (5 + $now->got * 55))
+			$now->push();
+}
+
 function p($to_write)
 {
 	$time = date("Y-m-d H:i:s",time());

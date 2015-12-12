@@ -114,10 +114,6 @@
 			{
 				$this->info[$key] = $value;
 			}
-			$sql = 'SELECT `code` FROM `mo_judge_code` WHERE `sid` = ?';
-			$db->prepare( $sql );
-			$db->bind( 'i', $this->sid );
-			$result = $db->execute();
-			$this->info['code'] = base64_decode( $result[0]['code'] );
+			$this->info['code'] = base64_decode( $this->info['code'] );
 		}
 	}

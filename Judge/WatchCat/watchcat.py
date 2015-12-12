@@ -29,6 +29,8 @@ client_id = 0
 client_hash = ''
 client_name = ''
 web_url = ''
+max_thread = 2
+now_thread = 0
 
 config_file = '/etc/judge.conf'
 log = open("/var/log/judge.log", "a+", 0)
@@ -63,6 +65,7 @@ def init():
 		client_id = config.get("client", "client_id")
 		client_hash = config.get("client", "client_hash")
 		web_url = config.get("judge", "web_url")
+		max_thread = (int)(config.get("judge", "max_thread"))
 	except:
 		p("Error Reading the Config File", True)
 	try:
@@ -106,11 +109,16 @@ def heart_beat():
 				var = line.split(':')[1].split()[0]
 				mem[name] = long(var) * 1024.0
 		mem_ratio = str(round((mem['MemTotal'] - mem['MemAvailable']) / mem['MemTotal'] * 100, 1))
-		data = {'action': 'heartbeat', 'loadavg': loadavg, 'mem_ratio': mem_ratio}
+		data = {'action': 'heartbeat', 'loadavg': loadavg, 'mem_ratio': mem_ratio, 'timestamp': (int)(time.time())}
 		send(data)
 		time.sleep(60)
 		while not connected:
 			time.sleep(5)
+
+def start_judge(data):
+	while 1:
+		time.sleep(1)
+	pass
 
 def login():
 	login_request = {'action': 'login', 'client_id': client_id, 'client_hash': client_hash}
@@ -118,13 +126,13 @@ def login():
 	while client_name == '':
 		if exiting:
 			sys.exit(1)
-		time.sleep(1)
-	p("Now the judge client <" + client_name + "> has started successfully.Waiting for judge requests...")
+		time.sleep(0.2)
+	p("Now the judge client <" + client_name + "> has started successfully. Waiting for judge requests...")
 #	Clean()
 
 def send(msg):
 	while not connected:
-		time.sleep(1)
+		time.sleep(0.2)
 	global sock
 	sock.sendall(json.dumps(msg) + "\n")
 
@@ -144,7 +152,10 @@ def receiver():
 		action = buf['action']
 		if action == 'online':
 			deadline = 0
-			continue
+		elif action == 'judge':
+			new_judge = threading.Thread(target=start_judge, name='JudgeLoader' + (str)(buf['sid']), args=(buf,))
+			new_judge.setDaemon(True)
+			new_judge.start()
 		elif action == 'refuse':
 			p("Client ID or hash refused by the server.", True)
 		elif action == 'admit':
@@ -152,7 +163,7 @@ def receiver():
 		else:
 			p("Unknown Action")
 		while not connected:
-			sleep(1)
+			sleep(0.5)
 
 def killer():
 	global deadline, connected, exiting

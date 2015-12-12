@@ -81,15 +81,11 @@
 		$db->prepare( $sql );
 		$db->bind( 'iisi', $result[0]['submit'], $result[0]['try'], $result[0]['submit_problem'],  $uid );
 		$db->execute();
-		$sql = 'INSERT INTO `mo_judge_solution` (`pid`, `uid`, `client`, `post_time`, `language`, `code_length`) VALUES (?, ?, ?, CURRENT_TIMESTAMP, ?, ?)';
+		$sql = 'INSERT INTO `mo_judge_solution` (`pid`, `uid`, `client`, `code`, `post_time`, `language`, `code_length`) VALUES (?, ?, ?, CURRENT_TIMESTAMP, ?, ?)';
 		$db->prepare( $sql );
-		$db->bind( 'iiiii', $pid, $uid, $client, $lang, $length );
+		$db->bind( 'iiisii', $pid, $uid, $client, $post, $lang, $length );
 		$db->execute();
 		$sid = $db->getInsID();
-		$sql = 'INSERT INTO `mo_judge_code` (`sid`, `code`) VALUES (?, ?)';
-		$db->prepare( $sql );
-		$db->bind( 'is', $sid, $post );
-		$db->execute();
 		mo_write_note( 'A new solution has been added.' );
 		mo_log_user( "User added a new solution (DID = $sid)." );
 		return $sid;
