@@ -15,7 +15,7 @@
 		private $pass = 'moyoj';
 		
 		private $mysqli = NULL;
-		private $query;
+		private $query = array();
 		private $insID;
 		
 		private $count = 0;
@@ -42,43 +42,48 @@
 		}
 		function prepare($sql)
 		{
-			$this->query = $this->mysqli->prepare($sql);
-			return $this->query ? True : False;
+			$mark = rand(10000, 99999);
+			while (isset($this->query[$mark]))
+				$mark = rand(10000, 99999);
+			$this->query[$mark] = $this->mysqli->prepare($sql);
+			return $this->query[$mark] ? $mark : False;
 		}
 		function bind()
 		{
 			$input = func_get_args();
 			$cnt = count($input);
-			if ($cnt < 2)
+			if ($cnt < 3)
 			{
-				throw new Exception('Wrong Binding!');
+				throw new Exception('Bad Binding!');
 				return;
 			}
-			for($i = 1; $i < $cnt; ++$i)
+			$mark = (int)$input[0];
+			for($i = 0; $i < $cnt - 1; ++$i)
 			{
-				$input[$i] = &$input[$i];
+				$input[$i] = &$input[$i + 1];
 			}
-			call_user_func_array(array($this->query, 'bind_param'), $input);
+			unset($input[$cnt - 1]);
+			call_user_func_array(array($this->query[$mark], 'bind_param'), $input);
 		}
-		function execute()
+		function execute($mark)
 		{
-			$this->query->execute();
+			$this->query[$mark]->execute();
 			$this->count ++;
-			$this->insID = $this->query->insert_id;
-			if (!$this->query->field_count)
+			$this->insID = $this->query[$mark]->insert_id;
+			if (!$this->query[$mark]->field_count)
 			{
-				$this->query->close();
+				$this->query[$mark]->close();
 				return 0;
 			}
 			$result = array();
-			$meta = $this->query->result_metadata();   
+			$meta = $this->query[$mark]->result_metadata();   
 			while ($field = $meta->fetch_field())
 			{
 				$params[] = &$row[$field->name];
 			}
-			$this->query->store_result();
-			call_user_func_array(array($this->query, 'bind_result'), $params);
-			while ($this->query->fetch())
+			$this->query[$mark]->store_result();
+			call_user_func_array(array($this->query[$mark], 'bind_result'), $params);
+			while ($this->query[$mark]->fetch())
 			{
 				foreach($row as $key => $val)
 				{
@@ -86,8 +91,9 @@
 				}
 				$result[] = $c;
 			}
-			$this->query->free_result();
-			$this->query->close();
+			$this->query[$mark]->free_result();
+			$this->query[$mark]->close();
+			unset($this->query[$mark]);
 			return $result;
 		}
 		

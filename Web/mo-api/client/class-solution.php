@@ -12,13 +12,6 @@ class Solution
 	public $got = False;
 	public $send = array('action' => 'judge');
 	
-	public $used_time = -1;
-	public $used_memory = -1;
-	public $detail;
-	public $detail_result;
-	public $detail_time;
-	public $detail_memory;
-	
 	public function __construct($data)
 	{
 		global $db, $task;
@@ -32,9 +25,9 @@ class Solution
 		if (!$result)
 		{
 			$sql = 'SELECT `id`, `hash`, `time_limit`, `memory_limit`, `test_turn` FROM `mo_judge_problem` WHERE `id` = ?';
-			$db->prepare($sql);
-			$db->bind('i', $data['sid']);
-			$result = $db->execute();
+			$mark = $db->prepare($sql);
+			$db->bind($mark, 'i', $data['sid']);
+			$result = $db->execute($mark);
 			set('client-problem-'. $data['sid'], $result);
 		}
 		list($this->send['sid'], $this->send['hash'], $this->send['time_limit'], $this->send['memory_limit'], $this->send['test_turn']) = 
@@ -71,10 +64,5 @@ class Solution
 		sendMsg($to_choose_from[$turn], $this->send);
 		p("The solution ( sid = $this->sid ) was sent to the client ( cid = $this->cid )");
 		return True;
-	}
-	
-	public function update($data)
-	{
-		
 	}
 }

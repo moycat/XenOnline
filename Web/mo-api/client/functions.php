@@ -13,13 +13,66 @@ function heartbeat($connection, $data)
 	global $db;
 	$timestamp = date('Y-m-d G:i:s');
 	$sql = 'UPDATE `mo_judge_client` SET `load_1` = ?, `load_5` = ?, `load_15` = ?, `memory` = ?, `last_ping` = ? WHERE `id` = ?';
-	$db->prepare($sql);
-	$db->bind('sssssi', $data['loadavg']['lavg_1'], $data['loadavg']['lavg_5'], $data['loadavg']['lavg_15'], $data['mem_ratio'], $timestamp, $connection->cid);
-	$db->execute();
+	$mark = $db->prepare($sql);
+	$db->bind($mark, 'sssssi', $data['loadavg']['lavg_1'], $data['loadavg']['lavg_5'], $data['loadavg']['lavg_15'], $data['mem_ratio'], $timestamp, $connection->cid);
+	$db->execute($mark);
 	p("Get a heartbeat. ( cid = $connection->cid, IP = $connection->IP )");
-	
-	debuggy();
-	
+	return True;
+}
+
+function update($connection, $data)
+{
+	global $db, $task;
+	if (!$connection->cid || !isset($data['state'], $data['used_time'], $data['used_memory'], $data['detail'], $data['detail_result'], 
+			$data['detail_time'], $data['detail_memory'], $data['sid']))
+		return False;
+	$sid = (int)$data['sid'];
+	if (!isset($task[$sid]) || $task[$sid]->cid != $connection->cid)
+	{
+		p("Bad update. ( cid = $connection->cid, IP = $connection->IP )");
+		return False;
+	}
+	$sql = 'UPDATE `mo_judge_solution` SET `state` = ?, `used_time` = ?, `used_memory` = ?, `detail` = ?, '.
+				'`detail_result` = ?, `detail_time` = ?, `detail_memory` = ? WHERE `id` = ?';
+	$mark = $db->prepare($sql);
+	$db->bind($mark, 'iiissssi', $data['state'], $data['used_time'], $data['used_memory'], $data['detail'], $data['detail_result'], 
+						$data['detail_time'], $data['detail_memory'], $data['sid']);
+	$db->execute($mark);
+	$uid = (int)$task[$sid]->uid;
+	$pid = (int)$task[$sid]->pid;
+	if ((int)$data['state'] == 10)
+	{
+		$sql = 'SELECT `ac`, `solved` FROM `mo_judge_problem` WHERE `id` = ?';
+		$mark = $db->prepare($sql);
+		$db->bind($mark, 'i', $pid);
+		$prob = $db->execute($mark);
+		$prob_accept = (int)$prob[0]['ac'] + 1;
+		$prob_solved = (int)$prob[0]['solved'];
+		$sql = 'SELECT `ac_problem`, `accept`, `solve` FROM `mo_user_record` WHERE `uid` = ?';
+		$mark = $db->prepare($sql);
+		$db->bind($mark, 'i', $pid);
+		$user = $db->execute($mark);
+		$user_ac = $user[0]['ac_problem'];
+		$user_accept = (int)$user[0]['accept'] + 1;
+		$user_solve = (int)$user[0]['solve'];
+		$tmp = explode(' ', $user_ac);
+		if (!in_array((string)$pid, $tmp))
+		{
+			$user_ac .= "$pid ";
+			$prob_solved++;
+			$user_solve++;
+		}
+		$sql = 'UPDATE `mo_judge_problem` SET `solved` = ?, `ac` = ? WHERE `id` = ?';
+		$mark = $db->prepare($sql);
+		$db->bind($mark, 'iii', $prob_solved, $prob_accept, $pid);
+		$db->execute($mark);
+		$sql = 'UPDATE `mo_user_record` SET `ac_problem` = ?, `accept` = ?, `solve` = ? WHERE `uid` = ?';
+		$mark = $db->prepare($sql);
+		$db->bind($mark, 'siii', $user_ac, $user_accept, $user_solve, $uid);
+		$db->execute($mark);
+	}
+	p("Get a update. The solution is done. ( sid = $sid, cid = $connection->cid, IP = $connection->IP )");
+	unset($task[$sid]);
 	return True;
 }
 
@@ -30,19 +83,21 @@ function update_state($connection, $data)
 		return False;
 	$sid = (int)$data['sid'];
 	if (!isset($task[$sid]) || $task[$sid]->cid != $connection->cid || $task[$sid]->last_time > (int)$data['timestamp'])
+	{
+		p("Bad update-state. ( cid = $connection->cid, IP = $connection->IP )");
 		return False;
+	}
 	$task[$sid]->last_time = (int)$data['timestamp'];
 	if (MEM)
-	{
 		set('solution-state-'. $sid, $data['state']);
-	}
 	else
 	{
 		$sql = 'UPDATE `mo_judge_solution` SET `state` = ? WHERE `mo_judge_solution`.`id` = ?';
-		$db->prepare($sql);
-		$db->bind('ii', $data['state'], $data['sid']);
-		$db->execute();
+		$mark = $db->prepare($sql);
+		$db->bind($mark, 'ii', $data['state'], $data['sid']);
+		$db->execute($mark);
 	}
+	p("Get a update-state. ( sid = $sid, cid = $connection->cid, IP = $connection->IP )");
 	return True;
 }
 
@@ -56,9 +111,9 @@ function login($connection, $data)
 		return False;
 	}
 	$sql = 'SELECT name FROM mo_judge_client WHERE id = ? AND hash = ?';
-	$db->prepare($sql);
-	$db->bind('is', $data['client_id'], $data['client_hash']);
-	$result = $db->execute();
+	$mark = $db->prepare($sql);
+	$db->bind($mark, 'is', $data['client_id'], $data['client_hash']);
+	$result = $db->execute($mark);
 	if (!$result)
 	{
 		p("Bad Client ID or Hash ( IP = $connection->IP )");
