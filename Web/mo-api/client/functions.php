@@ -70,6 +70,32 @@ function check_lost()
 			$now->push();
 }
 
+function get($key)
+{
+	if (!MEM)
+		return False;
+	global $mem;
+	return $mem->get($key);
+}
+
+function set($key, $data)
+{
+	if (!MEM)
+		return False;
+	global $mem;
+	if (!$mem->set($key, $data))
+		$mem->replace($key, $data);
+	return True;
+}
+
+function del($key)
+{
+	if (!MEM)
+		return False;
+	global $mem;
+	return $mem->delete($key);
+}
+
 function p($to_write)
 {
 	$time = date("Y-m-d H:i:s",time());

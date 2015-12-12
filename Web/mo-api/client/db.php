@@ -33,11 +33,11 @@
 			if (mysqli_connect_errno())
 			{
 				$error = mysqli_connect_errno();
-				echo "Error Connecting to the Database #$error\n";
+				p("Error Connecting to the Database #$error");
 				return False;
 			}
 			$this->mysqli->set_charset('utf8');
-			echo "Connected to the database successfully.\n";
+			p("Connected to the database successfully.");
 			return True;
 		}
 		function prepare($sql)

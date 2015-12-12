@@ -15,12 +15,15 @@ $cid = array();
 
 $worker_tasker->onWorkerStart = function($worker_tasker)
 {
-	global $db;
+	global $db, $mem;
 	$db = new DB();
-	$db->init( DB_HOST, DB_USER, DB_PASS, DB_NAME );
-	while ( !$db->connect() ) // 未连接自动重连
-	{
+	$db->init(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+	while (!$db->connect()) // 未连接自动重连
 		sleep(1);
+	if (MEM)
+	{
+		$mem = new Memcached;
+		$mem->addServer(MEM_HOST, MEM_PORT);
 	}
 	Timer::add(3, function()use($worker_tasker) // 每3秒，自动发送心跳包
 	{
@@ -28,6 +31,7 @@ $worker_tasker->onWorkerStart = function($worker_tasker)
 			sendMsg($connection, array('action' => 'online'));
 	});
 	Timer::add(10, 'check_lost'); // 每10秒，检查无响应的评测请求
+	p('The server <Tasker> has started.');
  };
 
 $worker_tasker->onConnect = function($connection)

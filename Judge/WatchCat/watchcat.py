@@ -117,6 +117,7 @@ def heart_beat():
 
 def start_judge(data):
 	while 1:
+		print data
 		time.sleep(1)
 	pass
 

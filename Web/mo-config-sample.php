@@ -16,9 +16,16 @@
 	// The password of the account
 	define( 'DB_PASS' , 'the_db_pass' );
 	
+	// Whether to use memcached
+	define( 'MEM', True);
+	// The address of your memcached server
+	define( 'MEM_HOST' , 'the_mem_addr' );
+	// The port of the memcached service
+	define( 'MEM_PORT' , 11211 );
+	
 	// The cost used when crypting password
 	// At least 4, and 5 is recommond
-	define( 'CRYPT_COST', 5 );
+	define( 'CRYPT_COST', 4 );
 	
 	// If debugging, set it to True to output details
 	define( 'DEBUG', False );
