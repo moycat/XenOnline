@@ -41,6 +41,7 @@ client_name = ''
 web_url = ''
 max_thread = 2
 now_thread = 0
+threadlock = threading.Lock()
 
 if os.geteuid() != 0:
 	print "Not run by root. Exiting"
@@ -184,11 +185,13 @@ def heart_beat():
 			time.sleep(5)
 
 def judge(data):
-	global now_thread
+	global now_thread, threadlock
 	p("Got a new request! SID = " + str(data['sid']) + ", Lang = " + str(data['lang']))
 	while now_thread >= max_thread:
 		time.sleep(0.5)
+	threadlock.acquire()
 	now_thread = now_thread + 1
+	threadlock.release()
 	
 	sid = str(data['sid'])
 	lang = str(data['lang'])
@@ -279,7 +282,9 @@ def judge(data):
 	send(update)
 	p("The request (SID = " + sid + ") has been dealt.")
 	clean(sid)
+	threadlock.acquire()
 	now_thread = now_thread - 1
+	threadlock.release()
 
 def login():
 	login_request = {'action': 'login', 'client_id': client_id, 'client_hash': client_hash}
@@ -307,7 +312,7 @@ def receiver():
 			if ('\n' in tmp):
 				loc = tmp.find('\n')
 				buf = tmp[0:loc]
-				tmp = buf[loc + 1: len(tmp)]
+				tmp = tmp[loc + 2: len(tmp)]
 				break
 		buf = json.loads(buf)
 		action = buf['action']
