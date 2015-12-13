@@ -42,6 +42,7 @@ web_url = ''
 max_thread = 2
 now_thread = 0
 threadlock = threading.Lock()
+timeoutlock = threading.Lock()
 
 if os.geteuid() != 0:
 	print "Not run by root. Exiting"
@@ -113,8 +114,8 @@ def clean(path = ""):
 		path = path + "/"
 	else:
 		path = "*"
-	os.system("rm /judge/inside/" + path + " -R")
-	os.system("rm /judge/stdout/" + path + " -R")
+	os.system("rm /judge/inside/" + path + " -R -f")
+	os.system("rm /judge/stdout/" + path + " -R -f")
 
 def compare(sid, now):
 	stdout = "/judge/stdout/" + sid + "/std" + str(now) + ".out "
@@ -128,7 +129,7 @@ def compare(sid, now):
 def docker_run(sid):
 	run = subprocess.Popen(["docker", "run", "-u", "nobody", "-v", "/judge/inside/" + sid + ":/judge", "-t" ,"--net", "none", "-i", "moyoj:cell", "/judge/Cell", sid + "s"])
 	while not os.path.exists('/judge/inside/' + sid + '/out/compile'):
-		time.sleep(0.5)
+		time.sleep(0.1)
 	update = {'action': 'update_state', 'sid': sid, 'state': -3, 'timestamp': (int)(time.time())}
 	send(update)
 	while os.popen("docker ps | grep '/judge/Cell " + sid + "s'").read() != '':
@@ -182,13 +183,13 @@ def heart_beat():
 		send(data)
 		time.sleep(60)
 		while not connected:
-			time.sleep(5)
+			time.sleep(1)
 
 def judge(data):
 	global now_thread, threadlock
 	p("Got a new request! SID = " + str(data['sid']) + ", Lang = " + str(data['lang']))
 	while now_thread >= max_thread:
-		time.sleep(0.5)
+		time.sleep(0.2)
 	threadlock.acquire()
 	now_thread = now_thread + 1
 	threadlock.release()
@@ -298,16 +299,18 @@ def login():
 
 def send(msg):
 	while not connected:
-		time.sleep(0.2)
+		time.sleep(0.1)
 	global sock
 	sock.sendall(json.dumps(msg) + "\n")
 
 def receiver():
-	global sock, deadline, client_name
+	global sock, deadline, client_name, timeoutlock
 	buf = ''
 	tmp = ''
 	while not exiting:
 		while not exiting:
+			while not connected:
+				time.sleep(0.1)
 			tmp = tmp + sock.recv(8096)
 			if ('\n' in tmp):
 				loc = tmp.find('\n')
@@ -317,7 +320,9 @@ def receiver():
 		buf = json.loads(buf)
 		action = buf['action']
 		if action == 'online':
+			timeoutlock.acquire()
 			deadline = 0
+			timeoutlock.release()
 		elif action == 'judge':
 			new_judge = threading.Thread(target=judge, name='JudgeLoader' + (str)(buf['sid']), args=(buf,))
 			new_judge.setDaemon(True)
@@ -326,21 +331,26 @@ def receiver():
 			p("Client ID or hash refused by the server.", True)
 		elif action == 'admit':
 			client_name = buf['client_name']
+		elif action == 'another':
+			p("Client ID logged in somewhere else.", True)
 		else:
 			p("Unknown Action")
-		while not connected:
-			time.sleep(0.5)
 
 def killer():
-	global deadline, connected, exiting
+	global sock, deadline, connected, exiting, timeoutlock
 	while not exiting:
-		while deadline < 15:
+		sign = 1
+		while deadline < 15 and sign == 1:
+			timeoutlock.acquire()
 			deadline = deadline + 1
+			timeoutlock.release()
 			time.sleep(1)
+			sign = sock.getsockopt(socket.IPPROTO_TCP, socket.TCP_INFO)
 		connected = False
 		p("Lost the connection with the server.")
-		connect_socket()
 		time.sleep(1)
+		connect_socket()
+		time.sleep(0.5)
 		login()
 		deadline = 0
 

@@ -104,7 +104,7 @@ function update_state($connection, $data)
 function login($connection, $data)
 {
 	global $db, $cid;
-	if (!isset($data['client_id'], $data['client_hash'] ) || isset($cid[$data['client_id']]) || $connection->cid)
+	if (!isset($data['client_id'], $data['client_hash'] ) || $connection->cid)
 	{
 		p("Bad Login Action ( IP = $connection->IP )");
 		cut($connection, 'refuse');
@@ -122,6 +122,11 @@ function login($connection, $data)
 	}
 	Timer::del($connection->deadline);
 	$connection->deadline = 0;
+	if (isset($cid[$data['client_id']]))
+	{
+		cut($cid[$data['client_id']], 'another');
+		unset($cid[$data['client_id']]);
+	}
 	$connection->cid = (string)$data['client_id'];
 	$connection->name = $result[0]['name'];
 	$cid[$connection->cid] = $connection;
