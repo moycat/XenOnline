@@ -20,16 +20,8 @@ class Solution
 			p("Get a bad solution.");
 			return;
 		}
-		list($this->sid, $this->pid, $this->uid, $this->send['lang'], $this->send['code']) = array((int)$data['sid'], $data['pid'], $data['uid'], $data['lang'], $data['code']);
-		$result = get('client-problem-'. $data['sid']);
-		if (!$result)
-		{
-			$sql = 'SELECT `id`, `hash`, `time_limit`, `memory_limit`, `test_turn` FROM `mo_judge_problem` WHERE `id` = ?';
-			$mark = $db->prepare($sql);
-			$db->bind($mark, 'i', $data['sid']);
-			$result = $db->execute($mark);
-			set('client-problem-'. $data['sid'], $result);
-		}
+		list($this->sid, $this->pid, $this->uid, $this->send['lang'], $this->send['code']) = array((int)$data['sid'], (int)$data['pid'], $data['uid'], $data['lang'], $data['code']);
+		$result = get_prob($this->pid);
 		list($this->send['sid'], $this->send['hash'], $this->send['time_limit'], $this->send['memory_limit'], $this->send['test_turn']) = 
 				array($this->sid, $result[0]['hash'], $result[0]['time_limit'], $result[0]['memory_limit'], $result[0]['test_turn']);
 		$task[$this->sid] = &$this;

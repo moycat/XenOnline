@@ -32,10 +32,10 @@ function update($connection, $data)
 		p("Bad update. ( cid = $connection->cid, IP = $connection->IP )");
 		return False;
 	}
-	$sql = 'UPDATE `mo_judge_solution` SET `state` = ?, `used_time` = ?, `used_memory` = ?, `detail` = ?, '.
+	$sql = 'UPDATE `mo_judge_solution` SET `client` = ?, `state` = ?, `used_time` = ?, `used_memory` = ?, `detail` = ?, '.
 				'`detail_result` = ?, `detail_time` = ?, `detail_memory` = ? WHERE `id` = ?';
 	$mark = $db->prepare($sql);
-	$db->bind($mark, 'iiissssi', $data['state'], $data['used_time'], $data['used_memory'], $data['detail'], $data['detail_result'], 
+	$db->bind($mark, 'iiiissssi',$connection->cid, $data['state'], $data['used_time'], $data['used_memory'], $data['detail'], $data['detail_result'], 
 						$data['detail_time'], $data['detail_memory'], $data['sid']);
 	$db->execute($mark);
 	$uid = (int)$task[$sid]->uid;
@@ -142,18 +142,59 @@ function cut(&$connection, $reason)
 	$connection->close();
 }
 
+function check_forgotten()
+{
+	global $db, $task;
+	$sql = 'SELECT `id`, `pid`, `uid`, `code`, `state`, `language` FROM `mo_judge_solution` WHERE `state` = 0';
+	$mark = $db->prepare($sql);
+	$result = $db->execute($mark);
+	if (!count($result))
+	{
+		return 0;
+	}
+	foreach ($result as $solution)
+	{
+		if (!isset($task[(int)$solution['id']]))
+		{
+			$data = array('sid' => $solution['id'], 'pid' => $solution['pid'], 'uid' => $solution['uid'], 'lang' => $solution['language'], 'code' => $solution['code']);
+			$new_solution = new Solution($data);
+			$new_solution->push();
+		}
+	}
+	return True;
+}
+
 function check_lost()
 {
 	global $task;
 	foreach ($task as $now)
+	{
 		if (time() - $now->last_time > (5 + $now->got * 55))
 			$now->push();
+	}
+}
+
+function get_prob($sid)
+{
+	global $db;
+	$result = get('client-problem-'. $sid);
+	if (!$result)
+	{
+		$sql = 'SELECT `id`, `hash`, `time_limit`, `memory_limit`, `test_turn` FROM `mo_judge_problem` WHERE `id` = ?';
+		$mark = $db->prepare($sql);
+		$db->bind($mark, 'i', $sid);
+		$result = $db->execute($mark);
+		set('client-problem-'. $sid, $result);
+	}
+	return $result;
 }
 
 function get($key)
 {
 	if (!MEM)
+	{
 		return False;
+	}
 	global $mem;
 	return $mem->get($key);
 }
@@ -161,7 +202,9 @@ function get($key)
 function set($key, $data)
 {
 	if (!MEM)
+	{
 		return False;
+	}
 	global $mem;
 	if (!$mem->set($key, $data))
 		$mem->replace($key, $data);
@@ -171,7 +214,9 @@ function set($key, $data)
 function del($key)
 {
 	if (!MEM)
+	{
 		return False;
+	}
 	global $mem;
 	return $mem->delete($key);
 }

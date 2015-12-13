@@ -20,6 +20,7 @@ $worker_tasker->onWorkerStart = function($worker_tasker)
 			sendMsg($connection, array('action' => 'online'));
 	});
 	Timer::add(10, 'check_lost'); // 每10秒，检查无响应的评测请求
+	Timer::add(10, 'check_forgotten'); // 每30秒，在数据库中寻找丢失的请求
 	p('The server <Tasker> has started.');
  };
 
