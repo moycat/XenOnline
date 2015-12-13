@@ -1,6 +1,7 @@
 *~
 *.o
 *.log
+*.pid
 mo-config.php
 Web/mo-content/cache/*.php
 Web/mo-content/data/*
