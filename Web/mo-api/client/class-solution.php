@@ -42,15 +42,15 @@ class Solution
 				$to_choose_from[] = $now_client;
 				$client_count++;
 			}
-		if (!$worker_tasker->connections)
+		if (!$client_count)
 		{
 			$this->cid = -1;
 			return False;
 		}
 		if ($cid == -1)
-			$turn = $this->sid % count($worker_tasker->connections);
+			$turn = $this->sid % $client_count;
 		else
-			$turn = ($this->turn + 1) % count($worker_tasker->connections);
+			$turn = ($this->turn + 1) % $client_count;
 		$this->turn = $turn;
 		$this->cid = $to_choose_from[$turn]->cid;
 		sendMsg($to_choose_from[$turn], $this->send);

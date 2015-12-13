@@ -44,6 +44,12 @@ $worker_tasker->onConnect = function($connection)
 $worker_tasker->onMessage = function($connection, $data)
 {
 	$data = json_decode($data, True);
+	if ($connection->IP == '127.0.0.1' && isset($data['pass'], $data['task']) && $data['pass'] == sha1(DB_PASS))
+	{
+		$solution = New Solution($data['task']);
+		$solution->push();
+		return;
+	}
 	if ($data == NULL || !isset($data['action']))
 	{
 		p("Json decoding failed or in bad format. ( cid = $connection->cid, IP = $connection->IP )");

@@ -114,6 +114,6 @@
 			{
 				$this->info[$key] = $value;
 			}
-			$this->info['code'] = base64_decode( $this->info['code'] );
+			$this->info['code'] = base64_decode( $result[0]['code'] );
 		}
 	}

@@ -64,7 +64,6 @@
 		global $db;
 		$length = strlen( $post );
 		$post = base64_encode( $post );
-		$client = mo_get_client();
 		$sql = 'SELECT `submit`, `try`, `submit_problem` FROM `mo_user_record` WHERE `uid` = ?';
 		$db->prepare( $sql );
 		$db->bind( 'i', $uid );
@@ -81,19 +80,32 @@
 		$db->prepare( $sql );
 		$db->bind( 'iisi', $result[0]['submit'], $result[0]['try'], $result[0]['submit_problem'],  $uid );
 		$db->execute();
-		$sql = 'INSERT INTO `mo_judge_solution` (`pid`, `uid`, `client`, `code`, `post_time`, `language`, `code_length`) VALUES (?, ?, ?, CURRENT_TIMESTAMP, ?, ?)';
+		$sql = 'INSERT INTO `mo_judge_solution` (`pid`, `uid`, `code`, `post_time`, `language`, `code_length`) VALUES (?, ?, ?, CURRENT_TIMESTAMP, ?, ?)';
 		$db->prepare( $sql );
-		$db->bind( 'iiisii', $pid, $uid, $client, $post, $lang, $length );
+		$db->bind( 'iisii', $pid, $uid, $post, $lang, $length );
 		$db->execute();
 		$sid = $db->getInsID();
+		$data = array('sid' => $sid, 'pid' => $pid, 'uid' => $uid, 'lang' => $lang, 'code' => $post);
 		mo_write_note( 'A new solution has been added.' );
-		mo_log_user( "User added a new solution (DID = $sid)." );
+		mo_log_user( "User added a new solution (SID = $sid)." );
+		socket_push($data);
 		return $sid;
 	}
 	
-	function mo_get_client() // TODO
+	function socket_push( $data )
 	{
-		return 1;
+		$request = json_encode( array( 'task' => $data, 'pass' => sha1(DB_PASS) ) ). "\n";
+		$errno = 0;
+		$errstr = '';
+		$socket = fsockopen( '127.0.0.1', '6666', $errno, $errstr, 1 );
+		if ( !$socket )
+		{
+			mo_log_user( 'Solution Failed Pushing (SID = '. $data['sid']. ').' );
+			return False;
+		}
+		fwrite($socket, $request);
+		fclose($socket);
+		return True;
 	}
 	
 	function mo_problem_add_try( $pid )
