@@ -128,7 +128,7 @@ def compare(sid, now):
 
 def docker_run(sid):
 	run = subprocess.Popen(["docker", "run", "-u", "nobody", "-v", "/judge/inside/" + sid + ":/judge", "-t" ,"--net", "none", "-i", "moyoj:cell", "/judge/Cell", sid + "s"])
-	while not os.path.exists('/judge/inside/' + sid + '/out/compile'):
+	while not (os.path.exists('/judge/inside/' + sid + '/out/compile')) and not (os.popen("docker ps | grep '/judge/Cell " + sid + "s'").read()):
 		time.sleep(0.1)
 	update = {'action': 'update_state', 'sid': sid, 'state': -3, 'timestamp': (int)(time.time())}
 	send(update)
@@ -136,7 +136,7 @@ def docker_run(sid):
 		time.sleep(0.05)
 
 def docker(sid):
-	_docker2 = threading.Thread(target=docker_run, name='docker_run', args=(sid,))
+	_docker2 = threading.Thread(target=docker_run, name='docker_run' + sid, args=(sid,))
 	_docker2.setDaemon(True)
 	_docker2.start()
 	_docker2.join(60)
@@ -249,32 +249,33 @@ def judge(data):
 		error = True
 		all_result = result[0]
 	i = 0
-	for row in result:
-		if len(row) < 3:
-			continue
-		now = row
-		now = now.split(" ")
-		if now[0] == RE:
-			all_result = RE
-		elif now[0] == MLE and result != RE:
-			all_result = MLE
-		elif now[0] == TLE and result != RE and result != MLE:
-			all_result = TLE
-		detail_time += now[1] + " "
-		detail_memory += now[2] + " "
-		used_time += int(now[1])
-		if int(now[2]) > used_memory:
-			used_memory = int(now[2])
-		if now[0] == '0':
-			if not compare(sid, i):
-				detail_result += WA + " "
+	if not error:
+		for row in result:
+			if len(row) < 3:
+				continue
+			now = row
+			now = now.split(" ")
+			if now[0] == RE:
+				all_result = RE
+			elif now[0] == MLE and result != RE:
+				all_result = MLE
+			elif now[0] == TLE and result != RE and result != MLE:
+				all_result = TLE
+			detail_time += now[1] + " "
+			detail_memory += now[2] + " "
+			used_time += int(now[1])
+			if int(now[2]) > used_memory:
+				used_memory = int(now[2])
+			if now[0] == '0':
+				if not compare(sid, i):
+					detail_result += WA + " "
+				else:
+					detail_result += AC + " "
+			elif int(now[0]) < 0:
+				detail_result += "0 "
 			else:
-				detail_result += AC + " "
-		elif int(now[0]) < 0:
-			detail_result += "0 "
-		else:
-			detail_result += now[0] + " "
-		i += 1
+				detail_result += now[0] + " "
+			i += 1
 	
 	error_log = open("/judge/inside/" + sid + "/out/error.log")
 	detail = error_log.read()
