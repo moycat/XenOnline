@@ -77,7 +77,7 @@
 	
 	function mo_get_solution_count( $pid = 'all', $uid = 'all', $state = 'all' )
 	{
-		$count = mo_read_cache( 'mo_prob_solution' );
+		$count = mo_read_cache( 'mo_solution_count' );
 		if ( !$count )
 		{
 			global $db;
@@ -103,7 +103,7 @@
 	}
 	function mo_get_problem_count( $tag = '' )
 	{
-		$count = mo_read_cache( 'mo_problem_count' );
+		$count = mo_read_cache( 'mo_problem_count_tag'. $tag );
 		if ( !$count )
 		{
 			global $db;
@@ -120,13 +120,13 @@
 			}
 			$result = $db->execute();
 			$count = (int)$result[0]['total'];
-			mo_write_cache( 'mo_problem_count', $count );
+			mo_write_cache( 'mo_problem_count_tag'. $tag, $count );
 		}
 		return $count;
 	}
 	function mo_get_discussion_count( $parent = 0, $category = 'all', $uid = 'all', $status = 1 )
 	{
-		$count = mo_read_cache( 'mo_discussion_count' );
+		$count = mo_read_cache( "mo_discussion_count_p$parent_c$category_u$uid_s$status" );
 		if ( !$count )
 		{
 			global $db;
@@ -144,7 +144,21 @@
 			$db->bind( 'ii', $parent, $status );
 			$result = $db->execute();
 			$count = (int)$result[0]['total'];
-			mo_write_cache( 'mo_discussion_count', $count );
+			mo_write_cache( "mo_discussion_count_p$parent_c$category_u$uid_s$status", $count );
+		}
+		return $count;
+	}
+	function mo_get_user_count()
+	{
+		$count = mo_read_cache( 'mo_user_count' );
+		if ( !$count )
+		{
+			global $db;
+			$sql = 'SELECT COUNT(*) AS total FROM `mo_user`';
+			$db->prepare( $sql );
+			$result = $db->execute();
+			$count = (int)$result[0]['total'];
+			mo_write_cache( 'mo_user_count', $count );
 		}
 		return $count;
 	}

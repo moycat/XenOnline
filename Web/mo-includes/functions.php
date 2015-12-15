@@ -57,6 +57,10 @@
 	{
 		if ( defined( 'MEM' ) && MEM == True )
 		{
+			if ( strlen( $cache ) > 100 )
+			{
+				return False;
+			}
 			global $mem;
 			return $mem->get( $cache );
 		}
@@ -79,6 +83,10 @@
 	{
 		if ( defined ( 'MEM' ) && MEM == True )
 		{
+			if ( strlen( $cache ) > 100 )
+			{
+				return False;
+			}
 			global $mem;
 			if ( !$mem->set( $cache, $data ) )
 				$mem->replace( $cache, $data );
@@ -103,6 +111,10 @@
 	{
 		if ( defined( 'MEM' ) && MEM == True )
 		{
+			if ( strlen( $cache ) > 100 )
+			{
+				return False;
+			}
 			global $mem;
 			return $mem->delete( $cache );
 		}
