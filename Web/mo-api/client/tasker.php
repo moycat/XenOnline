@@ -7,12 +7,14 @@ $worker_tasker->onWorkerStart = function($worker_tasker)
 	global $db, $mem;
 	$db = new DB();
 	$db->init(DB_HOST, DB_USER, DB_PASS, DB_NAME);
-	while (!$db->connect()) // 未连接自动重连
+	while (!$db->connect())
+	{
 		sleep(1);
+	}
 	if (MEM)
 	{
 		$mem = new Memcached;
-		$mem->addServer(MEM_HOST, MEM_PORT);
+		$mem->setOption(Memcached::OPT_LIBKETAMA_COMPATIBLE, true);
 	}
 	Timer::add(3, function()use($worker_tasker) // 每3秒，自动发送心跳包
 	{
@@ -77,9 +79,13 @@ $worker_tasker->onMessage = function($connection, $data)
 $worker_tasker->onClose = function($connection)
 {
 	global $cid;
-	if($connection->deadline)
+	if ($connection->deadline)
+	{
 		Timer::del($connection->deadline);
+	}
 	if (isset($cid[$connection->cid]))
+	{
 		unset($cid[$connection->cid]);
+	}
     p("A client closed the connection. ( cid = $connection->cid, IP = $connection->IP )");
 };

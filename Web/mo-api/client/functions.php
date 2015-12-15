@@ -25,7 +25,9 @@ function update($connection, $data)
 	global $db, $task;
 	if (!$connection->cid || !isset($data['state'], $data['used_time'], $data['used_memory'], $data['detail'], $data['detail_result'], 
 			$data['detail_time'], $data['detail_memory'], $data['sid']))
+	{
 		return False;
+	}
 	$sid = (int)$data['sid'];
 	if (!isset($task[$sid]) || $task[$sid]->cid != $connection->cid)
 	{
@@ -88,8 +90,11 @@ function update_state($connection, $data)
 		return False;
 	}
 	$task[$sid]->last_time = (int)$data['timestamp'];
+	$task[$sid]->got = 1;
 	if (MEM)
+	{
 		set('solution-state-'. $sid, $data['state']);
+	}
 	else
 	{
 		$sql = 'UPDATE `mo_judge_solution` SET `state` = ? WHERE `mo_judge_solution`.`id` = ?';
@@ -175,7 +180,9 @@ function check_lost()
 	foreach ($task as $now)
 	{
 		if (time() - $now->last_time > (5 + $now->got * 55))
+		{
 			$now->push();
+		}
 	}
 }
 
@@ -212,7 +219,9 @@ function set($key, $data)
 	}
 	global $mem;
 	if (!$mem->set($key, $data))
+	{
 		$mem->replace($key, $data);
+	}
 	return True;
 }
 

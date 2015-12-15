@@ -3,13 +3,13 @@
 class Solution
 {
 	public $sid;
-	public $cid;
+	public $cid = -1;
 	public $pid;
 	public $uid;
 	public $turn = -1;
 	
 	public $last_time = 0;
-	public $got = False;
+	public $got = 0;
 	public $send = array('action' => 'judge');
 	
 	public function __construct($data)
@@ -32,25 +32,33 @@ class Solution
 	{
 		global $worker_tasker, $cid;
 		if (!$this->sid || time() - $this->last_time < 60)
+		{
 			return False;
+		}
 		$this->last_time = time();
 		$to_choose_from = array();
 		$client_count = 0;
 		foreach ($cid as $now_client)
+		{
 			if ($now_client->cid)
 			{
 				$to_choose_from[] = $now_client;
 				$client_count++;
 			}
+		}
 		if (!$client_count)
 		{
 			$this->cid = -1;
 			return False;
 		}
-		if ($cid == -1)
+		if ($this->cid == -1)
+		{
 			$turn = $this->sid % $client_count;
+		}
 		else
+		{
 			$turn = ($this->turn + 1) % $client_count;
+		}
 		$this->turn = $turn;
 		$this->cid = $to_choose_from[$turn]->cid;
 		sendMsg($to_choose_from[$turn], $this->send);
