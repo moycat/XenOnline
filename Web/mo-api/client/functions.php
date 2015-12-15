@@ -84,13 +84,14 @@ function update_state($connection, $data)
 	if (!$connection->cid || !isset($data['timestamp'], $data['sid'], $data['state']))
 		return False;
 	$sid = (int)$data['sid'];
-	if (!isset($task[$sid]) || $task[$sid]->cid != $connection->cid || $task[$sid]->last_time > (int)$data['timestamp'])
+	if (!isset($task[$sid]) || $task[$sid]->cid != $connection->cid || $task[$sid]->state < (int)$data['state'])
 	{
 		p("Bad update-state. ( cid = $connection->cid, IP = $connection->IP )");
 		return False;
 	}
 	$task[$sid]->last_time = (int)$data['timestamp'];
 	$task[$sid]->got = 1;
+	$task[$sid]->state = (int)$data['state'];
 	if (MEM)
 	{
 		set('solution-state-'. $sid, $data['state']);

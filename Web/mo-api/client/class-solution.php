@@ -10,6 +10,7 @@ class Solution
 	
 	public $last_time = 0;
 	public $got = 0;
+	public $state = 0;
 	public $send = array('action' => 'judge');
 	
 	public function __construct($data)
