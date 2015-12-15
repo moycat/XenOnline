@@ -28,7 +28,7 @@
 		}
 		function connect()
 		{
-			$this->mysqli = new mysqli( $this->host, $this->user,
+			$this->mysqli = new mysqli( 'p:'. $this->host, $this->user,
 								$this->pass, $this->name );
 			if ( mysqli_connect_errno() )
 			{
