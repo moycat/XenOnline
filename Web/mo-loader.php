@@ -52,7 +52,15 @@
 		die( '<h1>Site Closed Temporarily</h1>' );
 	}
 	
+	if ( defined( 'MEM' ) && MEM == True )
+	{
+		$mem = new Memcached();
+		$mem->addServer(MEM_HOST, MEM_PORT);
+	}
 	$db = new DB();
+	$db->init( DB_HOST, DB_USER, DB_PASS, DB_NAME );
+	$db->connect();
+	
 	$user = new User();
 	$mo_settings = array();
 	$mo_request = '';
@@ -61,9 +69,6 @@
 	$mo_theme_floder = '';
 	$mo_theme_file = '';
 	
-	// To connect to the database
-	$db->init( DB_HOST, DB_USER, DB_PASS, DB_NAME );
-	$db->connect();
 	mo_load_settings();
 	$mo_request = mo_analyze();
 	
