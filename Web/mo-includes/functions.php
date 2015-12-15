@@ -9,27 +9,7 @@
 	
 	$mo_time = microtime();
 	$mo_settings = array();
-	
-	function mo_init()
-	{
-		session_start();
-		if ( DEBUG == True )
-		{
-			error_reporting( E_ALL );
-			mo_write_note( 'DEBUG ENABLED' );
-		}
-		else
-		{
-			error_reporting( E_ERROR | E_WARNING | E_PARSE );
-		}
 		
-		// Check if closed
-		if ( file_exists( MOCON. 'closed.lock' ) )
-		{
-			die( '<h1>Site Closed Temporarily</h1>' );
-		}
-	}
-	
 	function mo_analyze()
 	{
 		$request = array();
@@ -75,40 +55,78 @@
 	
 	function mo_read_cache( $cache )
 	{
-		$cache_file = MOCACHE. $cache. '.php';
-		if ( file_exists( $cache_file ) )
+		if ( defined( 'MEM' ) && MEM == True )
 		{
-			require_once( $cache_file );
-			return unserialize( $mo_cache[$cache] );
+			if ( strlen( $cache ) > 100 )
+			{
+				return False;
+			}
+			global $mem;
+			return $mem->get( $cache );
 		}
 		else
 		{
-			return False;
+			$cache_file = MOCACHE. $cache. '.php';
+			if ( file_exists( $cache_file ) )
+			{
+				require_once( $cache_file );
+				return unserialize( $mo_cache[$cache] );
+			}
+			else
+			{
+				return False;
+			}
 		}
 	}
 	
 	function mo_write_cache( $cache, $data )
 	{
-		if ( !is_writable( MOCACHE ) )
+		if ( defined ( 'MEM' ) && MEM == True )
 		{
-			return False;
+			if ( strlen( $cache ) > 100 )
+			{
+				return False;
+			}
+			global $mem;
+			if ( !$mem->set( $cache, $data ) )
+				$mem->replace( $cache, $data );
+			return True;
 		}
-		$cache_file = MOCACHE. $cache. '.php';
-		$to_cache = "<?php\n" . "\$mo_cache['$cache'] = '". serialize( $data ). "';\n";
-		$file = fopen( $cache_file, 'w' );
-		fwrite( $file, $to_cache );
-		fclose( $file );
-		return True;
+		else
+		{
+			if ( !is_writable( MOCACHE ) )
+			{
+				return False;
+			}
+			$cache_file = MOCACHE. $cache. '.php';
+			$to_cache = "<?php\n" . "\$mo_cache['$cache'] = '". serialize( $data ). "';\n";
+			$file = fopen( $cache_file, 'w' );
+			fwrite( $file, $to_cache );
+			fclose( $file );
+			return True;
+		}
 	}
 	
 	function mo_del_cache( $cache )
 	{
-		$cache_file = MOCACHE. $cache. '.php';
-		if ( file_exists( $cache_file ) && is_writable( MOCACHE ) )
+		if ( defined( 'MEM' ) && MEM == True )
 		{
-			return unlink( $cache_file );
+			if ( strlen( $cache ) > 100 )
+			{
+				return False;
+			}
+			global $mem;
+			return $mem->delete( $cache );
 		}
-		return False;
+		else
+		{
+			$cache_file = MOCACHE. $cache. '.php';
+			if ( file_exists( $cache_file ) && is_writable( MOCACHE ) )
+			{
+				return unlink( $cache_file );
+			}
+			return False;
+		}
 	}
 	
 	function is_serialized( $data, $strict = true ) // From WordPress

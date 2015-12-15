@@ -116,14 +116,7 @@
 		// Functions related to login & logout
 		public function autoLogin()
 		{
-			if ( isset( $_POST['login'] ) )
-			{
-				if ( isset( $_POST['login_name'] ) && isset( $_POST['password'] ) )
-				{
-					return $this->login( $_POST['login_name'], $_POST['password'] );
-				}
-			}
-			elseif ( isset( $_SESSION['uid'] ) && is_numeric( $_SESSION['uid'] ) )
+			if ( isset( $_SESSION['uid'] ) && is_numeric( $_SESSION['uid'] ) )
 			{
 				mo_write_note( 'Logged in within the session.' );
 				$this->uid = $_SESSION['uid'];

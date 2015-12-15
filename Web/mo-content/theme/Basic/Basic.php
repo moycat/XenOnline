@@ -10,6 +10,8 @@
 	
 	require_once( $mo_theme_floder. 'functions.php' );
 	
+	add_action( 'loadPT', 'b_login', 1 );
+	
 	function Basic()
 	{
 		global $mo_request, $mo_theme_floder;
