@@ -54,8 +54,12 @@
 	
 	if ( defined( 'MEM' ) && MEM == True )
 	{
-		$mem = new Memcached();
-		$mem->addServer(MEM_HOST, MEM_PORT);
+		$mem = new Memcached( 'moyoj' );
+		$mem->setOption(Memcached::OPT_LIBKETAMA_COMPATIBLE, true);
+		if ( !count( $mem->getServerList() ) )
+		{
+			$mem->addServer(MEM_HOST, MEM_PORT);
+		}
 	}
 	$db = new DB();
 	$db->init( DB_HOST, DB_USER, DB_PASS, DB_NAME );
