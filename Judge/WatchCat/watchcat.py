@@ -42,7 +42,6 @@ web_url = ''
 max_thread = 2
 now_thread = 0
 threadlock = threading.Lock()
-timeoutlock = threading.Lock()
 
 if os.geteuid() != 0:
 	print "Not run by root. Exiting"
@@ -55,7 +54,6 @@ ext = (None, 'cpp', 'pas', 'java')
 sock = None
 connected = False
 exiting = False
-deadline = 0
 
 def p(message, over = False):
 	global log, exiting
@@ -320,11 +318,7 @@ def receiver():
 				break
 		buf = json.loads(buf)
 		action = buf['action']
-		if action == 'online':
-			timeoutlock.acquire()
-			deadline = 0
-			timeoutlock.release()
-		elif action == 'judge':
+		if action == 'judge':
 			new_judge = threading.Thread(target=judge, name='JudgeLoader' + (str)(buf['sid']), args=(buf,))
 			new_judge.setDaemon(True)
 			new_judge.start()
@@ -338,13 +332,10 @@ def receiver():
 			p("Unknown Action")
 
 def killer():
-	global sock, deadline, connected, exiting, timeoutlock
+	global sock, connected, exiting
 	while not exiting:
 		sign = 1
-		while deadline < 15 and sign == 1:
-			timeoutlock.acquire()
-			deadline = deadline + 1
-			timeoutlock.release()
+		while sign == 1:
 			time.sleep(1)
 			sign = sock.getsockopt(socket.IPPROTO_TCP, socket.TCP_INFO)
 		connected = False
@@ -353,7 +344,6 @@ def killer():
 		connect_socket()
 		time.sleep(0.5)
 		login()
-		deadline = 0
 
 def start_deamon():
 	_Receiver = threading.Thread(target=receiver, name='Receiver')

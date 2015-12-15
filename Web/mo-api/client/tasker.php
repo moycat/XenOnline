@@ -16,11 +16,6 @@ $worker_tasker->onWorkerStart = function($worker_tasker)
 		$mem = new Memcached;
 		$mem->setOption(Memcached::OPT_LIBKETAMA_COMPATIBLE, true);
 	}
-	Timer::add(3, function()use($worker_tasker) // 每3秒，自动发送心跳包
-	{
-		foreach($worker_tasker->connections as $connection)
-			sendMsg($connection, array('action' => 'online'));
-	});
 	Timer::add(5, 'check_lost'); // 每5秒，检查无响应的评测请求
 	Timer::add(10, 'check_forgotten'); // 每10秒，在数据库中寻找丢失的请求
 	p('The server <Tasker> has started.');
