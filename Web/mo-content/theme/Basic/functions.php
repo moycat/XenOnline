@@ -21,3 +21,15 @@
 			return True;
 		}
 	}
+	
+	function b_login()
+	{
+		if ( isset( $_POST['login'] ) )
+		{
+			if ( isset( $_POST['login_name'] ) && isset( $_POST['password'] ) )
+			{
+				global $user;
+				return $user->login( $_POST['login_name'], $_POST['password'] );
+			}
+		}
+	}

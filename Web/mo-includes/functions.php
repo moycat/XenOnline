@@ -9,27 +9,7 @@
 	
 	$mo_time = microtime();
 	$mo_settings = array();
-	
-	function mo_init()
-	{
-		session_start();
-		if ( DEBUG == True )
-		{
-			error_reporting( E_ALL );
-			mo_write_note( 'DEBUG ENABLED' );
-		}
-		else
-		{
-			error_reporting( E_ERROR | E_WARNING | E_PARSE );
-		}
 		
-		// Check if closed
-		if ( file_exists( MOCON. 'closed.lock' ) )
-		{
-			die( '<h1>Site Closed Temporarily</h1>' );
-		}
-	}
-	
 	function mo_analyze()
 	{
 		$request = array();
