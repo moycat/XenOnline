@@ -13,6 +13,8 @@ $worker_tasker->count = 2;
 
 $task = array();
 $cid = array();
+$ava_client = array();
+$client_sorted = False;
 
 require_once 'tasker.php';
 

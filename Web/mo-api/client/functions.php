@@ -109,7 +109,7 @@ function update_state($connection, $data)
 
 function login($connection, $data)
 {
-	global $db, $cid;
+	global $db, $cid, $ava_client, $client_sorted;
 	if (!isset($data['client_id'], $data['client_hash'] ) || $connection->cid)
 	{
 		p("Bad Login Action ( IP = $connection->IP )");
@@ -137,6 +137,7 @@ function login($connection, $data)
 	$connection->name = $result[0]['name'];
 	$cid[$connection->cid] = $connection;
 	sendMsg($connection, array('action' => 'admit', 'client_name' => $result[0]['name']));
+	$client_sorted = False;
 	p("The client <$connection->name> has joined. ( cid = $connection->cid, IP = $connection->IP )");
 	return True;
 }

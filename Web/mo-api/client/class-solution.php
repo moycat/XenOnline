@@ -32,25 +32,36 @@ class Solution
 	public function push()
 	{
 		global $worker_tasker, $cid;
+		global $ava_client, $client_sorted;
 		if (!$this->sid || time() - $this->last_time < 60)
 		{
 			return False;
 		}
 		$this->last_time = time();
-		$to_choose_from = array();
-		$client_count = 0;
-		foreach ($cid as $now_client)
+		if (!$client_sorted)
 		{
-			if ($now_client->cid)
+			$to_choose_from = array();
+			$client_count = 0;
+			foreach ($cid as $now_client)
 			{
-				$to_choose_from[] = $now_client;
-				$client_count++;
+				if ($now_client->cid)
+				{
+					$to_choose_from[] = $now_client;
+					$client_count++;
+				}
 			}
+			if (!$client_count)
+			{
+				$this->cid = -1;
+				return False;
+			}
+			$client_sorted = True;
+			$ava_client = $to_choose_from;
 		}
-		if (!$client_count)
+		else
 		{
-			$this->cid = -1;
-			return False;
+			$to_choose_from = $ava_client;
+			$client_count = count($ava_client);
 		}
 		if ($this->cid == -1)
 		{

@@ -73,7 +73,7 @@ $worker_tasker->onMessage = function($connection, $data)
 
 $worker_tasker->onClose = function($connection)
 {
-	global $cid;
+	global $cid, $ava_client, $client_sorted;
 	if ($connection->deadline)
 	{
 		Timer::del($connection->deadline);
@@ -81,6 +81,7 @@ $worker_tasker->onClose = function($connection)
 	if (isset($cid[$connection->cid]))
 	{
 		unset($cid[$connection->cid]);
+		$client_sorted = False;
 	}
     p("A client closed the connection. ( cid = $connection->cid, IP = $connection->IP )");
 };
