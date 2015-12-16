@@ -41,6 +41,7 @@ client_name = ''
 web_url = ''
 max_thread = 2
 now_thread = 0
+cache = 0
 threadlock = threading.Lock()
 
 if os.geteuid() != 0:
@@ -66,7 +67,8 @@ def p(message, over = False):
 		sys.exit(1)
 
 def init():
-	global socket_host, socket_port, client_id, client_hash, client_name, web_url
+	global socket_host, socket_port, client_id, client_hash, client_name
+	global web_url, max_thread, cache
 	global sock, connected
 	config = ConfigParser.ConfigParser()
 	config.read(config_file)
@@ -77,6 +79,7 @@ def init():
 		client_hash = config.get("client", "client_hash")
 		web_url = config.get("judge", "web_url")
 		max_thread = (int)(config.get("judge", "max_thread"))
+		cache = (int)(config.get("judge", "cache"))
 	except:
 		p("Error Reading the Config File", True)
 	mount()
