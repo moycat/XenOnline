@@ -308,14 +308,14 @@ def receiver():
 	tmp = ''
 	while not exiting:
 		while not exiting:
-			while not connected:
-				time.sleep(0.1)
-			tmp = tmp + sock.recv(8096)
 			if ('\n' in tmp):
 				loc = tmp.find('\n')
 				buf = tmp[0:loc]
 				tmp = tmp[loc + 2: len(tmp)]
 				break
+			while not connected:
+				time.sleep(0.1)
+			tmp = tmp + sock.recv(8096)
 		buf = json.loads(buf)
 		action = buf['action']
 		if action == 'judge':
