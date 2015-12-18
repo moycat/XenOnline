@@ -116,10 +116,14 @@ def clean(path = ""):
 	else:
 		path = "*"
 	os.system("rm /judge/inside/" + path + " -R -f")
-	os.system("rm /judge/stdout/" + path + " -R -f")
+	if not cache:
+		os.system("rm /judge/stdout/" + path + " -R -f")
 
-def compare(sid, now):
-	stdout = "/judge/stdout/" + sid + "/std" + str(now) + ".out "
+def compare(sid, pid, now):
+	if cache:
+		stdout = "/judge/stdout/" + pid + "/std" + str(now) + ".out "
+	else:
+		stdout = "/judge/stdout/" + sid + "/std" + str(now) + ".out "
 	userout = "/judge/inside/" + sid + "/out/out" + str(now) + ".out"
 	result = os.popen("diff -q -B -b --strip-trailing-cr " + stdout + userout).read()
 	if result == '':
@@ -129,11 +133,11 @@ def compare(sid, now):
 
 def docker_run(sid):
 	run = subprocess.Popen(["docker", "run", "-u", "nobody", "-v", "/judge/inside/" + sid + ":/judge", "-t" ,"--net", "none", "-i", "moyoj:cell", "/judge/Cell", sid + "s"])
-	while not (os.path.exists('/judge/inside/' + sid + '/out/compile')) and not (os.popen("docker ps | grep '/judge/Cell " + sid + "s'").read()):
+	while not (os.path.exists('/judge/inside/' + sid + '/out/compile')) and (os.popen("docker ps | grep '/judge/Cell " + sid + "s'").read()):
 		time.sleep(0.1)
 	update = {'action': 'update_state', 'sid': sid, 'state': -3, 'timestamp': (int)(time.time())}
 	send(update)
-	while os.popen("docker ps | grep '/judge/Cell " + sid + "s'").read() != '':
+	while os.popen("docker ps | grep '/judge/Cell " + sid + "s'").read() or not os.path.exists('/judge/inside/' + sid + '/out/summary.out'):
 		time.sleep(0.05)
 
 def docker(sid):
@@ -182,7 +186,7 @@ def heart_beat():
 		mem_ratio = str(round((mem['MemTotal'] - mem['MemAvailable']) / mem['MemTotal'] * 100, 1))
 		data = {'action': 'heartbeat', 'loadavg': loadavg, 'mem_ratio': mem_ratio, 'timestamp': (int)(time.time())}
 		send(data)
-		time.sleep(60)
+		time.sleep(180)
 		while not connected:
 			time.sleep(1)
 
@@ -196,6 +200,8 @@ def judge(data):
 	threadlock.release()
 	
 	sid = str(data['sid'])
+	pid = str(data['pid'])
+	ver = str(data['version'])
 	lang = str(data['lang'])
 	test_turn = str(data['test_turn'])
 	time_limit = str(data['time_limit'])
@@ -211,7 +217,26 @@ def judge(data):
 	detail_time = ''
 	detail_memory = ''
 	
-	os.system("mkdir /judge/inside/" + sid + " /judge/inside/" + sid + "/in /judge/inside/" + sid + "/out /judge/stdout/" + sid)
+	os.system("mkdir /judge/inside/" + sid + " /judge/inside/" + sid + "/in /judge/inside/" + sid + "/out")
+	out = open("/judge/inside/" + sid + "/downlist", "w", 0)
+	i = 0
+	while i < int(test_turn):
+		out.write(web_url + "/data/" + p_hash + "/test" + str(i) + ".in\n")
+		out.write(web_url + "/data/" + p_hash + "/std" + str(i) + ".out\n")
+		i += 1
+	out.close()
+	if cache:
+		stdout_floder = "/judge/stdout/" + pid
+		if not os.path.exists(stdout_floder + "/" + ver):
+			os.system("rm " + stdout_floder + " -R -f")
+			os.system("mkdir " + stdout_floder)
+			os.system("wget -P " + stdout_floder + "/ -i /judge/inside/" + sid + "/downlist -q --no-check-certificate")
+			os.system("echo 1 > " + stdout_floder + "/" + ver)
+	else:
+		stdout_floder = "/judge/stdout/"+sid
+		os.system("mkdir " + stdout_floder)
+		os.system("wget -P " + stdout_floder + "/ -i /judge/inside/" + sid + "/downlist -q --no-check-certificate")
+	os.system("rm /judge/inside/" + sid + "/downlist")
 	os.system("cp /judge/Cell /judge/inside/" + sid + "/Cell")
 	os.system("chmod 777 /judge/inside/" + sid + "/out")
 	os.system("chmod 755 /judge/inside/" + sid + "/Cell")
@@ -221,16 +246,7 @@ def judge(data):
 	out = open("/judge/inside/" + sid + "/judge.conf", "w", 0)
 	out.write(time_limit + "\n" + memory_limit + "\n" + test_turn + "\n" + lang)
 	out.close()
-	i = 0
-	out = open("/judge/inside/" + sid + "/downlist", "w", 0)
-	while i < int(test_turn):
-		out.write(web_url + "/data/" + p_hash + "/test" + str(i) + ".in\n")
-		out.write(web_url + "/data/" + p_hash + "/std" + str(i) + ".out\n")
-		i += 1
-	out.close()
-	os.system("wget -P /judge/stdout/" + sid + "/ -i /judge/inside/" + sid + "/downlist -q --no-check-certificate")
-	os.system("mv /judge/stdout/" + sid + "/test* /judge/inside/" + sid + "/in/")
-	os.system("rm /judge/inside/" + sid + "/downlist")
+	os.system("cp " + stdout_floder + "/test* /judge/inside/" + sid + "/in/")
 	
 	p("Now starting to compile & run... ( sid = " + sid + " )")
 	update = {'action': 'update_state', 'sid': sid, 'state': -2, 'timestamp': (int)(time.time())}
@@ -268,7 +284,7 @@ def judge(data):
 			if int(now[2]) > used_memory:
 				used_memory = int(now[2])
 			if now[0] == '0':
-				if not compare(sid, i):
+				if not compare(sid, pid, i):
 					detail_result += WA + " "
 				else:
 					detail_result += AC + " "

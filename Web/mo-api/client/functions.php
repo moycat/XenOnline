@@ -194,7 +194,7 @@ function get_prob($sid)
 	$result = get('client-problem-'. $sid);
 	if (!$result)
 	{
-		$sql = 'SELECT `id`, `hash`, `time_limit`, `memory_limit`, `test_turn` FROM `mo_judge_problem` WHERE `id` = ?';
+		$sql = 'SELECT `id`, `hash`, `ver`, `time_limit`, `memory_limit`, `test_turn` FROM `mo_judge_problem` WHERE `id` = ?';
 		$mark = $db->prepare($sql);
 		$db->bind($mark, 'i', $sid);
 		$result = $db->execute($mark);
