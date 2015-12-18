@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # -*- coding: utf-8 -*
 
 #
@@ -45,7 +45,7 @@ cache = 0
 threadlock = threading.Lock()
 
 if os.geteuid() != 0:
-	print "Not run by root. Exiting"
+	print("Not run by root. Exiting")
 	sys.exit(1)
 
 config_file = '/etc/judge.conf'
@@ -59,7 +59,7 @@ exiting = False
 def p(message, over = False):
 	global log, exiting
 	to_write = time.strftime("[%Y-%m-%d %X] ", time.localtime()) + message
-	print to_write
+	print(to_write)
 	log.write(to_write + "\n")
 	if over:
 		log.write("\n")
@@ -82,11 +82,11 @@ def init():
 		cache = (int)(config.get("judge", "cache"))
 	except:
 		p("Error Reading the Config File", True)
-	mount()
 	try:
 		socket_host = socket.gethostbyname(socket_host)
 	except:
 		p("Error Resolving the Domain", True)
+	mount()
 	connect_socket()
 	start_deamon()
 	login()
@@ -100,6 +100,12 @@ def mount():
 	if status != '':
 		status = status.split(" ")
 		os.system("umount " + status[2])
+	if not os.path.exists('/judge'):
+		os.system("mkdir /judge")
+	if not os.path.exists('/judge/inside'):
+		os.system("mkdir /judge/inside")
+	if not os.path.exists('/judge/stdout'):
+		os.system("mkdir /judge/stdout")
 	if not os.path.exists('/judge/judge.img'):
 		os.system("dd if=/dev/zero of=/judge/judge.img bs=10M count=" + str(max_thread * 5))
 		os.system("mkfs.ext3 -F /dev/loop20")
@@ -375,7 +381,30 @@ def start_deamon():
 	_hb.setDaemon(True)
 	_hb.start()
 
-p("MoyOJ Judge Client Starting...")
-init()
-while not exiting:
-	time.sleep(1)
+def hide():
+	pid = os.fork()
+	if pid > 0:
+		sys.exit(0)
+	pid = os.fork()
+	if pid > 0:
+		sys.exit(0)
+	os.chdir("/")
+	os.setsid()
+	os.umask(0)
+	pid = os.fork()
+	if pid > 0:
+		sys.exit(0)
+	sys.stdout.flush()
+	sys.stderr.flush()
+	so = file("/dev/null", 'a+')
+	se = file("/dev/null", 'a+', 0)
+	os.dup2(so.fileno(), sys.stdout.fileno())
+	os.dup2(se.fileno(), sys.stderr.fileno())
+
+if __name__  ==  '__main__':
+	if '-d' in sys.argv:
+		hide()
+	p("MoyOJ Judge Client Starting...")
+	init()
+	while not exiting:
+		time.sleep(1)
