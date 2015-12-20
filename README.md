@@ -75,3 +75,5 @@ MoyOJ带有主题、插件功能，降低了二次开发的难度。如果不满
 [WordPress](https://wordpress.org/)：WP的网站结构不错～插件和主题系统的思路亦来自此
 
 [Workerman](http://www.workerman.net/)：开源的PHP Socket框架
+
+[Editor.md](https://pandao.github.io/editor.md/)：开源的Markdown在线编辑器

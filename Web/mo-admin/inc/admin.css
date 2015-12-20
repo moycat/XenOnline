@@ -1,0 +1,30 @@
+@import url('https://fonts.googleapis.com/css?family=Lato|Lato');
+.bg {
+  background: #f1f1f1;
+}
+.login {
+  background: #FFF;
+  border-radius: 3px;
+  padding: 3%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.13);
+}
+.logincon {
+  padding: 3%;
+  width: 500px;
+}
+.hitokoto {
+  height: auto;
+  font-size: 16px;
+}
+.hitokoto:hover {
+  text-shadow: rgb(102, 102, 102) 0px 0px 5px;
+  text-decoration: none;
+}
+.signimg {
+  width: 33.3%;
+}
+.fakefooter {
+  padding-bottom:20px;
+}
+#test-editormd {
+}
