@@ -36,3 +36,27 @@
 			$active = '';
 		}
 	}
+	
+	function get_problem($get)
+	{
+		if (!isset($get['pid']) || !is_numeric($get['pid']))
+		{
+			return False;
+		}
+		global $db;
+		$sql = 'SELECT `id`, `title`, `description`, `tag`, `extra`, `time_limit`, `memory_limit`, `state` FROM `mo_judge_problem` WHERE `id` = ?';
+		$db->prepare($sql);
+		$db->bind('i', $get['pid']);
+		$result = $db->execute();
+		return $result ? $result[0] : False;
+	}
+	
+	function add_problem()
+	{
+		
+	}
+	
+	function edit_problem()
+	{
+		
+	}

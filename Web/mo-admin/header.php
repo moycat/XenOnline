@@ -24,6 +24,8 @@ require_once MOINC. 'function-user.php';
 require_once 'functions.php';
 
 check_login();
+if (!isset($no_display))
+{
 ?>
 
 <html>
@@ -97,3 +99,5 @@ check_login();
 		</div>
 	</div>
 </div>
+<?php
+}
