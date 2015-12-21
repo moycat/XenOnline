@@ -53,10 +53,10 @@ if (isset($_SESSION['aid']))
    <head>
       <title>管理登录</title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <link href="http://apps.bdimg.com/libs/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet">
+      <link href="//cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
       <link href="inc/admin.css" rel="stylesheet">
-      <script src="http://apps.bdimg.com/libs/jquery/2.0.0/jquery.min.js"></script>
-      <script src="http://apps.bdimg.com/libs/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+      <script src="//cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
+      <script src="//cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
    </head>
 	<body class="bg">
 		<div class="section">
@@ -100,6 +100,8 @@ if (isset($_SESSION['aid']))
 			<br>
 			<a href="/" title="误入深处？">← 返回主页</a>
 			</div>
+		</div>
+		<div class="fakefooter">
 		</div>
 	</body>
 </html>

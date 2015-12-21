@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css?family=Lato|Lato');
 .bg {
   background: #f1f1f1;
+  padding-bottom:20px;
 }
 .login {
   background: #FFF;
@@ -10,7 +11,7 @@
 }
 .logincon {
   padding: 3%;
-  width: 500px;
+  width: 320px;
 }
 .hitokoto {
   height: auto;
@@ -22,9 +23,6 @@
 }
 .signimg {
   width: 33.3%;
-}
-.fakefooter {
-  padding-bottom:20px;
 }
 #test-editormd {
 }
