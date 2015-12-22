@@ -1,7 +1,7 @@
 <?php
 function publish_jump($status)
 {
-	header("Location: problem_view.php?result=$status");
+	header("Location: problem.php?result=$status");
 	exit(0);
 }
 
@@ -20,9 +20,8 @@ switch ($_POST['action'])
 		}
 		else
 		{
-			publish_jump(-1);
+			header("Location: problem_edit.php?action=add");
 		}
-		//TODO 回到编辑页面显示tmp
 	case 'edit':
 		if (edit_problem())
 		{

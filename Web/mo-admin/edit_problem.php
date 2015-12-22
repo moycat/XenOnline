@@ -14,7 +14,7 @@ $head = '<link rel="stylesheet" href="https://pandao.github.io/editor.md/css/edi
 require_once 'header.php';
 if (!isset($_GET['action']))
 {
-	$error = True;
+	$error = '未定义的操作。';
 }
 else
 {
@@ -24,18 +24,23 @@ else
 			$pv_info = get_problem($_GET);
 			if (!$pv_info)
 			{
-				$error = True;
+				$error = '未定义的操作。';
 				break;
 			}
 		case 'add':
 			if (isset($_SESSION['publish_tmp']))
 			{
 				$pv_info = $_SESSION['publish_tmp'];
+				if (isset($_SESSION['publish_tmp']['error']))
+				{
+					$error = $_SESSION['publish_tmp']['error'];
+				}
+				unset($_SESSION['publish_tmp']);
 			}
 			$error = False;
 			break;
 		default:
-			$error = True;
+			$error = '未定义的操作。';
 	}
 }
 if (!$error)
@@ -46,7 +51,7 @@ if (!$error)
 <li><a href="problem.php">管理题目</a></li>
 <li<?php if ($_GET['action'] == 'add') echo ' class="active"'; ?>><a href="edit_problem.php?action=add">添加题目</a></li>
 </ul>
-<form id="newform" role="form" method="post" action="publish.php">
+<form id="newform" role="form" method="post" action="publish.php" enctype="multipart/form-data">
 	<div class="form-group input-group-lg">
 	 <label class="control-label" for="title"><h2>标题</h2></label>
 	 <input id="title" class="form-control" type="text" name="title" placeholder="请在此输入标题～"<?php echo isset($pv_info)?' value="'.$pv_info['title'].'"':''; ?>>
@@ -91,10 +96,10 @@ if (!$error)
 		 <?php if (isset($pv_info)) echo '<div class="alert alert-warning">如不修改测试数据，请不要在此选择文件！一旦选择文件，将覆盖此题之前版本所有测试数据！</div>'; ?>
 		 <div class="row">
 			<div class="col-md-3">
-			 <p><input type="file" id="input1" title="输入数据 #1" name="input1" class="btn-primary"></p>
+			 <p><input type="file" id="input0" title="输入数据 #0" name="input0" class="btn-primary"></p>
 			 </div>
 			 <div class="col-md-3">
-			 <p><input type="file" id="stdout1" title="输出数据 #1" name="stdout1" class="btn-primary"></p>
+			 <p><input type="file" id="stdout0" title="输出数据 #0" name="stdout0" class="btn-primary"></p>
 			 </div>
 		 </div>
 	 </div>
@@ -117,9 +122,19 @@ if (!$error)
 		</div>
 	</div>
 	<div class="form-group input-group-sm">
-	 <label class="control-label" for="extra"><h3>额外信息</h3></label>
-	 <input id="extra" class="form-control" type="text" name="extra" placeholder="TODO">
-	</div>
+	 <h3>额外信息(TODO)</h3>
+	 <div class="extra">
+		 <div class="row">
+			<div class="col-md-3">
+				<input id="extra-tag1" class="form-control" type="text" name="extra-tag1" placeholder="标签">
+			</div>
+			<div class="col-md-9">
+				<input id="extra-con1" class="form-control" type="text" name="extra-con1" placeholder="内容">
+			</div>
+		 </div>
+	 </div>
+	 <button type="button" class="btn btn-danger" onclick="add_extra_data()">添加一组额外信息</button>
+	 </div>
 	<?php
 	if ($_GET['action'] == 'add')
 	{
@@ -188,7 +203,7 @@ else
 {
 ?>
 <div class="container">
-	<div class="alert alert-danger">未定义的操作。</div>
+	<div class="alert alert-danger"><?php echo $error; ?></div>
 </div>
 <?php
 }

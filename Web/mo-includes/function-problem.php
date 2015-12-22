@@ -97,7 +97,7 @@
 		$request = json_encode( array( 'task' => $data, 'pass' => sha1(DB_PASS) ) ). "\n";
 		$errno = 0;
 		$errstr = '';
-		$socket = fsockopen( '127.0.0.1', '6666', $errno, $errstr, 1 );
+		$socket = fsockopen( SOCK_HOST, SOCK_PORT, $errno, $errstr, 1 );
 		if ( !$socket )
 		{
 			mo_log_user( 'Solution Failed Pushing (SID = '. $data['sid']. ').' );

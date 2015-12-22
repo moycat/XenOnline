@@ -34,5 +34,6 @@ body {
 .signimg {
   width: 33.3%;
 }
-#test-editormd {
+.extra {
+  padding-bottom: 10px;
 }

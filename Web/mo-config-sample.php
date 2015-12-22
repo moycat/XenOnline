@@ -23,6 +23,11 @@
 	// The port of the memcached service
 	define( 'MEM_PORT' , 11211 );
 	
+	// The address of your socket server
+	define( 'SOCK_HOST' , 'the_socket_addr' );
+	// The port of the memcached service
+	define( 'SOCK_PORT' , 6666 );
+	
 	// The cost used when crypting password
 	// At least 4, and 5 is recommond
 	define( 'CRYPT_COST', 4 );
