@@ -71,7 +71,7 @@ $user_to_verify = (int)$result[0]['total'];
 				<p class="text-left">
 					当前评测机状态：<br>
 					<span class="glyphicon glyphicon-arrow-up"></span><?php echo $ava_client_count; ?>　
-					<span class="glyphicon glyphicon-arrow-down"></span><?php echo $client_count; ?>
+					<span class="glyphicon glyphicon-arrow-down"></span><?php echo $client_count-$ava_client_count; ?>
 				</p>
 				<a href="client.php" class="btn btn-primary btn-default" role="button">查看详情</a>
 			</div>

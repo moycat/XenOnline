@@ -58,7 +58,7 @@ if (isset($_SESSION['aid']))
       <script src="//cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
       <script src="//cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
    </head>
-	<body class="bg">
+	<body>
 		<div class="section">
 			<div class="container logincon">
 				<div class="row">
@@ -100,8 +100,6 @@ if (isset($_SESSION['aid']))
 			<br>
 			<a href="/" title="误入深处？">← 返回主页</a>
 			</div>
-		</div>
-		<div class="fakefooter">
 		</div>
 	</body>
 </html>

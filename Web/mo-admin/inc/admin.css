@@ -1,18 +1,27 @@
 @import url('https://fonts.googleapis.com/css?family=Lato|Lato');
-.bg {
+body {
   background: #f1f1f1;
   padding-bottom:20px;
   font-family:"Microsoft Yahei","Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+.logincon {
+  padding: 3%;
+  width: 320px;
+}
+@media only screen and (min-width: 769px) {
+  .container {
+    padding: 0 3.157em;
+  }
+  .logincon {
+    padding: 3%;
+    width: 500px;
+  }
 }
 .login {
   background: #FFF;
   border-radius: 3px;
   padding: 3%;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.13);
-}
-.logincon {
-  padding: 3%;
-  width: 320px;
 }
 .hitokoto {
   height: auto;

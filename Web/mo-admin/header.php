@@ -38,7 +38,7 @@ if (!isset($no_display))
       <script src="//cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
       <?php if (isset($head)) echo $head; ?>
    </head>
-<body class="bg">
+<body>
 <div class="navbar navbar-default navbar-static-top">
 	<div class="container">
 		<div class="navbar-header">
