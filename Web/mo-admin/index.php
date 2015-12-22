@@ -75,7 +75,7 @@ $user_to_verify = (int)$result[0]['total'];
 				</p>
 				<a href="client.php" class="btn btn-primary btn-default" role="button">查看详情</a>
 			</div>
-			<div class="col-md-6 text-center">
+			<div class="col-md-6">
 				<img src="inc/icon/<?php echo $user_to_verify ? 'user-warn.png' : 'user.png'; ?>" align="left" class="img-rounded img-responsive signimg">
 				<h3 class="text-left">
 					用户

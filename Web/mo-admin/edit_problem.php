@@ -1,6 +1,9 @@
 <?php
 $active = 'problem';
 $head = '<link rel="stylesheet" href="https://pandao.github.io/editor.md/css/editormd.min.css" />
+<link href="//cdn.bootcss.com/formvalidation/0.6.1/css/formValidation.min.css" rel="stylesheet">
+<script src="//cdn.bootcss.com/formvalidation/0.6.1/js/formValidation.min.js"></script>
+<script src="//cdn.bootcss.com/formvalidation/0.6.1/js/framework/bootstrap.min.js"></script>
 <script src="inc/bootstrap.file-input.js"></script>
 <script src="inc/admin.js"></script>
 <script>
@@ -43,7 +46,7 @@ if (!$error)
 <li><a href="problem.php">管理题目</a></li>
 <li<?php if ($_GET['action'] == 'add') echo ' class="active"'; ?>><a href="edit_problem.php?action=add">添加题目</a></li>
 </ul>
-<form role="form" method="post" action="publish.php">
+<form id="newform" role="form" method="post" action="publish.php">
 	<div class="form-group input-group-lg">
 	 <label class="control-label" for="title"><h2>标题</h2></label>
 	 <input id="title" class="form-control" type="text" name="title" placeholder="请在此输入标题～"<?php echo isset($pv_info)?' value="'.$pv_info['title'].'"':''; ?>>
@@ -104,7 +107,7 @@ if (!$error)
 				<input id="time_limit" class="form-control" type="text" name="time_limit" placeholder="单位：毫秒" pattern="^[0-9]*$"<?php echo isset($pv_info)?' value="'.$pv_info['time_limit'].'"':''; ?>>
 			</div>
 			<div class="col-md-3">
-				<label class="control-label" for="time_limit"><h3>内存限制（MB）</h3></label>
+				<label class="control-label" for="memory_limit"><h3>内存限制（MB）</h3></label>
 				<input id="memory_limit" class="form-control" type="text" name="memory_limit" placeholder="单位：兆字节" pattern="^[0-9]*$"<?php echo isset($pv_info)?' value="'.$pv_info['memory_limit'].'"':''; ?>>
 			</div>
 			<div class="col-md-6">
@@ -131,6 +134,54 @@ if (!$error)
 	<button type="submit" class="btn btn-default btn-lg">发布</button>
 </form>
 </div>
+<script>
+$(document).ready(function() {
+    $('#newform').formValidation({
+        framework: 'bootstrap',
+        icon: {
+            valid: 'glyphicon glyphicon-ok',
+            invalid: 'glyphicon glyphicon-remove',
+            validating: 'glyphicon glyphicon-refresh'
+        },
+        fields: {
+            title: {
+                validators: {
+                    notEmpty: {
+                        message: '请输入题目的标题'
+                    },
+                    stringLength: {
+                        min: 0,
+                        max: 200,
+                        message: '标题长度不能超过200字符！'
+                    }
+                }
+            },
+            time_limit: {
+                validators: {
+                    notEmpty: {
+                        message: '请输入每组测试数据限时'
+                    },
+                    regexp: {
+                        regexp: /^\+?[1-9][0-9]*$/,
+                        message: '请输入一个正整数！'
+                    }
+                }
+            },
+            memory_limit: {
+                validators: {
+                    notEmpty: {
+                        message: '请输入程序运行内存限制'
+                    },
+                    regexp: {
+                        regexp: /^\+?[1-9][0-9]*$/,
+                        message: '请输入一个正整数！'
+                    }
+                }
+            }
+        }
+    });
+});
+</script>
 <?php
 }
 else

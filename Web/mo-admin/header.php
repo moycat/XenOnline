@@ -39,7 +39,7 @@ if (!isset($no_display))
       <?php if (isset($head)) echo $head; ?>
    </head>
 <body>
-<div class="navbar navbar-default navbar-static-top">
+<div class="navbar navbar-default">
 	<div class="container">
 		<div class="navbar-header">
 			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-ex-collapse">
