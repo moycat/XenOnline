@@ -53,7 +53,7 @@ if (!isset($no_display))
 				<span class="icon-bar">
 				</span>
 			</button>
-			<a class="navbar-brand" href="#">
+			<a class="navbar-brand" href="/mo-admin/">
 				<?php echo mo_get_option('site_name'); ?> - 管理后台
 			</a>
 		</div>
