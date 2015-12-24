@@ -12,15 +12,16 @@
 		global $db;
 		$start -= 1;
 		$sql = 'SELECT `id`, `title`, `tag`, `extra`, `solved`, `try` FROM `mo_judge_problem` WHERE `state` = 1 ';
+		$piece = $end - $start + 1;
 		if ( $tag )
 		{
-			$sql .= "AND (MATCH (tag) AGAINST (?)) ORDER BY `id` DESC LIMIT $start,$end";
+			$sql .= "AND (MATCH (tag) AGAINST (?)) ORDER BY `id` DESC LIMIT $start,$piece";
 			$db->prepare( $sql );
 			$db->bind( 's', $tag );
 		}
 		else
 		{
-			$sql .= "ORDER BY `id` DESC LIMIT $start,$end";
+			$sql .= "ORDER BY `id` DESC LIMIT $start,$piece";
 			$db->prepare( $sql );
 		}
 		$result = $db->execute();
@@ -44,7 +45,8 @@
 		{
 			$sql .= " AND `uid` = $state";
 		}
-		$sql .= " ORDER BY `id` DESC LIMIT $start,$end";
+		$piece = $end - $start + 1;
+		$sql .= " ORDER BY `id` DESC LIMIT $start,$piece";
 		$db->prepare( $sql );
 		$result = $db->execute();
 		return $result;

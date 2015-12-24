@@ -41,13 +41,13 @@ $user_to_verify = (int)$result[0]['total'];
 			<div class="col-md-6">
 				<img src="inc/icon/problem.png" align="left" class="img-rounded img-responsive signimg">
 				<h3 class="text-left">
-					题目
+					题库
 				</h3>
 				<p class="text-left">
 					题库当前线上题目数：<?php echo mo_get_problem_count(); ?><br>
 				</p>
 				<a href="edit_problem.php?action=add" class="btn btn-primary btn-default" role="button">添加题目</a>
-				<a href="problem.php" class="btn btn-default btn-default" role="button">浏览题目</a>
+				<a href="problem.php" class="btn btn-default btn-default" role="button">管理题目</a>
 			</div>
 			<div class="col-md-6">
 				<img src="inc/icon/data.png" align="left" class="img-rounded img-responsive signimg">

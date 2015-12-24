@@ -20,7 +20,8 @@
 		{
 			$sql .= " AND `uid` = $uid";
 		}
-		$sql .= " ORDER BY `id` DESC LIMIT $start,$end";
+		$piece = $end - $start + 1;
+		$sql .= " ORDER BY `id` DESC LIMIT $start,$piece";
 		$db->prepare( $sql );
 		$db->bind( 'ii', $parent, $status );
 		$result = $db->execute();

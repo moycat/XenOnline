@@ -36,6 +36,7 @@ if (!isset($no_display))
       <link href="inc/admin.css" rel="stylesheet">
       <script src="//cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
       <script src="//cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+      <script src="inc/admin.js"></script>
       <?php if (isset($head)) echo $head; ?>
    </head>
 <body>

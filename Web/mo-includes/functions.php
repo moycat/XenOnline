@@ -189,6 +189,11 @@
 		return round( ( $s1 + $m1 - $s0 - $m0 ) * 1000, $p );
 	}
 	
+	function mo_get_problem_url( $pid )
+	{
+		return '/?r=problem/'.$pid;
+	}
+	
 	function mo_write_note( $note )
 	{
 		if ( defined( 'DEBUG' ) && DEBUG && defined( 'OUTPUT' ) && OUTPUT )

@@ -5,7 +5,6 @@ $head = '<link rel="stylesheet" href="https://pandao.github.io/editor.md/css/edi
 <script src="//cdn.bootcss.com/formvalidation/0.6.1/js/formValidation.min.js"></script>
 <script src="//cdn.bootcss.com/formvalidation/0.6.1/js/framework/bootstrap.min.js"></script>
 <script src="inc/bootstrap.file-input.js"></script>
-<script src="inc/admin.js"></script>
 <script>
 	$().ready(function() {
 		filePrint();
@@ -27,14 +26,14 @@ else
 				break;
 			}
 		case 'add':
-			if (isset($_SESSION['publish_tmp']))
+			if (isset($_SESSION['admin_publish_tmp']))
 			{
-				$pv_info = $_SESSION['publish_tmp'];
-				if (isset($_SESSION['publish_tmp']['error']))
+				$pv_info = $_SESSION['admin_publish_tmp'];
+				if (isset($_SESSION['admin_publish_tmp']['error']))
 				{
-					$error = $_SESSION['publish_tmp']['error'];
+					$error = $_SESSION['admin_publish_tmp']['error'];
 				}
-				unset($_SESSION['publish_tmp']);
+				unset($_SESSION['admin_publish_tmp']);
 			}
 			$error = False;
 			break;
@@ -48,7 +47,9 @@ if (!$error)
 <div class="container">
 <ul class="nav nav-tabs">
 <li><a href="problem.php">管理题目</a></li>
-<li<?php if ($_GET['action'] == 'add') echo ' class="active"'; ?>><a href="edit_problem.php?action=add">添加题目</a></li>
+<?php if ($_GET['action'] == 'add') echo '<li class="active"><a href="edit_problem.php?action=add">添加题目</a></li>';
+elseif ($_GET['action'] == 'edit') echo '<li><a href="edit_problem.php?action=add">添加题目</a></li>
+<li class="active"><a href="#">编辑题目</a></li>'?>
 </ul>
 <form id="newform" role="form" method="post" action="publish.php" enctype="multipart/form-data">
 	<div class="form-group input-group-lg">
