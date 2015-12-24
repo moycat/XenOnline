@@ -21,8 +21,7 @@ else
 	switch ($_GET['action'])
 	{
 		case 'edit':
-			$pv_info = get_problem($_GET);
-			if (!$pv_info)
+			if (!isset($_GET['pid']) || !($pv_info = get_problem($_GET['pid'])))
 			{
 				$error = '未定义的操作。';
 				break;
@@ -69,7 +68,7 @@ if (!$error)
 				width: "100%",
 				height: 740,
 				path : '//cdn.rawgit.com/pandao/editor.md/master/lib/',
-				markdown : <?php echo isset($pv_info)?'\''.$pv_info['description'].'\'':'md'; ?>,
+				markdown : <?php echo isset($pv_info)?json_encode($pv_info['description']):'md'; ?>,
 				codeFold : true,
 				saveHTMLToTextarea : true,
 				searchReplace : true,

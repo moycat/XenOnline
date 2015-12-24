@@ -20,7 +20,7 @@ switch ($_POST['action'])
 		}
 		else
 		{
-			header("Location: problem_edit.php?action=add");
+			header('Location: problem_edit.php?action=add');
 		}
 	case 'edit':
 		if (edit_problem())
@@ -29,7 +29,7 @@ switch ($_POST['action'])
 		}
 		else
 		{
-			publish_jump(-2);
+			header('Location: problem_edit.php?action=edit&id='. $_GET['edit_id']);
 		}
 	default:
 		publish_jump(0);
