@@ -27,13 +27,25 @@ $page = ceil($problem_count / $piece);
              <input type="text" name="pid" class="form-control" placeholder="题号">
                 <span class="input-group-btn">
                   <button class="btn btn-default" type="submit" >
-                     EDIT
+                     Edit
                 </button>
                </span>
              <input type="hidden" name="action" value="edit">
           </div>
         </form>
+        <form method="get" action="problem.php">
         <h4>筛选器</h4>
+        <div class="input-group">
+             <span class="input-group-addon">#</span>
+             <input type="text" name="pid" class="form-control" placeholder="题号">
+          </div>
+        <input type="hidden" name="action" value="search">
+        <span class="input-group-btn">
+          <button class="btn btn-default" type="submit" >
+             Apply
+        </button>
+       </span>
+        </form>
     </div>
     <div class="col-md-9">
         <div class="row">
@@ -45,7 +57,7 @@ $page = ceil($problem_count / $piece);
             {
                 foreach ($result as $prob)
                 {
-					$detail[$prob['id']] = json_encode($prob);
+                    $detail[$prob['id']] = json_encode($prob);
                     $tr = (isset($_GET['pid']) && (string)$prob['id'] == $_GET['pid']) ? '<tr id="'.$prob['id'].'" class="success">' : '<tr id="'.$prob['id'].'">';
                     echo '
                     '.$tr.'
@@ -57,18 +69,7 @@ $page = ceil($problem_count / $piece);
                      <a class="btn btn-primary btn-sm" href="edit_problem.php?action=edit&pid='.$prob['id'].'">编辑</a>
                      <button type="button" class="btn btn-info btn-sm" onclick="prob_detail('.$prob['id'].')">详情</button> 
                      <button type="button" class="btn btn-danger btn-sm">删除</button>
-                     <div class="btn-group">
-                    <button type="button" class="btn btn-default btn-sm dropdown-toggle" 
-                      data-toggle="dropdown">
-                      更多
-                      <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu">
-                      <li><a href="#">提交</a></li>
-                      <li><a href="#">讨论</a></li>'.
-                      (($prob['state'] == 1) ? '<li><a href="#">锁定</a></li>' : '<li><a href="#">解锁</a></li>').
-                      '</ul>
-                    </div>
+                     <button type="button" class="btn btn-warning btn-sm">'.(($prob['state'] == 1) ? '锁定' : '解锁').'</button>
                      </div></tr>';
                 }
             }
@@ -86,6 +87,7 @@ $page = ceil($problem_count / $piece);
           </table>
             <ul class="pager">
               <li class="<?php echo $start >= $piece ? 'previous' : 'previous disabled';?>"><a href="<?php echo $start >= $piece ? 'problem.php?loc='.($start-$piece) : '#';?>">&larr; 上一页</a></li>
+              共<?php echo ceil($problem_count / $piece); ?>页，正在浏览第<?php echo ceil($start / $piece) + 1; ?>页
               <li class="<?php echo $problem_count - $start >= $piece ? 'next' : 'next disabled';?>"><a href="<?php echo $problem_count - $start >= $piece ? 'problem.php?loc='.($start+$piece) : '#';?>">下一页 &rarr;</a></li>
             </ul>
          </div>

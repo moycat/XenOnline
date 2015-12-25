@@ -27,6 +27,16 @@ function add_extra_data() {
 	$(".extra").append(new_extra);
 }
 function prob_detail(pid) {
-	$('#'+pid).webuiPopover({title:prob[pid]['title'],content:'<p><button type="button" class="btn btn-default btn-xs">\
-  <span class="glyphicon glyphicon-tags"></span> 标签</button> '+prob[pid]['tag']+'<p>',placement:'bottom'});
+	$('#'+pid).webuiPopover({title:prob[pid]['title'],content:'<p><span class="label label-info">\
+<span class="glyphicon glyphicon-tags"></span>&nbsp;标签</span> '+prob[pid]['tag']+'</p>\
+<p><span class="label label-primary">\
+<span class="glyphicon glyphicon-time"></span>&nbsp;限时</span> '+prob[pid]['time_limit']+'ms&nbsp;&nbsp;\
+<span class="label label-primary">\
+<span class="glyphicon glyphicon-floppy-disk"></span>&nbsp;内存</span> '+prob[pid]['memory_limit']+'MB</p>\
+<p><span class="label label-warning">\
+<span class="glyphicon glyphicon-send"></span>&nbsp;尝试</span> '+prob[pid]['submit']+'('+prob[pid]['try']+')&nbsp;&nbsp;<span class="label label-success"><span class="glyphicon glyphicon-ok">\
+</span>&nbsp;通过</span> '+prob[pid]['ac']+'('+prob[pid]['solved']+')</p>\
+<p><span class="label label-primary">\
+<span class="glyphicon glyphicon-calendar"></span>&nbsp;发布时间</span> '+prob[pid]['post_time']+'</p>'
+,placement:'bottom',animation:'fade'});
 }
