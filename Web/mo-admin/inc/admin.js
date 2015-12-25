@@ -27,5 +27,6 @@ function add_extra_data() {
 	$(".extra").append(new_extra);
 }
 function prob_detail(pid) {
-	$('#'+pid).webuiPopover({title:'Title',content:'Content',placement:'bottom'});
+	$('#'+pid).webuiPopover({title:prob[pid]['title'],content:'<p><button type="button" class="btn btn-default btn-xs">\
+  <span class="glyphicon glyphicon-tags"></span> 标签</button> '+prob[pid]['tag']+'<p>',placement:'bottom'});
 }
