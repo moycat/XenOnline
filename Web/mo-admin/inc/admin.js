@@ -26,3 +26,6 @@ function add_extra_data() {
 		 </div>"
 	$(".extra").append(new_extra);
 }
+function prob_detail(pid) {
+	$('#'+pid).webuiPopover({title:'Title',content:'Content',placement:'bottom'});
+}

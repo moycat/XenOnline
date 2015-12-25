@@ -1,5 +1,7 @@
 <?php
 $active = 'problem';
+$head = '<link rel="stylesheet" href="inc/jquery.webui-popover.css">
+<script src="inc/jquery.webui-popover.js"></script>';
 require_once 'header.php';
 $start = isset($_GET['loc']) ? (int)$_GET['loc'] : 0;
 $piece = isset($_GET['piece']) ? (int)$_GET['piece'] : 20;
@@ -39,7 +41,7 @@ $page = ceil($problem_count / $piece);
 			{
 				foreach ($result as $prob)
 				{
-					$tr = (isset($_GET['pid']) && (string)$prob['id'] == $_GET['pid']) ? '<tr class="success">' : '<tr>';
+					$tr = (isset($_GET['pid']) && (string)$prob['id'] == $_GET['pid']) ? '<tr id="'.$prob['id'].'" class="success">' : '<tr id="'.$prob['id'].'">';
 					echo '
 					'.$tr.'
 					 <td>'.$prob['id'].'</td>
@@ -47,13 +49,13 @@ $page = ceil($problem_count / $piece);
 					 <td>'.$prob['time_limit'].'/'.$prob['memory_limit'].'</td></td>
 					 <td>'.$prob['test_turn'].' ('.$prob['ver'].')</td>
 					 <td><div class="btn-group">
-					 <a class="btn btn-primary btn-sm" href="edit_problem.php?action=edit&id='.$prob['id'].'">编辑</a>
-					 <button type="button" class="btn btn-info btn-sm">详情</button> 
+					 <a class="btn btn-primary btn-sm" href="edit_problem.php?action=edit&pid='.$prob['id'].'">编辑</a>
+					 <button type="button" class="btn btn-info btn-sm" onclick="prob_detail('.$prob['id'].')">详情</button> 
 					 <button type="button" class="btn btn-danger btn-sm">删除</button>
 					 <div class="btn-group">
 					<button type="button" class="btn btn-default btn-sm dropdown-toggle" 
 					  data-toggle="dropdown">
-					  更多操作
+					  更多
 					  <span class="caret"></span>
 					</button>
 					<ul class="dropdown-menu">'.
