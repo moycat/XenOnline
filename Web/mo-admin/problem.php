@@ -53,26 +53,23 @@ $page = ceil($problem_count / $piece);
            <tbody>
             <?php
             $detail = array();
-            if ($result)
-            {
-                foreach ($result as $prob)
-                {
-                    $detail[$prob['id']] = json_encode($prob);
-                    $tr = (isset($_GET['pid']) && (string)$prob['id'] == $_GET['pid']) ? '<tr id="'.$prob['id'].'" class="success">' : '<tr id="'.$prob['id'].'">';
-                    echo '
-                    '.$tr.'
-                     <td>'.$prob['id'].'</td>
-                     <td><a href="'.mo_get_problem_url($prob['id']).'">'.(($prob['state'] == 1) ? $prob['title'] : '<del>'. $prob['title']. '</del>').'</a></td></td>
-                     <td>'.$prob['time_limit'].'/'.$prob['memory_limit'].'</td></td>
-                     <td>'.$prob['test_turn'].' ('.$prob['ver'].')</td>
-                     <td><div class="btn-group">
-                     <a class="btn btn-primary btn-sm" href="edit_problem.php?action=edit&pid='.$prob['id'].'">编辑</a>
-                     <button type="button" class="btn btn-info btn-sm" onclick="prob_detail('.$prob['id'].')">详情</button> 
-                     <button type="button" class="btn btn-danger btn-sm">删除</button>
-                     <button type="button" class="btn btn-warning btn-sm">'.(($prob['state'] == 1) ? '锁定' : '解锁').'</button>
-                     </div></tr>';
-                }
-            }
+			foreach ($result as $prob)
+			{
+				$detail[$prob['id']] = json_encode($prob);
+				$tr = (isset($_GET['pid']) && (string)$prob['id'] == $_GET['pid']) ? '<tr id="'.$prob['id'].'" class="success">' : '<tr id="'.$prob['id'].'">';
+				echo '
+				'.$tr.'
+				 <td>'.$prob['id'].'</td>
+				 <td><a href="'.mo_get_problem_url($prob['id']).'">'.(($prob['state'] == 1) ? $prob['title'] : '<del>'. $prob['title']. '</del>').'</a></td>
+				 <td>'.$prob['time_limit'].'/'.$prob['memory_limit'].'</td>
+				 <td>'.$prob['test_turn'].' ('.$prob['ver'].')</td>
+				 <td><div class="btn-group">
+				 <a class="btn btn-primary btn-sm" href="edit_problem.php?action=edit&pid='.$prob['id'].'">编辑</a>
+				 <button type="button" class="btn btn-info btn-sm" onclick="prob_detail('.$prob['id'].')">详情</button> 
+				 <button type="button" class="btn btn-danger btn-sm">删除</button>
+				 <button type="button" class="btn btn-warning btn-sm">'.(($prob['state'] == 1) ? '锁定' : '解锁').'</button>
+				 </div></tr>';
+			}
             ?>
            </tbody>
            <thead>

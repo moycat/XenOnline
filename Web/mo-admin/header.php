@@ -85,8 +85,13 @@ if (!isset($no_display))
 					<a href="user.php">
 						用户
 					</a>
-				</li<?php ($active == 'setting')?print(' class="active"'):0; ?>>
-				<li>
+				</li>
+				<li<?php ($active == 'client')?print(' class="active"'):0; ?>>
+					<a href="client.php">
+						评测端
+					</a>
+				</li>
+				<li<?php ($active == 'setting')?print(' class="active"'):0; ?>>
 					<a href="setting.php">
 						设置
 					</a>

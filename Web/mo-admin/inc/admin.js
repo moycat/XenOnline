@@ -27,7 +27,7 @@ function add_extra_data() {
 	$(".extra").append(new_extra);
 }
 function prob_detail(pid) {
-	$('#'+pid).webuiPopover({title:prob[pid]['title'],content:'<p><span class="label label-info">\
+	$('#'+pid).webuiPopover({title:'#'+prob[pid]['id']+' '+prob[pid]['title'],content:'<p><span class="label label-info">\
 <span class="glyphicon glyphicon-tags"></span>&nbsp;标签</span> '+prob[pid]['tag']+'</p>\
 <p><span class="label label-primary">\
 <span class="glyphicon glyphicon-time"></span>&nbsp;限时</span> '+prob[pid]['time_limit']+'ms&nbsp;&nbsp;\
