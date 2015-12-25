@@ -108,15 +108,15 @@ elseif ($_GET['action'] == 'edit') echo '<li><a href="edit_problem.php?action=ad
 	<div class="form-group input-group-sm">
 		<div class="row">
 			<div class="col-md-3">
-				<label class="control-label" for="time_limit"><h3>时间限制（ms）</h3></label>
+				<label class="control-label" for="time_limit"><h3>时间限制(ms)</h3></label>
 				<input id="time_limit" class="form-control" type="text" name="time_limit" placeholder="单位：毫秒" pattern="^[0-9]*$"<?php echo isset($pv_info)?' value="'.$pv_info['time_limit'].'"':''; ?>>
 			</div>
 			<div class="col-md-3">
-				<label class="control-label" for="memory_limit"><h3>内存限制（MB）</h3></label>
+				<label class="control-label" for="memory_limit"><h3>内存限制(MB)</h3></label>
 				<input id="memory_limit" class="form-control" type="text" name="memory_limit" placeholder="单位：兆字节" pattern="^[0-9]*$"<?php echo isset($pv_info)?' value="'.$pv_info['memory_limit'].'"':''; ?>>
 			</div>
 			<div class="col-md-6">
-				<label class="control-label" for="tag"><h3>标签</h3></label>
+				<label class="control-label" for="tag"><h3><span class="glyphicon glyphicon-tags"></span>&nbsp;标签</h3></label>
 				<input id="tag" class="form-control" type="text" name="tag" placeholder="多个标签使用空格分开"<?php echo isset($pv_info)?' value="'.$pv_info['tag'].'"':''; ?>>
 			</div>
 		</div>

@@ -21,7 +21,7 @@ $page = ceil($problem_count / $piece);
     <?php if (isset($_GET['result']) && $_GET['result'] == 0) echo '<div class="alert alert-warning">未知错误。</div>'; ?>
     <div class="col-md-3">
         <form method="get" action="edit_problem.php">
-          <h3>快速编辑</h3>
+          <h4>快速编辑</h4>
             <div class="input-group">
              <span class="input-group-addon">#</span>
              <input type="text" name="pid" class="form-control" placeholder="题号">
@@ -33,7 +33,7 @@ $page = ceil($problem_count / $piece);
              <input type="hidden" name="action" value="edit">
           </div>
         </form>
-        <h3>筛选器</h3>
+        <h4>筛选器</h4>
     </div>
     <div class="col-md-9">
         <div class="row">
