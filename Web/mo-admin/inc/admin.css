@@ -29,6 +29,7 @@ body {
 }
 .hitokoto {
   height: auto;
+  min-height: 22px;
   font-size: 16px;
 }
 .hitokoto:hover {

@@ -3,6 +3,27 @@ $active = 'problem';
 $head = '<link rel="stylesheet" href="inc/jquery.webui-popover.css">
 <script src="inc/jquery.webui-popover.js"></script>';
 require_once 'header.php';
+if (isset($_GET['action']))
+{
+	if ($_GET['action'] == 'lock' || $_GET['action'] == 'unlock')
+	{
+		$pid = $_GET['pid'];
+		$sql = 'UPDATE `mo_judge_problem` SET `state` = \''.($_GET['action'] == 'lock' ? '0' : '1').'\' WHERE `id` = ?';
+		$db->prepare($sql);
+		$db->bind('i', $pid);
+		$db->execute();
+		$msg = '成功'.($_GET['action'] == 'lock' ? '锁定' : '解锁').'题目#'. $pid. '。';
+	}
+	elseif ($_GET['action'] == 'del')
+	{
+		$pid = $_GET['pid'];
+		$sql = 'DELETE FROM `mo_judge_problem` WHERE `id` = ?';
+		$db->prepare($sql);
+		$db->bind('i', $pid);
+		$db->execute();
+		$msg = '成功删除题目#'. $pid. '。';
+	}
+}
 $start = isset($_GET['loc']) ? (int)$_GET['loc'] : 0;
 $piece = isset($_GET['piece']) ? (int)$_GET['piece'] : 20;
 $sql = "SELECT `id`, `title`, `tag`, `ver`, `post_time`, `time_limit`, `memory_limit`, `state`, `ac`, `submit`,".
@@ -18,7 +39,22 @@ $page = ceil($problem_count / $piece);
     <li><a href="edit_problem.php?action=add">添加题目</a></li>
     </ul>
     <?php if (!$result) echo '<div class="alert alert-warning">题库暂时为空！请先添加题目。</div>'; ?>
-    <?php if (isset($_GET['result']) && $_GET['result'] == 0) echo '<div class="alert alert-warning">未知错误。</div>'; ?>
+    <?php if (isset($_GET['result']))
+    {
+		if ($_GET['result'] == 0)
+		{
+			echo '<div class="alert alert-warning">未知错误。</div>';
+		}
+		elseif ($_GET['result'] == 1 && isset($_GET['pid']))
+		{
+			echo '<div class="alert alert-success">添加成功！新题目编号为#'.$_GET['pid'].'。</div>';
+		}
+		elseif ($_GET['result'] == 2 && isset($_GET['pid']))
+		{
+			echo '<div class="alert alert-success">编辑成功！题目编号为#'.$_GET['pid'].'。</div>';
+		}
+	} ?>
+    <?php if (isset($msg)) echo '<div class="alert alert-success">'.$msg.'</div>'; ?>
     <div class="col-md-3">
         <form method="get" action="edit_problem.php">
           <h4>快速编辑</h4>
@@ -65,8 +101,8 @@ $page = ceil($problem_count / $piece);
 				 <td><div class="btn-group">
 				 <a class="btn btn-primary btn-sm" href="edit_problem.php?action=edit&pid='.$prob['id'].'">编辑</a>
 				 <button type="button" class="btn btn-info btn-sm" onclick="prob_detail('.$prob['id'].')">详情</button> 
-				 <button type="button" class="btn btn-danger btn-sm">删除</button>
-				 <button type="button" class="btn btn-warning btn-sm">'.(($prob['state'] == 1) ? '锁定' : '解锁').'</button>
+				 <button type="button" class="btn btn-danger btn-sm" onclick="del_problem('. $prob['id']. ')">删除</button>
+				 <a type="button" class="btn btn-warning btn-sm" href="problem.php?action='.(($prob['state'] == 1) ? 'lock' : 'unlock').'&pid='.$prob['id'].'">'.(($prob['state'] == 1) ? '锁定' : '解锁').'</a>
 				 </div></tr>';
 			}
             ?>
@@ -89,6 +125,42 @@ $page = ceil($problem_count / $piece);
          </div>
     </div>
 </div>
+<div class="modal fade" id="del_problem" tabindex="-1" role="dialog" 
+   aria-labelledby="myModalLabel" aria-hidden="true">
+   <form id="delform" role="form" method="get" action="problem.php" enctype="multipart/form-data">
+	   <div class="modal-dialog">
+		  <div class="modal-content">
+			 <div class="modal-header">
+				<button type="button" class="close" 
+				   data-dismiss="modal" aria-hidden="true">
+					  &times;
+				</button>
+				<h4 class="modal-title" id="del_problem_title">
+				   
+				</h4>
+			 </div>
+			 <div class="modal-body">
+				删除后本题目的数据将会消失，但相关的提交、讨论、文件、用户记录不会被删除。
+			 </div>
+			 <div class="modal-footer">
+				 <input type="hidden" name="action" value="del">
+				 <input type="hidden" id="del_pid" name="pid" value="0">
+				<button type="button" class="btn btn-default"  data-dismiss="modal">
+					取消
+				</button>
+				<button type="submit" class="btn btn-danger">删除</button>
+			 </div>
+		  </div>
+      </form>
+</div>
+<script>
+function del_problem(pid) {
+	$('#del_problem_title').html('<span class="glyphicon glyphicon-warning-sign"></span> 删除题目#'+pid);
+	$('#del_confirm').remove();
+    $('#del_pid').val(pid);
+	$('.modal').modal();
+}
+</script>
 <?php
 if ($detail)
 {

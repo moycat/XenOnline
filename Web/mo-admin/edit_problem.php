@@ -1,7 +1,7 @@
 <?php
 $active = 'problem';
 $head = '<link rel="stylesheet" href="https://pandao.github.io/editor.md/css/editormd.min.css" />
-<link href="//cdn.bootcss.com/formvalidation/0.6.1/css/formValidation.min.css" rel="stylesheet">
+<link href="//cdn.bootcss.com/formvalidation/0.6.1/css/formValidation.css" rel="stylesheet">
 <script src="//cdn.bootcss.com/formvalidation/0.6.1/js/formValidation.min.js"></script>
 <script src="//cdn.bootcss.com/formvalidation/0.6.1/js/framework/bootstrap.min.js"></script>
 <script src="inc/bootstrap.file-input.js"></script>

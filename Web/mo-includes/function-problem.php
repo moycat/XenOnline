@@ -75,7 +75,11 @@
 		{
 			$result[0]['submit_problem'] .= "$pid ";
 			$result[0]['try'] = (int)$result[0]['try'] + 1;
-			mo_problem_add_try( $pid );
+			mo_problem_add_submit( $pid, True );
+		}
+		else
+		{
+			mo_problem_add_submit( $pid );
 		}
 		$result[0]['submit'] = (int)$result[0]['submit'] + 1;
 		$sql = 'UPDATE `mo_user_record` SET `submit` = ?, `try` = ?, `submit_problem` = ? WHERE `uid` = ?';
@@ -107,10 +111,10 @@
 		}
 	}
 	
-	function mo_problem_add_try( $pid )
+	function mo_problem_add_submit( $pid, $add_try = False )
 	{
 		global $db;
-		$sql = 'SELECT `try` FROM `mo_judge_problem` WHERE `id` = ?';
+		$sql = 'SELECT `try`, `submit` FROM `mo_judge_problem` WHERE `id` = ?';
 		$db->prepare( $sql );
 		$db->bind( 'i', $pid );
 		$result = $db->execute();
@@ -118,10 +122,11 @@
 		{
 			return False;
 		}
-		$new_try = (int)$result[0]['try'] + 1;
-		$sql = 'UPDATE `mo_judge_problem` SET `try` = ? WHERE `id` = ?';
+		$new_try = $add_try ? (int)$result[0]['try'] + 1 : $add_try;
+		$new_submit = (int)$result[0]['submit'] + 1;
+		$sql = 'UPDATE `mo_judge_problem` SET `try` = ?, `submit` = ? WHERE `id` = ?';
 		$db->prepare( $sql );
-		$db->bind( 'ii', $new_try, $pid );
+		$db->bind( 'iii', $new_try, $new_submit, $pid );
 		$db->execute();
 		return True;
 	}
