@@ -40,3 +40,7 @@ function prob_detail(pid) {
 <span class="glyphicon glyphicon-calendar"></span>&nbsp;发布时间</span> '+prob[pid]['post_time']+'</p>'
 ,placement:'bottom',animation:'fade'});
 }
+function show_detail(loc, msg_title, msg_content) {
+	$(loc).webuiPopover({title:msg_title,content:msg_content,
+		placement:'bottom',animation:'fade'});
+}
