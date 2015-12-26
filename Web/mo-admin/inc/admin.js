@@ -27,7 +27,7 @@ function add_extra_data() {
 	$(".extra").append(new_extra);
 }
 function prob_detail(pid) {
-	$('#'+pid).webuiPopover({title:'#'+prob[pid]['id']+' '+prob[pid]['title'],content:'<p><span class="label label-info">\
+	$('#'+pid).webuiPopover({title:'题目#'+pid+' '+prob[pid]['title'],content:'<p><span class="label label-info">\
 <span class="glyphicon glyphicon-tags"></span>&nbsp;标签</span> '+prob[pid]['tag']+'</p>\
 <p><span class="label label-primary">\
 <span class="glyphicon glyphicon-time"></span>&nbsp;限时</span> '+prob[pid]['time_limit']+'ms&nbsp;&nbsp;\
@@ -40,7 +40,21 @@ function prob_detail(pid) {
 <span class="glyphicon glyphicon-calendar"></span>&nbsp;发布时间</span> '+prob[pid]['post_time']+'</p>'
 ,placement:'bottom',animation:'fade'});
 }
-function show_detail(loc, msg_title, msg_content) {
+function client_detail(cid) {
+	$('#client-'+cid).webuiPopover({title:'评测端#'+cid+' '+client[cid]['name'],content:'<p><span class="label label-info">\
+<span class="glyphicon glyphicon-info-sign"></span>&nbsp;简介</span> '+'</p><p>'+client[cid]['intro']+'</p>\
+<p><span class="label label-info">\
+<span class="glyphicon glyphicon-time"></span>&nbsp;上次心跳</span> '+client[cid]['last_ping']+'</p>\
+<p><span class="label label-info">\
+<span class="glyphicon glyphicon-tasks"></span>&nbsp;平均负载</span> <code>'+client[cid]['load_1']+'</code>&nbsp;<code>'+client[cid]['load_5']+'</code>&nbsp;<code>'+client[cid]['load_15']+'</code></p>\
+<p><span class="label label-info">\
+<span class="glyphicon glyphicon-floppy-disk"></span>&nbsp;已用内存</span> '+client[cid]['memory']+'%</p>\
+<p><span class="label label-primary">\
+<span class="glyphicon glyphicon-transfer"></span>&nbsp;通信密钥</span> '+'</p>'+client[cid]['hash']
+,placement:'bottom',animation:'fade',width:310});
+}
+function show_detail(loc, msg_title, msg_content, msg_width) {
+	msg_width=msg_width||'auto';
 	$(loc).webuiPopover({title:msg_title,content:msg_content,
-		placement:'bottom',animation:'fade'});
+		placement:'bottom',animation:'fade',width:msg_width});
 }
