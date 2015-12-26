@@ -180,6 +180,25 @@
 			return false; 
 	}
 	
+	function mo_com_socket( $send, $receive = False )
+	{
+		$request = json_encode( array( 'task' => $send, 'pass' => sha1(DB_PASS) ) ). "\n";
+		$errno = 0;
+		$errstr = '';
+		$socket = fsockopen( SOCK_HOST, SOCK_PORT, $errno, $errstr, 1 );
+		if ( !$socket )
+		{
+			return False;
+		}
+		fwrite($socket, $request);
+		if ( $receive )
+		{
+			$get = socket_read($socket, 8096, PHP_NORMAL_READ);
+		}
+		fclose($socket);
+		return $receive ? json_decode($get) : True;
+	}
+	
 	function mo_time( $p = 3 )
 	{
 		global $mo_time;

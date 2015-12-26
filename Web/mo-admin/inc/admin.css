@@ -10,6 +10,9 @@ body {
   width: 320px;
 }
 @media only screen and (min-width: 769px) {
+  .msg {
+    width: 500px;
+  }
   .container {
     padding: 0 3.157em;
   }

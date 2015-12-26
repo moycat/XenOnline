@@ -96,18 +96,15 @@
 	
 	function socket_push( $data )
 	{
-		$request = json_encode( array( 'task' => $data, 'pass' => sha1(DB_PASS) ) ). "\n";
-		$errno = 0;
-		$errstr = '';
-		$socket = fsockopen( SOCK_HOST, SOCK_PORT, $errno, $errstr, 1 );
-		if ( !$socket )
+		if ( !mo_com_socket( $data ) )
 		{
 			mo_log_user( 'Solution Failed Pushing (SID = '. $data['sid']. ').' );
 			return False;
 		}
-		fwrite($socket, $request);
-		fclose($socket);
-		return True;
+		else
+		{
+			return True;
+		}
 	}
 	
 	function mo_problem_add_try( $pid )

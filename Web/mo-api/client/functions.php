@@ -52,7 +52,7 @@ function update($connection, $data)
 		$prob_solved = (int)$prob[0]['solved'];
 		$sql = 'SELECT `ac_problem`, `accept`, `solve` FROM `mo_user_record` WHERE `uid` = ?';
 		$mark = $db->prepare($sql);
-		$db->bind($mark, 'i', $pid);
+		$db->bind($mark, 'i', $uid);
 		$user = $db->execute($mark);
 		$user_ac = $user[0]['ac_problem'];
 		$user_accept = (int)$user[0]['accept'] + 1;
@@ -147,6 +147,17 @@ function sendMsg(&$connection, $msg)
 	$msg = json_encode($msg)."\n";
 	$connection->send($msg);
 };
+
+function kill_client($client)
+{
+	global $cid;
+	$client = (string)$client;
+	if (!isset($cid[$client]))
+	{
+		return False;
+	}
+	cut($cid[$client], 'refuse');
+}
 
 function cut(&$connection, $reason)
 {

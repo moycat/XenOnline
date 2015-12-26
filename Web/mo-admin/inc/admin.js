@@ -58,3 +58,4 @@ function show_detail(loc, msg_title, msg_content, msg_width) {
 	$(loc).webuiPopover({title:msg_title,content:msg_content,
 		placement:'bottom',animation:'fade',width:msg_width});
 }
+

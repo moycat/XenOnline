@@ -43,9 +43,21 @@ $worker_tasker->onMessage = function($connection, $data)
 	$data = json_decode($data, True);
 	if ($connection->IP == '127.0.0.1' && isset($data['pass'], $data['task']) && $data['pass'] == sha1(DB_PASS))
 	{
-		$solution = New Solution($data['task']);
-		$solution->push();
-		return;
+		if (!isset($data['task']['action']))
+		{
+			$solution = New Solution($data['task']);
+			$solution->push();
+			return;
+		}
+		else
+		{
+			switch ($data['task']['action'])
+			{
+				case 'kill':
+					kill_client($data['task']['cid']);
+					break;
+			}
+		}
 	}
 	if ($data == NULL || !isset($data['action']))
 	{
