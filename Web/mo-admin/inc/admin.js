@@ -51,7 +51,7 @@ function client_detail(cid) {
 <span class="glyphicon glyphicon-floppy-disk"></span>&nbsp;已用内存</span> '+client[cid]['memory']+'%</p>\
 <p><span class="label label-primary">\
 <span class="glyphicon glyphicon-transfer"></span>&nbsp;通信密钥</span> '+'</p>'+client[cid]['hash']
-,placement:'bottom',animation:'fade',width:310});
+,placement:'bottom',animation:'fade',width:320});
 }
 function show_detail(loc, msg_title, msg_content, msg_width) {
 	msg_width=msg_width||'auto';

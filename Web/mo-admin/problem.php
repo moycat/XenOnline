@@ -33,18 +33,17 @@ $page = ceil($problem_count / $piece);
              <input type="hidden" name="action" value="edit">
           </div>
         </form>
-        <form method="get" action="problem.php">
         <h4>筛选器</h4>
+        <form method="get" action="problem.php">
         <div class="input-group">
              <span class="input-group-addon">#</span>
              <input type="text" name="pid" class="form-control" placeholder="题号">
+          <span class="input-group-btn">
+                  <button class="btn btn-default glyphicon glyphicon-search" type="submit" >
+                </button>
+               </span>
+             <input type="hidden" name="action" value="search">
           </div>
-        <input type="hidden" name="action" value="search">
-        <span class="input-group-btn">
-          <button class="btn btn-default" type="submit" >
-             Apply
-        </button>
-       </span>
         </form>
     </div>
     <div class="col-md-9">

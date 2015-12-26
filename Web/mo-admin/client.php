@@ -3,6 +3,25 @@ $active = 'client';
 $head = '<link rel="stylesheet" href="inc/jquery.webui-popover.css">
 <script src="inc/jquery.webui-popover.js"></script>';
 require_once 'header.php';
+if (isset($_POST['action']))
+{
+	if ($_POST['action'] == 'add')
+	{
+		$new_name = $_POST['name'];
+		$new_intro = $_POST['intro'];
+		$new_hash = sha1(password_hash(rand(10000, 99999), PASSWORD_DEFAULT));
+		$sql = 'INSERT INTO `moyoj`.`mo_judge_client` (`name`, `hash`, `intro`, `load_1`, `load_5`, `load_15`, `memory`, `last_ping`) VALUES (?, ?, ?, \'0\', \'0\', \'0\', \'0\', \'0000-00-00 00:00:00\')';
+		$db->prepare($sql);
+		$db->bind('sss', $new_name, $new_hash, $new_intro);
+		$db->execute();
+		$new_cid = $db->getInsID();
+		$msg = '<div class="alert alert-success">添加成功！新的评测端ID为'. $new_cid. '。</div>';
+	}
+	elseif($_POST['action'] == 'edit')
+	{
+		
+	}
+}
 $sql = 'SELECT * FROM `mo_judge_client`';
 $db->prepare($sql);
 $result = $db->execute();
@@ -16,17 +35,17 @@ $result = $db->execute();
 		$js_tmp = '';
 		foreach ($result as $client)
 		{
+			$tr = ($now - strtotime($client['last_ping']) < 200) ? '<tr class="success"' : '<tr class="danger"';
+			$tr .= ' id="client-'. $client['id']. '">';
 			$client['hash'] = '<code>'. $client['hash']. '</code>';
 			$client['last_ping'] = mo_date(strtotime($client['last_ping']));
 			$js_tmp .= 'client[\''. $client['id']. '\']='. json_encode($client). ";\n";
-			$tr = ($now - strtotime($client['last_ping']) < 200) ? '<tr class="success"' : '<tr class="danger"';
-			$tr .= ' id="client-'. $client['id']. '">';
 			echo  '
 			'.$tr.'
 			 <td>'.$client['id'].'</td>
 			 <td>'.$client['name'].'</td>
 			 <td class="hidden-xs">'.$client['intro'].'</td>
-			 <td class="hidden-xs">'.$client['load_1'].', '.$client['load_5'].', '.$client['load_15'].'</td>
+			 <td class="hidden-xs"><code>'.$client['load_1'].'</code>&nbsp;<code>'.$client['load_5'].'</code>&nbsp;<code>'.$client['load_15'].'</code></td>
 			 <td class="hidden-xs">'.$client['memory'].'%</td>
 			 <td>'.$client['last_ping'].'</td>
 			 <td><div class="btn-group">
@@ -50,7 +69,7 @@ $result = $db->execute();
 		</tr>
 		</thead>
 		</table>
-		<?php if (!$result) echo '<div class="alert alert-warning">暂无评测端！请先添加一个。</div>'; ?>
+		<?php if (!$result) echo '<div class="alert alert-warning">暂无评测端！请先添加一个。</div>'; if (isset($msg)) echo $msg; ?>
 		<button type="button" class="btn btn-primary" onclick="show_detail('#client', '添加评测端', add_win, 320)">添加评测端</button>
 	</div>
 </div>
@@ -72,7 +91,7 @@ client_hash = new Array();
 	echo $js_tmp;
 ?>
 function show_hash(cid) {
-	show_detail('#client-'+cid, '评测端#'+cid+' 通信密钥', client[cid]['hash'], 310);
+	show_detail('#client-'+cid, '评测端#'+cid+' 通信密钥', client[cid]['hash'], 320);
 }
 </script>
 <?php
