@@ -11,7 +11,7 @@ MoyOJ带有主题、插件功能，降低了二次开发的难度。如果不满
 
 更多信息和文档请访问本项目的[Wiki](https://github.com/moycat/MoyOJ/wiki)(有待补全)。
 
-其中部分代码和思路来自其他开源项目，感谢他们！
+Demo: [MoyOJ](http://oj.makedie.net/)
 
 然而这个坑变大了
 -----------
@@ -69,6 +69,8 @@ MoyOJ带有主题、插件功能，降低了二次开发的难度。如果不满
 
 本程序使用/借鉴的开源项目
 -----------
+
+本项目部分代码和思路来自一些开源项目，感谢他们！
 
 ~~[PyMySQL](https://github.com/PyMySQL/PyMySQL)：提供Python环境下的MySQL访问支持~~（已弃用此方案）
 
