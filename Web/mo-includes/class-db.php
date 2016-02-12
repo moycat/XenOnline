@@ -47,6 +47,7 @@ class DB
 	function prepare( $sql )
 	{
 		$this->query = $this->mysqli->prepare( $sql );
+		mo_write_note( 'Prepared: '. $sql );
 	}
 
 	// Bind the params of the query if needed
@@ -96,6 +97,12 @@ class DB
 		$this->query->free_result();
 		$this->query->close();
 		return $result;
+	}
+
+	// Clean a string
+	public function clean($str)
+	{
+		return $this->mysqli->real_escape_string($str);
 	}
 
 	// Return how many queries has been executed

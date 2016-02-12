@@ -49,6 +49,11 @@ $mo_theme = '';
 $mo_theme_floder = '';
 $mo_theme_file = '';
 
+$mo_user = array();
+$mo_discussion = array();
+$mo_problem = array();
+$mo_solution = array();
+
 // Initialise the environment
 if ( DEBUG == True )
 {

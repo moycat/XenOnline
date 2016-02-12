@@ -1,36 +1,57 @@
 <?php
 $active = 'problem';
-$head = '<link rel="stylesheet" href="inc/jquery.webui-popover.css">
-<script src="inc/jquery.webui-popover.js"></script>';
+$head = '<link rel="stylesheet" href="//cdn.bootcss.com/webui-popover/1.2.5/jquery.webui-popover.min.css">
+<script src="//cdn.bootcss.com/webui-popover/1.2.5/jquery.webui-popover.min.js"></script>';
 require_once 'header.php';
-if (isset($_GET['action']))
+
+$action = isset($_GET['action']) ? $_GET['action'] : 'list';
+$start = isset($_GET['loc']) ? (int)$_GET['loc'] : 0;
+$piece = isset($_GET['piece']) ? (int)$_GET['piece'] : 20;
+switch ($action)
 {
-	if ($_GET['action'] == 'lock' || $_GET['action'] == 'unlock')
-	{
+	case 'lock':
+	case 'unlock':
 		$pid = $_GET['pid'];
 		$sql = 'UPDATE `mo_judge_problem` SET `state` = \''.($_GET['action'] == 'lock' ? '0' : '1').'\' WHERE `id` = ?';
 		$db->prepare($sql);
 		$db->bind('i', $pid);
 		$db->execute();
 		$msg = '成功'.($_GET['action'] == 'lock' ? '锁定' : '解锁').'题目#'. $pid. '。';
-	}
-	elseif ($_GET['action'] == 'del')
-	{
+	case 'del':
 		$pid = $_GET['pid'];
 		$sql = 'DELETE FROM `mo_judge_problem` WHERE `id` = ?';
 		$db->prepare($sql);
 		$db->bind('i', $pid);
 		$db->execute();
 		$msg = '成功删除题目#'. $pid. '。';
-	}
+	default:
+	case 'list':
+		$sql = "SELECT `id`, `title`, `tag`, `ver`, `post_time`, `time_limit`, `memory_limit`, `state`, `ac`, `submit`,".
+		            " `solved`, `try`, `test_turn` FROM `mo_judge_problem` ORDER BY `id` DESC LIMIT $start,$piece";
+		$db->prepare($sql);
+		$result = $db->execute();
+		$problem_count = mo_get_problem_count();
+		break;
+	case 'search':
+		$sql = "SELECT `id`, `title`, `tag`, `ver`, `post_time`, `time_limit`, `memory_limit`, `state`, `ac`, `submit`,".
+		            " `solved`, `try`, `test_turn` FROM `mo_judge_problem` WHERE 1=1";
+		if (isset($_GET['pid']) && $_GET['pid'])
+		{
+			$sql .= ' AND `id` = '. $db->clean($_GET['pid']);
+		}
+		if (isset($_GET['title']) && isset($_GET['title']))
+		{
+			$sql .= ' AND `title` LIKE \'%'. $db->clean($_GET['title']). '%\'';
+		}
+		if (isset($_GET['tag']) && isset($_GET['tag']))
+		{
+			$sql .= ' AND MATCH(tag) AGAINST (\''.$db->clean($_GET['tag']).'\' IN BOOLEAN MODE )';
+		}
+		$sql .= " ORDER BY `id` DESC LIMIT $start,$piece";
+		$db->prepare($sql);
+		$result = $db->execute();
+		$problem_count = count($result);
 }
-$start = isset($_GET['loc']) ? (int)$_GET['loc'] : 0;
-$piece = isset($_GET['piece']) ? (int)$_GET['piece'] : 20;
-$sql = "SELECT `id`, `title`, `tag`, `ver`, `post_time`, `time_limit`, `memory_limit`, `state`, `ac`, `submit`,".
-            " `solved`, `try`, `test_turn` FROM `mo_judge_problem` ORDER BY `id` DESC LIMIT $start,$piece";
-$db->prepare($sql);
-$result = $db->execute();
-$problem_count = mo_get_problem_count();
 $page = ceil($problem_count / $piece);
 ?>
 <div class="container">
@@ -71,15 +92,23 @@ $page = ceil($problem_count / $piece);
         </form>
         <h4>筛选器</h4>
         <form method="get" action="problem.php">
+		  	<input type="hidden" name="action" value="search">
         <div class="input-group">
              <span class="input-group-addon">#</span>
-             <input type="text" name="pid" class="form-control" placeholder="题号">
-          <span class="input-group-btn">
-                  <button class="btn btn-default glyphicon glyphicon-search" type="submit" >
-                </button>
-               </span>
-             <input type="hidden" name="action" value="search">
+             <input type="text" name="pid" class="form-control" placeholder="题号" value="<?php if(isset($_GET['pid'])) echo $_GET['pid'];?>">
           </div>
+					<div class="input-group">
+						<span class="input-group-addon glyphicon glyphicon-pencil"></span>
+	             <input type="text" name="title" class="form-control" placeholder="标题" value="<?php if(isset($_GET['title'])) echo $_GET['title'];?>">
+	        </div>
+					<div class="input-group">
+						<span class="input-group-addon glyphicon glyphicon-tags"></span>
+	             <input type="text" name="tag" class="form-control" placeholder="标签" value="<?php if(isset($_GET['tag'])) echo $_GET['tag'];?>">
+							 <span class="input-group-btn">
+										<button class="btn btn-default glyphicon glyphicon-search" type="submit" >
+									</button>
+								 </span>
+	        </div>
         </form>
     </div>
     <div class="col-md-9">
@@ -91,19 +120,19 @@ $page = ceil($problem_count / $piece);
 			foreach ($result as $prob)
 			{
 				$detail[$prob['id']] = json_encode($prob);
-				$tr = (isset($_GET['pid']) && (string)$prob['id'] == $_GET['pid']) ? '<tr id="'.$prob['id'].'" class="success">' : '<tr id="'.$prob['id'].'">';
+				$tr = (isset($_GET['pid']) && (string)$prob['id'] == $_GET['pid']) ? '<tr class="success">' : '<tr>';
 				echo '
 				'.$tr.'
 				 <td>'.$prob['id'].'</td>
-				 <td><a href="'.mo_get_problem_url($prob['id']).'">'.(($prob['state'] == 1) ? $prob['title'] : '<del>'. $prob['title']. '</del>').'</a></td>
+				 <td><a href="/?r=problem/'.$prob['id'].'">'.(($prob['state'] == 1) ? $prob['title'] : '<del>'. $prob['title']. '</del>').'</a></td>
 				 <td>'.$prob['time_limit'].'/'.$prob['memory_limit'].'</td>
 				 <td>'.$prob['test_turn'].' ('.$prob['ver'].')</td>
-				 <td><div class="btn-group">
-				 <a class="btn btn-primary btn-sm" href="edit_problem.php?action=edit&pid='.$prob['id'].'">编辑</a>
-				 <button type="button" class="btn btn-info btn-sm" onclick="prob_detail('.$prob['id'].')">详情</button> 
+				 <td>
+				 <a class="btn btn-primary btn-sm" onClick="location.href=\'edit_problem.php?action=edit&pid='.$prob['id'].'\'">编辑</a>
+				 <button id="'.$prob['id'].'detail" type="button" class="btn btn-info btn-sm" onclick="prob_detail('.$prob['id'].')">详情</button>
 				 <button type="button" class="btn btn-danger btn-sm" onclick="del_problem('. $prob['id']. ')">删除</button>
 				 <a type="button" class="btn btn-warning btn-sm" href="problem.php?action='.(($prob['state'] == 1) ? 'lock' : 'unlock').'&pid='.$prob['id'].'">'.(($prob['state'] == 1) ? '锁定' : '解锁').'</a>
-				 </div></tr>';
+				 </tr>';
 			}
             ?>
            </tbody>
@@ -125,18 +154,18 @@ $page = ceil($problem_count / $piece);
          </div>
     </div>
 </div>
-<div class="modal fade" id="del_problem" tabindex="-1" role="dialog" 
+<div class="modal fade" id="del_problem" tabindex="-1" role="dialog"
    aria-labelledby="myModalLabel" aria-hidden="true">
    <form id="delform" role="form" method="get" action="problem.php" enctype="multipart/form-data">
 	   <div class="modal-dialog">
 		  <div class="modal-content">
 			 <div class="modal-header">
-				<button type="button" class="close" 
+				<button type="button" class="close"
 				   data-dismiss="modal" aria-hidden="true">
 					  &times;
 				</button>
 				<h4 class="modal-title" id="del_problem_title">
-				   
+
 				</h4>
 			 </div>
 			 <div class="modal-body">

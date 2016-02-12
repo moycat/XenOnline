@@ -2,9 +2,8 @@
 	global $user;
 	if( isset( $mo_request[1] )	&& is_numeric( $mo_request[1] ) )
 	{
-		$problem = new Problem( $mo_request[1] );
-		$problem->load();
-		if ( !$problem->getPID() )
+		$pid = $mo_request[1];
+		if ( !mo_load_problem( $pid ) )
 		{
 			require_once( $mo_theme_floder. '404.php' );
 		}
@@ -17,16 +16,16 @@
 			}
 			else
 			{
-				$new_sid = mo_add_new_solution( $mo_request[1], $_POST['lang'], $_POST['code'] );
+				$new_sid = mo_add_new_solution( $pid, $_POST['lang'], $_POST['code'] );
 				echo '提交成功！<a href="/?r=solution/'. $new_sid. '">点此</a>查看详情！';
 			}
 		}
-		echo '<h2>'. $problem->getInfo( 'title' ). '</h2>';
-		echo '<em>标签：'. $problem->getInfo( 'tag' ). '<br>';
-		echo '时间限制：'. $problem->getInfo( 'time_limit' ). 'MS 内存限制：'. $problem->getInfo( 'memory_limit' ). 'MB</em>';
+		echo '<h2>'. mo_get_problem( $pid, 'title' ). '</h2>';
+		echo '<em>标签：'. mo_get_problem( $pid, 'tag' ). '<br>';
+		echo '时间限制：'. mo_get_problem( $pid, 'time_limit' ). 'MS 内存限制：'. mo_get_problem( $pid, 'memory_limit' ). 'MB</em>';
 		echo '<h3>问题描述</h3>';
-		echo $problem->getInfo( 'description' );
-		echo '<br>提交人数：'. $problem->getInfo( 'try' ). ' AC人数：'. $problem->getInfo( 'solved' ). '<br>';
+		echo mo_get_problem( $pid, 'description' );
+		echo '<br>提交人数：'. mo_get_problem( $pid, 'try' ). ' AC人数：'. mo_get_problem( $pid, 'solved' ). '<br>';
 		echo '<h3>提交代码</h3>';
 		echo '<form name="form1" method="post" action="">
 				语言：
@@ -40,7 +39,7 @@
 				  <textarea name="code" cols="45" rows="5" required id="code"></textarea>
 				</p>
 				<p>
-				  <input type="submit" name="submit" id="submit" value="提交">  
+				  <input type="submit" name="submit" id="submit" value="提交">
 				  <br>
 				</p>
 				</form>';

@@ -55,6 +55,64 @@ function mo_list_solutions( $start, $end, $pid = 'all', $uid = 'all', $state = '
 	return $result;
 }
 
+function mo_load_problem( $pid )
+{
+	global $db, $mo_problem;
+	$sql = 'SELECT * FROM `mo_judge_problem` WHERE `id` = ?';
+	$db->prepare( $sql );
+	$db->bind( 'i', $pid );
+	$result = $db->execute();
+	if ( !$result || !$result[0]['state'] )
+	{
+		return false;
+	}
+	$mo_problem[$pid] = $result[0];
+	$mo_problem[$pid]['extra'] = unserialize( $mo_problem[$pid]['extra'] );
+	return True;
+}
+
+function mo_load_solution( $sid )
+{
+	global $db, $user, $mo_solution;
+	$sql = 'SELECT * FROM `mo_judge_solution` WHERE `id` = ?';
+	$db->prepare( $sql );
+	$db->bind( 'i', $sid );
+	$result = $db->execute();
+	if ( !$result || $result[0]['uid'] != $user->getUID() )
+	{
+		return False;
+	}
+	$mo_solution[$sid] = $result[0];
+	$mo_solution[$sid]['code'] = base64_decode( $result[0]['code'] );
+	return True;
+}
+
+function mo_get_solution( $sid, $category )
+{
+	global $mo_solution;
+	if ( isset( $mo_solution[$sid][$category] ) )
+	{
+		return $mo_solution[$sid][$category];
+	}
+	else
+	{
+		return False;
+	}
+}
+
+function mo_get_problem( $pid, $category )
+{
+	global $mo_problem;
+	if ( isset( $mo_problem[$pid][$category] ) )
+	{
+		return $mo_problem[$pid][$category];
+	}
+	else
+	{
+		return False;
+	}
+}
+
 function mo_add_new_solution( $pid, $lang, $post, $uid = 0 )
 {
 	global $user;

@@ -1,7 +1,7 @@
 <?php
 $active = 'client';
-$head = '<link rel="stylesheet" href="inc/jquery.webui-popover.css">
-<script src="inc/jquery.webui-popover.js"></script>';
+$head = '<link rel="stylesheet" href="//cdn.bootcss.com/webui-popover/1.2.5/jquery.webui-popover.min.css">
+<script src="//cdn.bootcss.com/webui-popover/1.2.5/jquery.webui-popover.min.js"></script>';
 require_once 'header.php';
 if (isset($_POST['action']))
 {
@@ -64,12 +64,12 @@ $result = $db->execute();
 			 <td class="hidden-xs"><code>'.$client['load_1'].'</code>&nbsp;<code>'.$client['load_5'].'</code>&nbsp;<code>'.$client['load_15'].'</code></td>
 			 <td class="hidden-xs">'.$client['memory'].'%</td>
 			 <td>'.$client['last_ping'].'</td>
-			 <td><div class="btn-group">
+			 <td>
 			 <button type="button" class="btn btn-primary btn-sm" onclick="edit_client('. $client['id']. ')">编辑</button>
-			 <button type="button" class="btn btn-info btn-sm hidden-xs" onclick="show_hash('. $client['id']. ')">查看hash</button>
-			 <button type="button" class="btn btn-info btn-sm visible-xs" onclick="client_detail('. $client['id']. ')">查看详情</button>
+			 <button id="'.$client['id'].'hash" type="button" class="btn btn-info btn-sm hidden-xs" onclick="show_hash('. $client['id']. ')">查看hash</button>
+			 <button id="'.$client['id'].'detail" type="button" class="btn btn-info btn-sm visible-xs" onclick="client_detail('. $client['id']. ')">查看详情</button>
 			 <button type="button" class="btn btn-danger btn-sm" onclick="del_client('. $client['id']. ')">删除</button>
-			 </div></tr>';
+			 </tr>';
 		}
 		?>
 		</tbody>
@@ -89,18 +89,18 @@ $result = $db->execute();
 		<button type="button" class="btn btn-primary" onclick="show_detail('#client', '添加评测端', add_win, 320)">添加评测端</button>
 	</div>
 </div>
-<div class="modal fade" id="del_client" tabindex="-1" role="dialog" 
+<div class="modal fade" id="del_client" tabindex="-1" role="dialog"
    aria-labelledby="myModalLabel" aria-hidden="true">
    <form id="delform" role="form" method="post" action="client.php" enctype="multipart/form-data">
 	   <div class="modal-dialog">
 		  <div class="modal-content">
 			 <div class="modal-header">
-				<button type="button" class="close" 
+				<button type="button" class="close"
 				   data-dismiss="modal" aria-hidden="true">
 					  &times;
 				</button>
 				<h4 class="modal-title" id="del_client_title">
-				   
+
 				</h4>
 			 </div>
 			 <div class="modal-body">
@@ -154,7 +154,7 @@ client_hash = new Array();
 	echo $js_tmp;
 ?>
 function show_hash(cid) {
-	show_detail('#client-'+cid, '评测端#'+cid+' 通信密钥', client[cid]['hash'], 320);
+	show_detail('#'+cid+'hash', '评测端#'+cid+' 通信密钥', client[cid]['hash'], 320);
 }
 function del_client(cid) {
 	$('#del_client_title').html('<span class="glyphicon glyphicon-warning-sign"></span> 删除评测端#'+cid);

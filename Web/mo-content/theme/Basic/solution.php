@@ -2,24 +2,25 @@
 	global $user;
 	if( isset( $mo_request[1] )	&& is_numeric( $mo_request[1] ) )
 	{
-		$solution = new Solution( $mo_request[1] );
-		$solution->load();
-		if ( !$solution->getSID() || $solution->getInfo( 'uid' ) != $user->getUID() )
+		$sid = $mo_request[1];
+		if ( !mo_load_solution( $sid ) || mo_get_solution( $sid, 'uid' ) != $user->getUID() )
 		{
 			require_once( $mo_theme_floder. '404.php' );
 		}
-		echo '<h2>提交：#'. $solution->getInfo( 'id' ). '</h2>';
-		echo '用户：#'. $solution->getInfo( 'uid' ). '<br>';
-		echo '问题：#<a href="/?r=problem/'. $solution->getInfo( 'pid' ). '">'. $solution->getInfo( 'pid' ). '</a><br>';
-		echo '语言：#'. $solution->getInfo( 'language' ). '<br>';
-		echo '评测机：#'. $solution->getInfo( 'client' ). '<br><br>';
-		if ( $solution->getInfo( 'state' ) <= 0 )
+		echo '<h2>提交：#'. mo_get_solution( $sid, 'id' ). '</h2>';
+		echo '用户：#'. mo_get_solution( $sid, 'uid' ). '<br>';
+		echo '问题：#<a href="/?r=problem/'. mo_get_solution( $sid, 'pid' ). '">'. mo_get_solution( $sid, 'pid' ).
+					'</a><br>';
+		echo '语言：#'. mo_get_solution( $sid, 'language' ). '<br>';
+		echo '评测机：#'. mo_get_solution( $sid, 'client' ). '<br><br>';
+		if ( mo_get_solution( $sid, 'state' ) <= 0 )
 		{
-			echo '评测中，当前状态：'. $solution->getInfo( 'state' ). '<br>';
+			echo '评测中，当前状态：'. mo_get_solution( $sid, 'state' ). '<br>';
 		}
 		else
 		{
-			echo '总耗时：'. $solution->getInfo( 'used_time' ). 'MS 最大使用内存：'. $solution->getInfo( 'used_memory' ). 'KB<br>';
+			echo '总耗时：'. mo_get_solution( $sid, 'used_time' ). 'MS 最大使用内存：'.
+						mo_get_solution( $sid, 'used_memory' ). 'KB<br>';
 			echo '<table width="100%" border="1">
 				  <tbody>
 					<tr>
@@ -28,9 +29,9 @@
 					  <td width="30%"><strong>内存（KB）</strong></td>
 					  <td width="20%"><strong>结果</strong></td>
 					</tr>';
-			$detail_time = explode( ' ', $solution->getInfo( 'detail_time' ) );
-			$detail_memory = explode( ' ', $solution->getInfo( 'detail_memory' ) );
-			$detail_result = explode( ' ', $solution->getInfo( 'detail_result' ) );
+			$detail_time = explode( ' ', mo_get_solution( $sid, 'detail_time' ) );
+			$detail_memory = explode( ' ', mo_get_solution( $sid, 'detail_memory' ) );
+			$detail_result = explode( ' ', mo_get_solution( $sid, 'detail_result' ) );
 			$turn = count( $detail_result );
 			for ( $i = 0; $i < $turn && $detail_result[$i]; ++$i )
 			{
@@ -45,7 +46,7 @@
 					</table><br>';
 		}
 		echo '代码：';
-		echo '  <textarea name="code" id="code" cols="45" rows="5">'. $solution->getInfo( 'code' ). '</textarea>';
+		echo '  <textarea name="code" id="code" cols="45" rows="5">'. mo_get_solution( $sid, 'code' ). '</textarea>';
 	}
 	else
 	{

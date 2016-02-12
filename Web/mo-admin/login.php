@@ -29,7 +29,6 @@ if (isset($_POST['username'], $_POST['password']) && $_POST['username'] && $_POS
 		$result = $result[0];
 		$_SESSION['aid'] = $result['id'];
 		$_SESSION['admin_password'] = $result['password'];
-		mo_write_cache('mo-admin-'. $_SESSION['aid'] , $result);
 	}
 	else
 	{

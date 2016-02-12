@@ -31,6 +31,35 @@ function mo_list_discussions( $start, $end, $parent = 0, $category = 'all', $uid
 	return $result;
 }
 
+function mo_load_discussion( $did )
+{
+	global $db, $mo_discussion;
+	$sql = 'SELECT * FROM `mo_judge_discussion` WHERE `id` = ?';
+	$db->prepare( $sql );
+	$db->bind( 'i', $did );
+	$result = $db->execute();
+	if ( !$result )
+	{
+		return False;
+	}
+	$mo_discussion[$did] = $result[0];
+	$mo_discussion[$did]['extra'] = unserialize( $mo_discussion[$did]['extra'] );
+	return True;
+}
+
+function mo_get_discussion( $did, $category )
+{
+	global $mo_discussion;
+	if ( isset( $mo_discussion[$did][$category] ) )
+	{
+		return $mo_discussion[$did][$category];
+	}
+	else
+	{
+		return False;
+	}
+}
+
 function mo_add_new_discussion( $category, $title, $content, $parent = 0, $uid = 0, $extra = array() )
 {
 	global $user;

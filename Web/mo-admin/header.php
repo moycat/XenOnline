@@ -2,7 +2,7 @@
 session_start();
 if (!isset($_SESSION['aid']))
 {
-	header("Location: login.php");
+	header("Location: /mo-admin/login.php");
 	exit(0);
 }
 define( 'ABSPATH', dirname( __FILE__ ). '/../' );
@@ -11,16 +11,7 @@ define( 'MOCON', ABSPATH. 'mo-content/' );
 define( 'MOCACHE', MOCON. 'cache/' );
 require_once ABSPATH. 'mo-config.php';
 require_once MOINC. 'functions.php';
-require_once MOINC. 'class-db.php';
-require_once MOINC. 'class-discussion.php';
-require_once MOINC. 'class-user.php';
-require_once MOINC. 'class-problem.php';
-require_once MOINC. 'function-action.php';
-require_once MOINC. 'function-discussion.php';
-require_once MOINC. 'function-data.php';
-require_once MOINC. 'function-log.php';
-require_once MOINC. 'function-problem.php';
-require_once MOINC. 'function-user.php';
+require_once MOINC. 'classes.php';
 require_once 'functions.php';
 
 check_login();
@@ -72,7 +63,7 @@ if (!isset($no_display))
 				</li>
 				<li<?php ($active == 'data')?print(' class="active dropdown" '):print(' class="dropdown" '); ?>">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-						数据 
+						数据
 						<b class="caret"></b>
 					</a>
 					<ul class="dropdown-menu">

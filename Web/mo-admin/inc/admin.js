@@ -27,7 +27,7 @@ function add_extra_data() {
 	$(".extra").append(new_extra);
 }
 function prob_detail(pid) {
-	$('#'+pid).webuiPopover({title:'题目#'+pid+' '+prob[pid]['title'],content:'<p><span class="label label-info">\
+	$('#'+pid+'detail').webuiPopover({title:'题目#'+pid+' '+prob[pid]['title'],content:'<p><span class="label label-info">\
 <span class="glyphicon glyphicon-tags"></span>&nbsp;标签</span> '+prob[pid]['tag']+'</p>\
 <p><span class="label label-primary">\
 <span class="glyphicon glyphicon-time"></span>&nbsp;限时</span> '+prob[pid]['time_limit']+'ms&nbsp;&nbsp;\
@@ -38,10 +38,10 @@ function prob_detail(pid) {
 </span>&nbsp;通过</span> '+prob[pid]['ac']+'('+prob[pid]['solved']+')</p>\
 <p><span class="label label-primary">\
 <span class="glyphicon glyphicon-calendar"></span>&nbsp;发布时间</span> '+prob[pid]['post_time']+'</p>'
-,placement:'bottom',animation:'fade'});
+,cache:false,placement:'auto-bottom',animation:'fade',width:320});
 }
 function client_detail(cid) {
-	$('#client-'+cid).webuiPopover({title:'评测端#'+cid+' '+client[cid]['name'],content:'<p><span class="label label-info">\
+	$('#'+cid+'detail').webuiPopover({title:'评测端#'+cid+' '+client[cid]['name'],content:'<p><span class="label label-info">\
 <span class="glyphicon glyphicon-info-sign"></span>&nbsp;简介</span> '+'</p><p>'+client[cid]['intro']+'</p>\
 <p><span class="label label-info">\
 <span class="glyphicon glyphicon-time"></span>&nbsp;上次心跳</span> '+client[cid]['last_ping']+'</p>\
@@ -51,11 +51,10 @@ function client_detail(cid) {
 <span class="glyphicon glyphicon-floppy-disk"></span>&nbsp;已用内存</span> '+client[cid]['memory']+'%</p>\
 <p><span class="label label-primary">\
 <span class="glyphicon glyphicon-transfer"></span>&nbsp;通信密钥</span> '+'</p>'+client[cid]['hash']
-,placement:'bottom',animation:'fade',width:320});
+,cache:false,placement:'auto-bottom',animation:'fade',width:320});
 }
 function show_detail(loc, msg_title, msg_content, msg_width) {
 	msg_width=msg_width||'auto';
 	$(loc).webuiPopover({title:msg_title,content:msg_content,
-		placement:'bottom',animation:'fade',width:msg_width});
+		placement:'auto-bottom',animation:'fade',width:msg_width});
 }
-

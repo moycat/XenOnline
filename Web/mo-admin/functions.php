@@ -36,7 +36,7 @@
 			$active = '';
 		}
 	}
-	
+
 	function get_problem($pid)
 	{
 		if (!isset($pid) || !is_numeric($pid))
@@ -49,4 +49,11 @@
 		$db->bind('i', $pid);
 		$result = $db->execute();
 		return $result ? $result[0] : False;
+	}
+
+	function undefined_error()
+	{
+		echo '<div class="alert alert-warning">题库暂时为空！请先添加题目。</div>';
+		require_once 'footer.php';
+		exit(0);
 	}
