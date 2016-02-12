@@ -1,119 +1,124 @@
 <?php
-	/*
-	 * mo-includes/class-problem.php @ MoyOJ
-	 * 
-	 * This file provides the classes of problems and solutions.
-	 * 
-	 */
-	
-	class Problem
+/*
+ * mo-includes/class-problem.php @ MoyOJ
+ *
+ * This file provides the classes of problems and solutions.
+ *
+ * Licensed under GNU General Public License, version 2:
+ * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+ *
+ */
+
+class Problem
+{
+	private $pid;
+	private $info = array();
+
+	function __construct( $pid = 0 )
 	{
-		private $pid;
-		private $info = array();
-		
-		function __construct( $pid = 0 )
+		$this->pid = $pid;
+		if ( $pid )
 		{
-			$this->pid = $pid;
-			if ( $pid )
-			{
-				$this->load();
-			}
-		}
-		public function setPID( $pid )
-		{
-			$this->pid = $pid;
 			$this->load();
 		}
-		public function getPID()
+	}
+
+	public function setPID( $pid )
+	{
+		$this->pid = $pid;
+		$this->load();
+	}
+	public function getPID()
+	{
+		return $this->pid;
+	}
+
+	public function getInfo( $category )
+	{
+		if ( isset( $this->info[$category] ) )
 		{
-			return $this->pid;
+			$content = apply_filter( "problem_$category", $this->info[$category] );
+			return $content;
 		}
-		
-		public function getInfo( $category )
+		else
 		{
-			if ( isset( $this->info[$category] ) )
-			{
-				$content = apply_filter( "problem_$category", $this->info[$category] );
-				return $content;
-			}
-			else
-			{
-				return False;
-			}
-		}
-		
-		public function load()
-		{
-			global $db;
-			$sql = 'SELECT * FROM `mo_judge_problem` WHERE `id` = ?';
-			$db->prepare( $sql );
-			$db->bind( 'i', $this->pid );
-			$result = $db->execute();
-			if ( !$result || !$result[0]['state'] )
-			{
-				$this->pid = 0;
-				return;
-			}
-			foreach ( $result[0] as $key => $value )
-			{
-				$this->info[$key] = $value;
-			}
-			$this->info['extra'] = unserialize( $this->info['extra'] );
+			return False;
 		}
 	}
-	
-	class Solution
+
+	public function load()
 	{
-		private $sid;
-		private $info = array();
-		
-		function __construct( $sid = 0 )
+		global $db;
+		$sql = 'SELECT * FROM `mo_judge_problem` WHERE `id` = ?';
+		$db->prepare( $sql );
+		$db->bind( 'i', $this->pid );
+		$result = $db->execute();
+		if ( !$result || !$result[0]['state'] )
 		{
-			$this->sid = $sid;
-			if ( $sid )
-			{
-				$this->load();
-			}
+			$this->pid = 0;
+			return;
 		}
-		public function setSID( $sid )
+		foreach ( $result[0] as $key => $value )
 		{
-			$this->sid = $sid;
+			$this->info[$key] = $value;
+		}
+		$this->info['extra'] = unserialize( $this->info['extra'] );
+	}
+}
+
+class Solution
+{
+	private $sid;
+	private $info = array();
+
+	function __construct( $sid = 0 )
+	{
+		$this->sid = $sid;
+		if ( $sid )
+		{
 			$this->load();
 		}
-		public function getSID()
+	}
+
+	public function setSID( $sid )
+	{
+		$this->sid = $sid;
+		$this->load();
+	}
+	public function getSID()
+	{
+		return $this->sid;
+	}
+
+	public function getInfo( $info )
+	{
+		if ( isset( $this->info[$info] ) )
 		{
-			return $this->sid;
+			$content = apply_filter( "solution_$info", $this->info[$info] );
+			return $content;
 		}
-		
-		public function getInfo( $info )
+		else
 		{
-			if ( isset( $this->info[$info] ) )
-			{
-				$content = apply_filter( "solution_$info", $this->info[$info] );
-				return $content;
-			}
-			else
-			{
-				return False;
-			}
-		}
-		
-		public function load()
-		{
-			global $db, $user;
-			$sql = 'SELECT * FROM `mo_judge_solution` WHERE `id` = ?';
-			$db->prepare( $sql );
-			$db->bind( 'i', $this->sid );
-			$result = $db->execute();
-			if ( !$result || $result[0]['uid'] != $user->getUID() )
-			{
-				$this->pid = 0;
-				return;
-			}
-			foreach ( $result[0] as $key => $value )
-			{
-				$this->info[$key] = $value;
-			}
-			$this->info['code'] = base64_decode( $result[0]['code'] );
+			return False;
 		}
 	}
+
+	public function load()
+	{
+		global $db, $user;
+		$sql = 'SELECT * FROM `mo_judge_solution` WHERE `id` = ?';
+		$db->prepare( $sql );
+		$db->bind( 'i', $this->sid );
+		$result = $db->execute();
+		if ( !$result || $result[0]['uid'] != $user->getUID() )
+		{
+			$this->pid = 0;
+			return;
+		}
+		foreach ( $result[0] as $key => $value )
+		{
+			$this->info[$key] = $value;
+		}
+		$this->info['code'] = base64_decode( $result[0]['code'] );
+	}
+}
