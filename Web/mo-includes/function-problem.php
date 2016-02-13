@@ -127,25 +127,25 @@ function mo_add_new_solution( $pid, $lang, $post, $uid = 0 )
 	global $db;
 	$length = strlen( $post );
 	$post = base64_encode( $post );
-	$sql = 'SELECT `submit`, `try`, `submit_problem` FROM `mo_user_record` WHERE `uid` = ?';
+	//$sql = 'SELECT `submit`, `try`, `submit_problem` FROM `mo_stat_user` WHERE `uid` = ?';
+	$sql = 'SELECT `submit_problem` FROM `mo_stat_user` WHERE `uid` = ?';
 	$db->prepare( $sql );
 	$db->bind( 'i', $uid );
 	$result = $db->execute();
 	$submit_problem = explode( ' ', $result[0]['submit_problem'] );
 	if ( !in_array( (string)$pid, $submit_problem ) )
 	{
+		$sql = 'UPDATE `mo_stat_user` SET submit = submit+1, try = try+1, submit_problem = ? WHERE `uid` = ?';
 		$result[0]['submit_problem'] .= "$pid ";
-		$result[0]['try'] = (int)$result[0]['try'] + 1;
 		mo_problem_add_submit( $pid, True );
 	}
 	else
 	{
+		$sql = 'UPDATE `mo_stat_user` SET submit = submit+1, submit_problem = ? WHERE `uid` = ?';
 		mo_problem_add_submit( $pid );
 	}
-	$result[0]['submit'] = (int)$result[0]['submit'] + 1;
-	$sql = 'UPDATE `mo_user_record` SET `submit` = ?, `try` = ?, `submit_problem` = ? WHERE `uid` = ?';
 	$db->prepare( $sql );
-	$db->bind( 'iisi', $result[0]['submit'], $result[0]['try'], $result[0]['submit_problem'],  $uid );
+	$db->bind( 'si', $result[0]['submit_problem'],  $uid );
 	$db->execute();
 	$sql = 'INSERT INTO `mo_judge_solution` (`pid`, `uid`, `code`, `post_time`, `language`, `code_length`) VALUES (?, ?, ?, CURRENT_TIMESTAMP, ?, ?)';
 	$db->prepare( $sql );
@@ -175,19 +175,15 @@ function socket_push( $data )
 function mo_problem_add_submit( $pid, $add_try = False )
 {
 	global $db;
-	$sql = 'SELECT `try`, `submit` FROM `mo_judge_problem` WHERE `id` = ?';
+	if ( $add_try )
+	{
+		$sql = 'UPDATE `mo_judge_problem` SET try = try+1, submit = submit+1 WHERE `id` = ?';
+	}
+	else
+	{
+		$sql = 'UPDATE `mo_judge_problem` SET submit = submit+1 WHERE `id` = ?';
+	}
 	$db->prepare( $sql );
 	$db->bind( 'i', $pid );
-	$result = $db->execute();
-	if ( !$result )
-	{
-		return False;
-	}
-	$new_try = $add_try ? (int)$result[0]['try'] + 1 : $add_try;
-	$new_submit = (int)$result[0]['submit'] + 1;
-	$sql = 'UPDATE `mo_judge_problem` SET `try` = ?, `submit` = ? WHERE `id` = ?';
-	$db->prepare( $sql );
-	$db->bind( 'iii', $new_try, $new_submit, $pid );
 	$db->execute();
-	return True;
 }

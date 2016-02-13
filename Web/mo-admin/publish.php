@@ -4,7 +4,7 @@ function publish_jump($status, $pid = 0)
 	header("Location: problem.php?result=$status&pid=$pid");
 	exit(0);
 }
-	
+
 function edit_problem()
 {
 	if (!isset($_POST['title'], $_POST['test-editormd-markdown-doc'], $_POST['time_limit'], $_POST['memory_limit'], $_POST['tag']))
@@ -19,7 +19,7 @@ function edit_problem()
 		return False;
 	}
 	$extra = '';
-	$prob = get_problem(1);
+	$prob = get_problem($_POST['edit_id']);
 	$hash = $prob['hash'];
 	$ver = (int)$prob['ver'];
 	$datacount = 0;
@@ -60,7 +60,7 @@ function edit_problem()
 				'`memory_limit` = ?, `test_turn` = ? WHERE `mo_judge_problem`.`id` = ?';
 	global $db;
 	$db->prepare($sql);
-	$db->bind('ssssiiiii', $_POST['title'], $_POST['test-editormd-markdown-doc'], $_POST['tag'], serialize($extra), $ver, $_POST['time_limit'], 
+	$db->bind('ssssiiiii', $_POST['title'], $_POST['test-editormd-markdown-doc'], $_POST['tag'], serialize($extra), $ver, $_POST['time_limit'],
 						$_POST['memory_limit'], $datacount, $_POST['edit_id']);
 	$db->execute();
 	return $_POST['edit_id'];

@@ -37,3 +37,6 @@ define( 'CRYPT_COST', 4 );
 
 // If debugging, set it to True to output details
 define( 'DEBUG', False );
+
+// Set the timezone
+date_default_timezone_set('Asia/Chongqing');

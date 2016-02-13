@@ -23,7 +23,7 @@ function heartbeat($connection, $data)
 function update($connection, $data)
 {
 	global $db, $task;
-	if (!$connection->cid || !isset($data['state'], $data['used_time'], $data['used_memory'], $data['detail'], $data['detail_result'], 
+	if (!$connection->cid || !isset($data['state'], $data['used_time'], $data['used_memory'], $data['detail'], $data['detail_result'],
 			$data['detail_time'], $data['detail_memory'], $data['sid']))
 	{
 		return False;
@@ -37,40 +37,35 @@ function update($connection, $data)
 	$sql = 'UPDATE `mo_judge_solution` SET `client` = ?, `state` = ?, `used_time` = ?, `used_memory` = ?, `detail` = ?, '.
 				'`detail_result` = ?, `detail_time` = ?, `detail_memory` = ? WHERE `id` = ?';
 	$mark = $db->prepare($sql);
-	$db->bind($mark, 'iiiissssi',$connection->cid, $data['state'], $data['used_time'], $data['used_memory'], $data['detail'], $data['detail_result'], 
+	$db->bind($mark, 'iiiissssi',$connection->cid, $data['state'], $data['used_time'], $data['used_memory'], $data['detail'], $data['detail_result'],
 						$data['detail_time'], $data['detail_memory'], $data['sid']);
 	$db->execute($mark);
 	$uid = (int)$task[$sid]->uid;
 	$pid = (int)$task[$sid]->pid;
 	if ((int)$data['state'] == 10)
 	{
-		$sql = 'SELECT `ac`, `solved` FROM `mo_judge_problem` WHERE `id` = ?';
-		$mark = $db->prepare($sql);
-		$db->bind($mark, 'i', $pid);
-		$prob = $db->execute($mark);
-		$prob_accept = (int)$prob[0]['ac'] + 1;
-		$prob_solved = (int)$prob[0]['solved'];
-		$sql = 'SELECT `ac_problem`, `accept`, `solve` FROM `mo_user_record` WHERE `uid` = ?';
+		$sql = 'SELECT `ac_problem`, `accept`, `solve` FROM `mo_stat_user` WHERE `uid` = ?';
 		$mark = $db->prepare($sql);
 		$db->bind($mark, 'i', $uid);
 		$user = $db->execute($mark);
 		$user_ac = $user[0]['ac_problem'];
-		$user_accept = (int)$user[0]['accept'] + 1;
-		$user_solve = (int)$user[0]['solve'];
 		$tmp = explode(' ', $user_ac);
 		if (!in_array((string)$pid, $tmp))
 		{
 			$user_ac .= "$pid ";
-			$prob_solved++;
-			$user_solve++;
+			$sql1 = 'UPDATE `mo_judge_problem` SET solved = solved+1, ac = ac+1 WHERE `id` = ?';
+			$sql2 = 'UPDATE `mo_stat_user` SET ac_problem = ?, accept = accept+1, solve = solve+1 WHERE `uid` = ?';
 		}
-		$sql = 'UPDATE `mo_judge_problem` SET `solved` = ?, `ac` = ? WHERE `id` = ?';
-		$mark = $db->prepare($sql);
-		$db->bind($mark, 'iii', $prob_solved, $prob_accept, $pid);
+		else
+		{
+			$sql1 = 'UPDATE `mo_judge_problem` SET ac = ac+1 WHERE `id` = ?';
+			$sql2 = 'UPDATE `mo_stat_user` SET ac_problem = ?, accept = accept+1 WHERE `uid` = ?';
+		}
+		$mark = $db->prepare($sql1);
+		$db->bind($mark, 'i', $pid);
 		$db->execute($mark);
-		$sql = 'UPDATE `mo_user_record` SET `ac_problem` = ?, `accept` = ?, `solve` = ? WHERE `uid` = ?';
-		$mark = $db->prepare($sql);
-		$db->bind($mark, 'siii', $user_ac, $user_accept, $user_solve, $uid);
+		$mark = $db->prepare($sql2);
+		$db->bind($mark, 'si', $user_ac, $uid);
 		$db->execute($mark);
 	}
 	p("Get a update. The solution is done. ( sid = $sid, cid = $connection->cid, IP = $connection->IP )");

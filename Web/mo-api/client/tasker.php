@@ -17,7 +17,7 @@ $worker_tasker->onWorkerStart = function($worker_tasker)
 		$mem->setOption(Memcached::OPT_LIBKETAMA_COMPATIBLE, true);
 	}
 	Timer::add(5, 'check_lost'); // 每5秒，检查无响应的评测请求
-	Timer::add(10, 'check_forgotten'); // 每10秒，在数据库中寻找丢失的请求
+	Timer::add(20, 'check_forgotten'); // 每20秒，在数据库中寻找丢失的请求
 	p('The server <Tasker> has started.');
  };
 

@@ -31,7 +31,7 @@ function mo_add_user( $username, $password, $email, $nickname = '' )
 	$sql = 'INSERT INTO `mo_user_info` (`uid`, `info`, `preference`) VALUES (\''. $uid. '\', \'a:0:{}\', \'a:0:{}\')';
 	$db->prepare( $sql );
 	$db->execute();
-	$sql = 'INSERT INTO `mo_user_record` (`uid`) VALUES (\''. $uid. '\')';
+	$sql = 'INSERT INTO `mo_stat_user` (`uid`) VALUES (\''. $uid. '\')';
 	$db->prepare( $sql );
 	$db->execute();
 	mo_write_note( "A new user (ID = $uid) has been added." );
@@ -49,7 +49,7 @@ function mo_del_user( $uid )
 	$db->prepare( $sql );
 	$db->bind( 'i', $uid );
 	$db->execute();
-	$sql = 'DELETE FROM `mo_user_record` WHERE `uid` = ?';
+	$sql = 'DELETE FROM `mo_stat_user` WHERE `uid` = ?';
 	$db->prepare( $sql );
 	$db->bind( 'i', $uid );
 	$db->execute();

@@ -18,4 +18,4 @@ define( 'RUN', True );
 // Whether to output normally.
 define( 'OUTPUT', True );
 
-require( dirname( __FILE__ ). '/mo-loader.php' );
+require( __DIR__. '/mo-loader.php' );

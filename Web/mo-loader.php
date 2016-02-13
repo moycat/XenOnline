@@ -15,7 +15,7 @@
 
 // Define the fixed values
 
-define( 'ABSPATH', dirname( __FILE__ ). '/' );
+define( 'ABSPATH', __DIR__. '/' );
 define( 'MOINC', ABSPATH. 'mo-includes/' );
 define( 'MOCON', ABSPATH. 'mo-content/' );
 define( 'MOCACHE', MOCON. 'cache/' );

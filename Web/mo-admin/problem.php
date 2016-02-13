@@ -39,11 +39,11 @@ switch ($action)
 		{
 			$sql .= ' AND `id` = '. $db->clean($_GET['pid']);
 		}
-		if (isset($_GET['title']) && isset($_GET['title']))
+		if (isset($_GET['title']) && $_GET['title'])
 		{
 			$sql .= ' AND `title` LIKE \'%'. $db->clean($_GET['title']). '%\'';
 		}
-		if (isset($_GET['tag']) && isset($_GET['tag']))
+		if (isset($_GET['tag']) && $_GET['tag'])
 		{
 			$sql .= ' AND MATCH(tag) AGAINST (\''.$db->clean($_GET['tag']).'\' IN BOOLEAN MODE )';
 		}
@@ -104,11 +104,8 @@ $page = ceil($problem_count / $piece);
 					<div class="input-group">
 						<span class="input-group-addon glyphicon glyphicon-tags"></span>
 	             <input type="text" name="tag" class="form-control" placeholder="标签" value="<?php if(isset($_GET['tag'])) echo $_GET['tag'];?>">
-							 <span class="input-group-btn">
-										<button class="btn btn-default glyphicon glyphicon-search" type="submit" >
-									</button>
-								 </span>
 	        </div>
+					<button class="btn btn-default pull-right" type="submit" ><span class="glyphicon glyphicon-search"></span>搜索</button>
         </form>
     </div>
     <div class="col-md-9">

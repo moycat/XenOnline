@@ -7,8 +7,11 @@
 #	E-mail:		mxq.1203@gmail.com
 #
 '''
-		MoyOJ 评测端 - WatchCat version 1.0
-		授权：	GNU GENERAL PUBLIC LICENSE
+		MoyOJ 评测端 - WatchCat version 1.1
+		watchcat.py @ MoyOJ
+
+	   * Licensed under GNU General Public License, version 2:
+	   * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 '''
 
 import os
@@ -109,6 +112,7 @@ def mount():
 	if not os.path.exists('/judge/judge.img'):
 		os.system("dd if=/dev/zero of=/judge/judge.img bs=10M count=" + str(max_thread * 5))
 		os.system("mkfs.ext3 -F /dev/loop20")
+		mkfs -t ext3 /dev/loop20
 	sig = os.system("losetup /dev/loop20 /judge/judge.img")
 	if sig != 0:
 		global exiting
@@ -204,7 +208,7 @@ def judge(data):
 	threadlock.acquire()
 	now_thread = now_thread + 1
 	threadlock.release()
-	
+
 	sid = str(data['sid'])
 	pid = str(data['pid'])
 	ver = str(data['version'])
@@ -222,7 +226,7 @@ def judge(data):
 	detail_result = ''
 	detail_time = ''
 	detail_memory = ''
-	
+
 	os.system("mkdir /judge/inside/" + sid + " /judge/inside/" + sid + "/in /judge/inside/" + sid + "/out")
 	out = open("/judge/inside/" + sid + "/downlist", "w", 0)
 	i = 0
@@ -253,14 +257,14 @@ def judge(data):
 	out.write(time_limit + "\n" + memory_limit + "\n" + test_turn + "\n" + lang)
 	out.close()
 	os.system("cp " + stdout_floder + "/test* /judge/inside/" + sid + "/in/")
-	
+
 	p("Now starting to compile & run... ( sid = " + sid + " )")
 	update = {'action': 'update_state', 'sid': sid, 'state': -2, 'timestamp': (int)(time.time())}
 	send(update)
 	_docker = threading.Thread(target=docker, name='Docker', args=(sid,))
 	_docker.start()
 	_docker.join()
-	
+
 	if not os.path.exists('/judge/inside/' + sid + '/out/summary.out'):
 		error = True
 	summary = open("/judge/inside/" + sid + "/out/summary.out")
@@ -299,10 +303,10 @@ def judge(data):
 			else:
 				detail_result += now[0] + " "
 			i += 1
-	
+
 	error_log = open("/judge/inside/" + sid + "/out/error.log")
 	detail = error_log.read()
-	update = {'action': 'update', 'sid': sid, 'state': all_result, 'used_time': used_time, 'used_memory': used_memory, 'detail': detail, 'detail_result': detail_result, 
+	update = {'action': 'update', 'sid': sid, 'state': all_result, 'used_time': used_time, 'used_memory': used_memory, 'detail': detail, 'detail_result': detail_result,
 					'detail_time': detail_time, 'detail_memory': detail_memory}
 	send(update)
 	p("The request (SID = " + sid + ") has been dealt.")

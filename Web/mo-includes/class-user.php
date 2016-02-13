@@ -250,19 +250,21 @@ class User
 	public function loadStatus( $uid )
 	{
 		global $db;
-		$sql = 'SELECT * FROM `mo_user` WHERE `id` = ? LIMIT 1';
-		$db->prepare( $sql );
-		$db->bind( 'i', $uid );
-		$result = $db->execute();
-		foreach ( $result[0] as $key => $value )
+		$this->status = mo_read_cache( 'mo_user_'. $uid );
+		if ( !$this->status )
 		{
-			$this->status[$key] = $value;
+			$sql = 'SELECT * FROM `mo_user` WHERE `id` = ? LIMIT 1';
+			$db->prepare( $sql );
+			$db->bind( 'i', $uid );
+			$result = $db->execute();
+			$this->status = $result[0];
+			if ( !$this->status['nickname'] )
+			{
+				$this->status['nickname'] = $this->status['username'];
+			}
+			mo_write_cache( 'mo_user_'. $uid, $this->status );
 		}
 		$this->uid = $this->status['id'];
-		if ( !$this->status['nickname'] )
-		{
-			$this->status['nickname'] = $this->status['username'];
-		}
 	}
 
 	public function loadInfo( $uid )
@@ -278,7 +280,7 @@ class User
 	public function loadRecord( $uid )
 	{
 		global $db;
-		$sql = 'SELECT * FROM `mo_user_record` WHERE `uid` = ? LIMIT 1';
+		$sql = 'SELECT * FROM `mo_stat_user` WHERE `uid` = ? LIMIT 1';
 		$db->prepare( $sql );
 		$db->bind( 'i', $uid );
 		$result = $db->execute();
@@ -308,6 +310,7 @@ class User
 					$sql .= ' WHERE `id` = '. $this->uid;
 					$db->prepare( $sql );
 					call_user_func_array( array( $db, 'bind' ), $bind );
+					mo_del_cache( 'mo_user_'. $this->uid );
 					break;
 				case 'info':
 					$sql .= '`mo_user_info` SET `info` = ? WHERE `uid` = '. $this->uid;
@@ -320,7 +323,7 @@ class User
 					$db->bind( 's', serialize( $this->preference ) );
 					break;
 				case 'record':
-					$sql .= '`mo_user_record` SET `uid` = '. $this->uid;
+					$sql .= '`mo_stat_user` SET `uid` = '. $this->uid;
 					$bind = array();
 					$bind[0] = '';
 					foreach ( $this->record as $key => $value)
@@ -340,15 +343,16 @@ class User
 		mo_log_user( 'Information of the user (ID = '. $_SESSION['uid']. ') has been updated.' );
 		return True;
 	}
-	
+
 	public function refresh_login()
 	{
 		global $db;
 		$this->status['mask'] = (int)$this->status['mask'] + 1;
 		$this->status['mask'] = (string)$this->status['mask'];
-		$sql = 'UPDATE `mo_user` SET `mask` = ? WHERE `mo_user`.`id` = ?';
+		mo_del_cache( 'mo_user_'. $this->uid );
+		$sql = 'UPDATE `mo_user` SET mask = mask + 1 WHERE `id` = ?';
 		$db->prepare( $sql );
-		$db->bind( 'ii', $this->status['mask'], $this->uid );
+		$db->bind( 'i', $this->uid );
 		$db->execute();
 		$_SESSION['mask'] = $this->status['mask'];
 		mo_log_user( 'The user (ID = '. $_SESSION['uid']. ') has refreshed the saved password.' );
