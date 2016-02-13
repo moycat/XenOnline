@@ -3,40 +3,34 @@ $active = 'client';
 $head = '<link rel="stylesheet" href="//cdn.bootcss.com/webui-popover/1.2.5/jquery.webui-popover.min.css">
 <script src="//cdn.bootcss.com/webui-popover/1.2.5/jquery.webui-popover.min.js"></script>';
 require_once 'header.php';
-if (isset($_POST['action']))
-{
-	if ($_POST['action'] == 'add')
-	{
-		$new_name = $_POST['name'];
-		$new_intro = $_POST['intro'];
-		$new_hash = md5(password_hash(rand(10000, 99999), PASSWORD_DEFAULT));
-		$sql = 'INSERT INTO `moyoj`.`mo_judge_client` (`name`, `hash`, `intro`, `load_1`, `load_5`, `load_15`, `memory`, `last_ping`) VALUES (?, ?, ?, \'0\', \'0\', \'0\', \'0\', NULL)';
-		$db->prepare($sql);
-		$db->bind('sss', $new_name, $new_hash, $new_intro);
-		$db->execute();
-		$new_cid = $db->getInsID();
-		$msg = '<div class="alert alert-success">添加成功！新的评测端ID为'. $new_cid. '。</div>';
-	}
-	elseif($_POST['action'] == 'edit')
-	{
-		$edit_cid = $_POST['cid'];
-		$edit_name = $_POST['name'];
-		$edit_intro = $_POST['intro'];
-		$sql = 'UPDATE `mo_judge_client` SET `name` = ?, `intro` = ? WHERE `id` = ?';
-		$db->prepare($sql);
-		$db->bind('ssi', $edit_name, $edit_intro, $edit_cid);
-		$db->execute();
-		$msg = '<div class="alert alert-success">ID为'. $edit_cid. '的评测端修改成功！</div>';
-	}
-	elseif($_POST['action'] == 'del')
-	{
-		$sql = 'DELETE FROM `mo_judge_client` WHERE `id` = ?';
-		$db->prepare($sql);
-		$db->bind('i', $_POST['cid']);
-		$db->execute();
-		$order = array('action' => 'kill', 'cid' => $_POST['cid']);
-		mo_com_socket($order);
-	}
+if (isset($_POST['action'])) {
+    if ($_POST['action'] == 'add') {
+        $new_name = $_POST['name'];
+        $new_intro = $_POST['intro'];
+        $new_hash = md5(password_hash(rand(10000, 99999), PASSWORD_DEFAULT));
+        $sql = 'INSERT INTO `moyoj`.`mo_judge_client` (`name`, `hash`, `intro`, `load_1`, `load_5`, `load_15`, `memory`, `last_ping`) VALUES (?, ?, ?, \'0\', \'0\', \'0\', \'0\', NULL)';
+        $db->prepare($sql);
+        $db->bind('sss', $new_name, $new_hash, $new_intro);
+        $db->execute();
+        $new_cid = $db->getInsID();
+        $msg = '<div class="alert alert-success">添加成功！新的评测端ID为'.$new_cid.'。</div>';
+    } elseif ($_POST['action'] == 'edit') {
+        $edit_cid = $_POST['cid'];
+        $edit_name = $_POST['name'];
+        $edit_intro = $_POST['intro'];
+        $sql = 'UPDATE `mo_judge_client` SET `name` = ?, `intro` = ? WHERE `id` = ?';
+        $db->prepare($sql);
+        $db->bind('ssi', $edit_name, $edit_intro, $edit_cid);
+        $db->execute();
+        $msg = '<div class="alert alert-success">ID为'.$edit_cid.'的评测端修改成功！</div>';
+    } elseif ($_POST['action'] == 'del') {
+        $sql = 'DELETE FROM `mo_judge_client` WHERE `id` = ?';
+        $db->prepare($sql);
+        $db->bind('i', $_POST['cid']);
+        $db->execute();
+        $order = array('action' => 'kill', 'cid' => $_POST['cid']);
+        mo_com_socket($order);
+    }
 }
 $sql = 'SELECT * FROM `mo_judge_client`';
 $db->prepare($sql);
@@ -47,16 +41,15 @@ $result = $db->execute();
 		<table class="table table-striped table-hover">
 		<tbody>
 		<?php
-		$now = time();
-		$js_tmp = '';
-		foreach ($result as $client)
-		{
-			$tr = ($now - strtotime($client['last_ping']) < 200) ? '<tr class="success"' : '<tr class="danger"';
-			$tr .= ' id="client-'. $client['id']. '">';
-			$client['hash'] = '<code>'. $client['hash']. '</code>';
-			$client['last_ping'] = mo_date(strtotime($client['last_ping']));
-			$js_tmp .= 'client[\''. $client['id']. '\']='. json_encode($client). ";\n";
-			echo  '
+        $now = time();
+        $js_tmp = '';
+        foreach ($result as $client) {
+            $tr = ($now - strtotime($client['last_ping']) < 200) ? '<tr class="success"' : '<tr class="danger"';
+            $tr .= ' id="client-'.$client['id'].'">';
+            $client['hash'] = '<code>'.$client['hash'].'</code>';
+            $client['last_ping'] = mo_date(strtotime($client['last_ping']));
+            $js_tmp .= 'client[\''.$client['id'].'\']='.json_encode($client).";\n";
+            echo  '
 			'.$tr.'
 			 <td>'.$client['id'].'</td>
 			 <td id="name">'.$client['name'].'</td>
@@ -65,13 +58,13 @@ $result = $db->execute();
 			 <td class="hidden-xs">'.$client['memory'].'%</td>
 			 <td>'.$client['last_ping'].'</td>
 			 <td>
-			 <button type="button" class="btn btn-primary btn-sm" onclick="edit_client('. $client['id']. ')">编辑</button>
-			 <button id="'.$client['id'].'hash" type="button" class="btn btn-info btn-sm hidden-xs" onclick="show_hash('. $client['id']. ')">查看hash</button>
-			 <button id="'.$client['id'].'detail" type="button" class="btn btn-info btn-sm visible-xs" onclick="client_detail('. $client['id']. ')">查看详情</button>
-			 <button type="button" class="btn btn-danger btn-sm" onclick="del_client('. $client['id']. ')">删除</button>
+			 <button type="button" class="btn btn-primary btn-sm" onclick="edit_client('.$client['id'].')">编辑</button>
+			 <button id="'.$client['id'].'hash" type="button" class="btn btn-info btn-sm hidden-xs" onclick="show_hash('.$client['id'].')">查看hash</button>
+			 <button id="'.$client['id'].'detail" type="button" class="btn btn-info btn-sm visible-xs" onclick="client_detail('.$client['id'].')">查看详情</button>
+			 <button type="button" class="btn btn-danger btn-sm" onclick="del_client('.$client['id'].')">删除</button>
 			 </tr>';
-		}
-		?>
+        }
+        ?>
 		</tbody>
 		<thead>
 		<tr>
@@ -85,7 +78,11 @@ $result = $db->execute();
 		</tr>
 		</thead>
 		</table>
-		<?php if (!$result) echo '<div class="alert alert-warning">暂无评测端！请先添加一个。</div>'; if (isset($msg)) echo $msg; ?>
+		<?php if (!$result) {
+    echo '<div class="alert alert-warning">暂无评测端！请先添加一个。</div>';
+} if (isset($msg)) {
+    echo $msg;
+} ?>
 		<button type="button" class="btn btn-primary" onclick="show_detail('#client', '添加评测端', add_win, 320)">添加评测端</button>
 	</div>
 </div>
@@ -151,7 +148,7 @@ function edit_client(cid)
 	</form>';
 client_hash = new Array();
 <?php
-	echo $js_tmp;
+    echo $js_tmp;
 ?>
 function show_hash(cid) {
 	show_detail('#'+cid+'hash', '评测端#'+cid+' 通信密钥', client[cid]['hash'], 320);

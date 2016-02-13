@@ -3,17 +3,17 @@ $active = 'overview';
 require_once 'header.php';
 $status = array();
 $sql = 'SELECT COUNT(*) AS total FROM `mo_judge_client` WHERE TO_SECONDS(NOW()) - TO_SECONDS(last_ping) <= 200';
-$db->prepare( $sql );
+$db->prepare($sql);
 $result = $db->execute();
-$ava_client_count = (int)$result[0]['total'];
+$ava_client_count = (int) $result[0]['total'];
 $sql = 'SELECT COUNT(*) AS total FROM `mo_judge_client`';
-$db->prepare( $sql );
+$db->prepare($sql);
 $result = $db->execute();
-$client_count = (int)$result[0]['total'];
+$client_count = (int) $result[0]['total'];
 $sql = 'SELECT COUNT(*) AS total FROM `mo_user` WHERE user_group = -1';
-$db->prepare( $sql );
+$db->prepare($sql);
 $result = $db->execute();
-$user_to_verify = (int)$result[0]['total'];
+$user_to_verify = (int) $result[0]['total'];
 ?>
 <div class="section">
 	<div class="container">
@@ -32,11 +32,10 @@ $user_to_verify = (int)$result[0]['total'];
 			</div>
 		</div>
 		<?php
-		if (!$ava_client_count)
-		{
-			echo '<div class="alert alert-danger">当前没有评测端在线！请检查Socket服务端是否开启，以及评测端是否正常。</div>';
-		}
-		?>
+        if (!$ava_client_count) {
+            echo '<div class="alert alert-danger">当前没有评测端在线！请检查Socket服务端是否开启，以及评测端是否正常。</div>';
+        }
+        ?>
 		<div class="row">
 			<div class="col-md-6">
 				<img src="inc/icon/problem.png" align="left" class="img-rounded img-responsive signimg">
@@ -71,7 +70,7 @@ $user_to_verify = (int)$result[0]['total'];
 				<p class="text-left">
 					当前评测机状态：<br>
 					<span class="glyphicon glyphicon-arrow-up"></span><?php echo $ava_client_count; ?>　
-					<span class="glyphicon glyphicon-arrow-down"></span><?php echo $client_count-$ava_client_count; ?>
+					<span class="glyphicon glyphicon-arrow-down"></span><?php echo $client_count - $ava_client_count; ?>
 				</p>
 				<a href="client.php" class="btn btn-primary btn-default" role="button">查看详情</a>
 			</div>

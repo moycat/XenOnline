@@ -1,50 +1,42 @@
 <?php
 session_start();
-define( 'ABSPATH', dirname( __FILE__ ). '/../' );
-define( 'MOINC', ABSPATH. 'mo-includes/' );
-define( 'MOCON', ABSPATH. 'mo-content/' );
-if (isset($_POST['username'], $_POST['password']) && $_POST['username'] && $_POST['password'])
-{
-	require_once ABSPATH. 'mo-config.php';
-	require_once MOINC. 'functions.php';
-	require_once MOINC. 'class-db.php';
-	if ( defined( 'MEM' ) && MEM == True )
-	{
-		$mem = new Memcached( 'moyoj' );
-		$mem->setOption(Memcached::OPT_LIBKETAMA_COMPATIBLE, true);
-		if ( !count( $mem->getServerList() ) )
-		{
-			$mem->addServer(MEM_HOST, MEM_PORT);
-		}
-	}
-	$db = new DB();
-	$db->init( DB_HOST, DB_USER, DB_PASS, DB_NAME );
-	$db->connect();
-	$sql = 'SELECT `id`, `username`, `password`, `nickname`, `role` FROM `mo_admin` WHERE `username` = ? AND `role` > 0 LIMIT 1';
-	$db->prepare($sql);
-	$db->bind('s', $_POST['username']);
-	$result = $db->execute();
-	if ($result && password_verify($_POST['password'], $result[0]['password']))
-	{
-		$result = $result[0];
-		$_SESSION['aid'] = $result['id'];
-		$_SESSION['admin_password'] = $result['password'];
-	}
-	else
-	{
-		$loginfail = True;
-	}
+define('ABSPATH', dirname(__FILE__).'/../');
+define('MOINC', ABSPATH.'mo-includes/');
+define('MOCON', ABSPATH.'mo-content/');
+if (isset($_POST['username'], $_POST['password']) && $_POST['username'] && $_POST['password']) {
+    require_once ABSPATH.'mo-config.php';
+    require_once MOINC.'functions.php';
+    require_once MOINC.'class-db.php';
+    if (defined('MEM') && MEM == true) {
+        $mem = new Memcached('moyoj');
+        $mem->setOption(Memcached::OPT_LIBKETAMA_COMPATIBLE, true);
+        if (!count($mem->getServerList())) {
+            $mem->addServer(MEM_HOST, MEM_PORT);
+        }
+    }
+    $db = new DB();
+    $db->init(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    $db->connect();
+    $sql = 'SELECT `id`, `username`, `password`, `nickname`, `role` FROM `mo_admin` WHERE `username` = ? AND `role` > 0 LIMIT 1';
+    $db->prepare($sql);
+    $db->bind('s', $_POST['username']);
+    $result = $db->execute();
+    if ($result && password_verify($_POST['password'], $result[0]['password'])) {
+        $result = $result[0];
+        $_SESSION['aid'] = $result['id'];
+        $_SESSION['admin_password'] = $result['password'];
+    } else {
+        $loginfail = true;
+    }
 }
-if (isset($_GET['action']) && $_GET['action'] == 'logout')
-{
-	unset($_SESSION['aid']);
-	unset($_SESSION['admin_password']);
-	$logout = True;
+if (isset($_GET['action']) && $_GET['action'] == 'logout') {
+    unset($_SESSION['aid']);
+    unset($_SESSION['admin_password']);
+    $logout = true;
 }
-if (isset($_SESSION['aid']))
-{
-	header("Location: index.php");
-	exit(0);
+if (isset($_SESSION['aid'])) {
+    header('Location: index.php');
+    exit(0);
 }
 ?>
 <!DOCTYPE html>
@@ -66,19 +58,19 @@ if (isset($_SESSION['aid']))
 							后台登录
 						</h1>
 						 <?php
-							if (isset($loginfail))
-							{
-							?>
+                            if (isset($loginfail)) {
+                                ?>
 								<div class="alert alert-danger">登录失败！请检查用户名和密码是否正确。</div>
 							<?php
-							}
-							if (isset($logout))
-							{
-							?>
+
+                            }
+                            if (isset($logout)) {
+                                ?>
 								<div class="alert alert-success">你已成功登出。</div>
 							<?php
-							}
-						 ?>
+
+                            }
+                         ?>
 						<form method="post" action="/mo-admin/login.php">
 							<div class="form-group" id="username">
 								<label class="control-label" for="username">

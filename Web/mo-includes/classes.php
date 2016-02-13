@@ -9,5 +9,5 @@
  *
  */
 
-require_once( MOINC. 'class-db.php' );
-require_once( MOINC. 'class-user.php' );
+require_once MOINC.'class-db.php';
+require_once MOINC.'class-user.php';

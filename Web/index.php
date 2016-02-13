@@ -14,8 +14,8 @@
  */
 
 // Whether to run
-define( 'RUN', True );
+define('RUN', true);
 // Whether to output normally.
-define( 'OUTPUT', True );
+define('OUTPUT', true);
 
-require( __DIR__. '/mo-loader.php' );
+require __DIR__.'/mo-loader.php';

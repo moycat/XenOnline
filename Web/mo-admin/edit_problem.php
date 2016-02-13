@@ -11,50 +11,47 @@ $head = '<link rel="stylesheet" href="https://pandao.github.io/editor.md/css/edi
 	});
 </script>';
 require_once 'header.php';
-if (!isset($_GET['action']))
-{
-	$error = '未定义的操作。';
+if (!isset($_GET['action'])) {
+    $error = '未定义的操作。';
+} else {
+    switch ($_GET['action']) {
+        case 'edit':
+            if (!isset($_GET['pid']) || !($pv_info = get_problem($_GET['pid']))) {
+                $error = '未定义的操作。';
+                break;
+            }
+        case 'add':
+            if (isset($_SESSION['admin_publish_tmp'])) {
+                $pv_info = $_SESSION['admin_publish_tmp'];
+                if (isset($_SESSION['admin_publish_tmp']['error'])) {
+                    $error = $_SESSION['admin_publish_tmp']['error'];
+                }
+                unset($_SESSION['admin_publish_tmp']);
+            }
+            $error = false;
+            break;
+        default:
+            $error = '未定义的操作。';
+    }
 }
-else
-{
-	switch ($_GET['action'])
-	{
-		case 'edit':
-			if (!isset($_GET['pid']) || !($pv_info = get_problem($_GET['pid'])))
-			{
-				$error = '未定义的操作。';
-				break;
-			}
-		case 'add':
-			if (isset($_SESSION['admin_publish_tmp']))
-			{
-				$pv_info = $_SESSION['admin_publish_tmp'];
-				if (isset($_SESSION['admin_publish_tmp']['error']))
-				{
-					$error = $_SESSION['admin_publish_tmp']['error'];
-				}
-				unset($_SESSION['admin_publish_tmp']);
-			}
-			$error = False;
-			break;
-		default:
-			$error = '未定义的操作。';
-	}
-}
-if (!$error)
-{
-?>
+if (!$error) {
+    ?>
 <div class="container">
 <ul class="nav nav-tabs">
 <li><a href="problem.php">管理题目</a></li>
-<?php if ($_GET['action'] == 'add') echo '<li class="active"><a href="edit_problem.php?action=add">添加题目</a></li>';
-elseif ($_GET['action'] == 'edit') echo '<li><a href="edit_problem.php?action=add">添加题目</a></li>
-<li class="active"><a href="#">编辑题目</a></li>'?>
+<?php if ($_GET['action'] == 'add') {
+    echo '<li class="active"><a href="edit_problem.php?action=add">添加题目</a></li>';
+} elseif ($_GET['action'] == 'edit') {
+    echo '<li><a href="edit_problem.php?action=add">添加题目</a></li>
+<li class="active"><a href="#">编辑题目</a></li>';
+}
+    ?>
 </ul>
 <form id="newform" role="form" method="post" action="publish.php" enctype="multipart/form-data">
 	<div class="form-group input-group-lg">
 	 <label class="control-label" for="title"><h2>标题</h2></label>
-	 <input id="title" class="form-control" type="text" name="title" placeholder="请在此输入标题～"<?php echo isset($pv_info)?' value="'.$pv_info['title'].'"':''; ?>>
+	 <input id="title" class="form-control" type="text" name="title" placeholder="请在此输入标题～"<?php echo isset($pv_info) ? ' value="'.$pv_info['title'].'"' : '';
+    ?>>
 	</div>
 <div id="test-editormd">
 	<textarea style="display:none;">
@@ -69,7 +66,8 @@ elseif ($_GET['action'] == 'edit') echo '<li><a href="edit_problem.php?action=ad
 				width: "100%",
 				height: 740,
 				path : '//cdn.rawgit.com/pandao/editor.md/master/lib/',
-				markdown : <?php echo isset($pv_info)?json_encode($pv_info['description']):'md'; ?>,
+				markdown : <?php echo isset($pv_info) ? json_encode($pv_info['description']) : 'md';
+    ?>,
 				codeFold : true,
 				saveHTMLToTextarea : true,
 				searchReplace : true,
@@ -93,7 +91,10 @@ elseif ($_GET['action'] == 'edit') echo '<li><a href="edit_problem.php?action=ad
 	<div class="form-group input-group-sm">
 	 <h3>测试数据</h3>
 	 <div class="test-data">
-		 <?php if (isset($pv_info)) echo '<div class="alert alert-warning">如不修改测试数据，请不要在此选择文件！一旦选择文件，将覆盖此题之前版本所有测试数据！</div>'; ?>
+		 <?php if (isset($pv_info)) {
+    echo '<div class="alert alert-warning">如不修改测试数据，请不要在此选择文件！一旦选择文件，将覆盖此题之前版本所有测试数据！</div>';
+}
+    ?>
 		 <div class="row">
 			<div class="col-md-3">
 			 <p><input type="file" id="input0" title="输入数据 #0" name="input0" class="btn-primary"></p>
@@ -109,15 +110,18 @@ elseif ($_GET['action'] == 'edit') echo '<li><a href="edit_problem.php?action=ad
 		<div class="row">
 			<div class="col-md-3">
 				<label class="control-label" for="time_limit"><h3>时间限制(ms)</h3></label>
-				<input id="time_limit" class="form-control" type="text" name="time_limit" placeholder="单位：毫秒" pattern="^[0-9]*$"<?php echo isset($pv_info)?' value="'.$pv_info['time_limit'].'"':''; ?>>
+				<input id="time_limit" class="form-control" type="text" name="time_limit" placeholder="单位：毫秒" pattern="^[0-9]*$"<?php echo isset($pv_info) ? ' value="'.$pv_info['time_limit'].'"' : '';
+    ?>>
 			</div>
 			<div class="col-md-3">
 				<label class="control-label" for="memory_limit"><h3>内存限制(MB)</h3></label>
-				<input id="memory_limit" class="form-control" type="text" name="memory_limit" placeholder="单位：兆字节" pattern="^[0-9]*$"<?php echo isset($pv_info)?' value="'.$pv_info['memory_limit'].'"':''; ?>>
+				<input id="memory_limit" class="form-control" type="text" name="memory_limit" placeholder="单位：兆字节" pattern="^[0-9]*$"<?php echo isset($pv_info) ? ' value="'.$pv_info['memory_limit'].'"' : '';
+    ?>>
 			</div>
 			<div class="col-md-6">
 				<label class="control-label" for="tag"><h3><span class="glyphicon glyphicon-tags"></span>&nbsp;标签</h3></label>
-				<input id="tag" class="form-control" type="text" name="tag" placeholder="多个标签使用空格分开"<?php echo isset($pv_info)?' value="'.$pv_info['tag'].'"':''; ?>>
+				<input id="tag" class="form-control" type="text" name="tag" placeholder="多个标签使用空格分开"<?php echo isset($pv_info) ? ' value="'.$pv_info['tag'].'"' : '';
+    ?>>
 			</div>
 		</div>
 	</div>
@@ -136,16 +140,13 @@ elseif ($_GET['action'] == 'edit') echo '<li><a href="edit_problem.php?action=ad
 	 <button type="button" class="btn btn-danger" onclick="add_extra_data()">添加一组额外信息</button>
 	 </div>
 	<?php
-	if ($_GET['action'] == 'add')
-	{
-		echo '<input type="hidden" name="action" value="add">';
-	}
-	elseif ($_GET['action'] == 'edit')
-	{
-		echo '<input type="hidden" name="action" value="edit">';
-		echo '<input type="hidden" name="edit_id" value="'. $pv_info['id']. '">';
-	}
-	?>
+    if ($_GET['action'] == 'add') {
+        echo '<input type="hidden" name="action" value="add">';
+    } elseif ($_GET['action'] == 'edit') {
+        echo '<input type="hidden" name="action" value="edit">';
+        echo '<input type="hidden" name="edit_id" value="'.$pv_info['id'].'">';
+    }
+    ?>
 	<button type="submit" class="btn btn-default btn-lg">发布</button>
 </form>
 </div>
@@ -198,13 +199,14 @@ $(document).ready(function() {
 });
 </script>
 <?php
-}
-else
-{
-?>
+
+} else {
+    ?>
 <div class="container">
-	<div class="alert alert-danger"><?php echo $error; ?></div>
+	<div class="alert alert-danger"><?php echo $error;
+    ?></div>
 </div>
 <?php
+
 }
 require_once 'footer.php';
