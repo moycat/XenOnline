@@ -230,3 +230,47 @@ function mo_date($time = null)
     } // More than a year
     return $text;
 }
+
+// Change the state into words
+function mo_state($state, $short = false, $with_label = true)
+{
+    $rt = '';
+    $label = '';
+    switch ((int) $state) {
+    case 10:$rt = $short ? 'AC' : 'Accepted';
+    $label = 'success';
+    break;
+    case 6:$rt = $short ? 'WA' : 'Wrong Answer';
+    $label = 'danger';
+    break;
+    case 4:$rt = $short ? 'RE' : 'Runtime Error';
+    $label = 'danger';
+    break;
+    case 0:$rt = $short ? 'WAIT' : 'Waiting...';
+    $label = 'primary';
+    break;
+    case 1:$rt = $short ? 'CE' : 'Compile Error';
+    $label = 'warning';
+    break;
+    case 2:$rt = $short ? 'MLE' : 'Memory Limit Exceed';
+    $label = 'danger';
+    break;
+    case 3:$rt = $short ? 'TLE' : 'Time Limit Exceed';
+    $label = 'danger';
+    break;
+    case -3:$rt = $short ? 'RUN' : 'Running...';
+    $label = 'info';
+    break;
+    case -2:$rt = $short ? 'COM' : 'Compiling...';
+    $label = 'info';
+    break;
+    default:$rt = $short ? '???' : 'Unknown Status';
+    $label = 'default';
+    break;
+  }
+    if ($with_label) {
+        return '<span class="label label-'.$label.'">'.$rt.'</span>';
+    }
+
+    return $rt;
+}

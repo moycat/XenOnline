@@ -130,7 +130,7 @@ $page = ceil($solution_count / $piece);
             $detail = array();
             foreach ($result as $solution) {
                 $detail[$solution['id']] = json_encode($solution);
-                $tr = (isset($_GET['pid']) && (string) $solution['id'] == $_GET['pid']) ? '<tr class="success">' : '<tr>';
+                $tr = (isset($_GET['sid']) && (string) $solution['id'] == $_GET['sid']) ? '<tr class="success">' : '<tr>';
                 echo '
 				'.$tr.'
 				 <td>'.$solution['id'].'</td>
@@ -138,12 +138,12 @@ $page = ceil($solution_count / $piece);
  				 <td>'.$solution['pid'].'</td>
  				 <td class="hidden-xs">'.$solution['language'].'</td>
  				 <td class="hidden-xs">'.$solution['code_length'].'</td>
- 				 <td>'.$solution['state'].'</td>
+ 				 <td>'.mo_state($solution['state']).'</td>
  				 <td class="hidden-xs">'.$solution['used_time'].'</td>
  				 <td class="hidden-xs">'.$solution['used_memory'].'</td>
 				 <td>
-				 <a class="btn btn-primary btn-sm" onClick="location.href=\'edit_problem.php?action=edit&pid='.$solution['id'].'\'">编辑</a>
-				 <button id="'.$solution['id'].'detail" type="button" class="btn btn-info btn-sm" onclick="prob_detail('.$solution['id'].')">详情</button>
+				 <button type="button" class="btn btn-warning btn-sm" onclick="rejudge_solution('.$solution['id'].')">重评</button>
+         <a class="btn btn-info btn-sm" onClick="window.open(\'view_solution.php?sid='.$solution['id'].'\')">详情</a>
 				 <button type="button" class="btn btn-danger btn-sm" onclick="del_solution('.$solution['id'].')">删除</button>
 				 </tr>';
             }
@@ -171,9 +171,9 @@ $page = ceil($solution_count / $piece);
          </div>
     </div>
 </div>
-<div class="modal fade" id="del_solution" tabindex="-1" role="dialog"
+<div class="modal fade" id="op_solution" tabindex="-1" role="dialog"
    aria-labelledby="myModalLabel" aria-hidden="true">
-   <form id="delform" role="form" method="get" action="solution.php" enctype="multipart/form-data">
+   <form id="opform" role="form" method="get" action="solution.php" enctype="multipart/form-data">
 	   <div class="modal-dialog">
 		  <div class="modal-content">
 			 <div class="modal-header">
@@ -181,29 +181,41 @@ $page = ceil($solution_count / $piece);
 				   data-dismiss="modal" aria-hidden="true">
 					  &times;
 				</button>
-				<h4 class="modal-title" id="del_solution_title">
+				<h4 class="modal-title" id="op_solution_title">
 
 				</h4>
 			 </div>
-			 <div class="modal-body">
-				删除后本题目的数据将会消失，但相关的提交、讨论、文件、用户记录不会被删除。
+			 <div class="modal-body" id="op_body">
+
 			 </div>
 			 <div class="modal-footer">
-				 <input type="hidden" name="action" value="del">
-				 <input type="hidden" id="del_sid" name="sid" value="0">
+				 <input type="hidden" id="op_action" name="action" value="">
+				 <input type="hidden" id="op_sid" name="sid" value="0">
 				<button type="button" class="btn btn-default"  data-dismiss="modal">
 					取消
 				</button>
-				<button type="submit" class="btn btn-danger">删除</button>
+				<button id="op_name" type="submit" class="btn btn-danger"></button>
 			 </div>
 		  </div>
       </form>
 </div>
 <script>
-function del_solution(pid) {
-	$('#del_solution_title').html('<span class="glyphicon glyphicon-warning-sign"></span> 删除评测#'+pid);
-	$('#del_confirm').remove();
-    $('#del_sid').val(sid);
+function del_solution(sid) {
+	$('#op_solution_title').html('<span class="glyphicon glyphicon-warning-sign"></span> 删除评测#'+sid);
+  $('#op_body').html('删除后本次评测的数据将会消失，但相关的统计数据不会被修改。');
+  $('#op_name').html('删除');
+  $("#op_action").val("del");
+	$('#op_confirm').remove();
+    $('#op_sid').val(sid);
+	$('.modal').modal();
+}
+function rejudge_solution(sid) {
+	$('#op_solution_title').html('<span class="glyphicon glyphicon-warning-sign"></span> 重新评测#'+sid);
+  $('#op_body').html('你确定要重新评测这一次提交吗？');
+  $('#op_name').html('重评');
+  $("#op_action").val("rejudge");
+	$('#op_confirm').remove();
+    $('#op_sid').val(sid);
 	$('.modal').modal();
 }
 </script>
