@@ -52,6 +52,8 @@ $mo_discussion = array();
 $mo_problem = array();
 $mo_solution = array();
 
+$mo_temp = array();
+
 // Initialise the environment
 if (DEBUG == true) {
     error_reporting(E_ALL);

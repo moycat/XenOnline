@@ -57,3 +57,57 @@ function mo_del_user($uid)
 
     return true;
 }
+
+function mo_get_uid_by_username($username)
+{
+    global $mo_temp;
+    if (isset($mo_temp['mo-uid-'.$username])) {
+        return;
+    }
+    $uid = mo_read_cache('mo-uid-'.$username);
+    if (!$uid) {
+        global $db;
+        $sql = 'SELECT `id` FROM `mo_user` WHERE `username` = ?';
+        $db->prepare($sql);
+        $db->bind('s', $username);
+        $result = $db->execute();
+        if (count($result)) {
+            mo_write_cache('mo-uid-'.$username, $result[0]['id']);
+
+            return $result[0]['id'];
+        } else {
+            $mo_temp['mo-username-'.$uid] = 1;
+
+            return 0;
+        }
+    }
+
+    return $uid;
+}
+
+function mo_get_username_by_uid($uid)
+{
+    global $mo_temp;
+    if (isset($mo_temp['mo-username-'.$uid])) {
+        return;
+    }
+    $username = mo_read_cache('mo-username-'.$uid);
+    if (!$username) {
+        global $db;
+        $sql = 'SELECT `username` FROM `mo_user` WHERE `id` = ?';
+        $db->prepare($sql);
+        $db->bind('i', $uid);
+        $result = $db->execute();
+        if (count($result)) {
+            mo_write_cache('mo-username-'.$uid, $result[0]['username']);
+
+            return $result[0]['username'];
+        } else {
+            $mo_temp['mo-username-'.$uid] = 1;
+
+            return;
+        }
+    }
+
+    return $username;
+}

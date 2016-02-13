@@ -274,3 +274,29 @@ function mo_state($state, $short = false, $with_label = true)
 
     return $rt;
 }
+
+function mo_state_r($state)
+{
+    $info = mo_state($state, false, false);
+    $info_short = mo_state($state, true, false);
+    switch ($info_short) {
+    case 'AC':$label = 'success';break;
+    case 'CE':$label = 'warning';break;
+    case 'WA':case 'RE':case 'MLE':case 'TLE':$label = 'danger';break;
+    case 'RUN':case 'COM':$label = 'info';break;
+    case 'WAIT':$label = 'primary';break;
+    default:$label = 'default';break;
+  }
+
+    return '<span class="visible-lg label label-'.$label.'">'.$info.'</span><span class="hidden-lg label label-'.$label.'">'.$info_short.'</span>';
+}
+
+function mo_lang($lang)
+{
+    switch ($lang) {
+    case 1:return '<code>C++</code>';
+    case 2:return '<code>Pascal</code>';
+    case 3:return '<code>Java</code>';
+    default:return '<code>Unknown</code>';
+  }
+}

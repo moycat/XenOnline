@@ -35,7 +35,7 @@ switch ($action) {
         $sql = 'SELECT `id`, `title`, `tag`, `ver`, `post_time`, `time_limit`, `memory_limit`, `state`, `ac`, `submit`,'.
                     ' `solved`, `try`, `test_turn` FROM `mo_judge_problem` WHERE 1=1';
         if (isset($_GET['pid']) && $_GET['pid']) {
-            $sql .= ' AND `id` = '.$db->clean($_GET['pid']);
+            $sql .= ' AND `id` = '.$db->clean((int) $_GET['pid']);
         }
         if (isset($_GET['title']) && $_GET['title']) {
             $sql .= ' AND `title` LIKE \'%'.$db->clean($_GET['title']).'%\'';
@@ -55,21 +55,6 @@ $page = ceil($problem_count / $piece);
     <li class="active"><a href="problem.php">管理题目</a></li>
     <li><a href="edit_problem.php?action=add">添加题目</a></li>
     </ul>
-    <?php if (!$result) {
-    echo '<div class="alert alert-warning">题库暂时为空！请先添加题目。</div>';
-} ?>
-    <?php if (isset($_GET['result'])) {
-    if ($_GET['result'] == 0) {
-        echo '<div class="alert alert-warning">未知错误。</div>';
-    } elseif ($_GET['result'] == 1 && isset($_GET['pid'])) {
-        echo '<div class="alert alert-success">添加成功！新题目编号为#'.$_GET['pid'].'。</div>';
-    } elseif ($_GET['result'] == 2 && isset($_GET['pid'])) {
-        echo '<div class="alert alert-success">编辑成功！题目编号为#'.$_GET['pid'].'。</div>';
-    }
-} ?>
-    <?php if (isset($msg)) {
-    echo '<div class="alert alert-success">'.$msg.'</div>';
-} ?>
     <div class="col-md-3">
         <form method="get" action="edit_problem.php">
           <h4>快速编辑</h4>
@@ -105,11 +90,26 @@ $page = ceil($problem_count / $piece);
     echo $_GET['tag'];
 }?>">
 	        </div>
-					<button class="btn btn-default pull-right" type="submit" ><span class="glyphicon glyphicon-search"></span>搜索</button>
+					<button class="btn btn-default pull-right" type="submit" ><span class="glyphicon glyphicon-search"></span> 搜索</button>
         </form>
     </div>
     <div class="col-md-9">
         <div class="row">
+        <?php if (!$result) {
+    echo '<div class="alert alert-warning">题库暂时为空！请先添加题目。</div>';
+} ?>
+        <?php if (isset($_GET['result'])) {
+    if ($_GET['result'] == 0) {
+        echo '<div class="alert alert-warning">未知错误。</div>';
+    } elseif ($_GET['result'] == 1 && isset($_GET['pid'])) {
+        echo '<div class="alert alert-success">添加成功！新题目编号为#'.$_GET['pid'].'。</div>';
+    } elseif ($_GET['result'] == 2 && isset($_GET['pid'])) {
+        echo '<div class="alert alert-success">编辑成功！题目编号为#'.$_GET['pid'].'。</div>';
+    }
+} ?>
+        <?php if (isset($msg)) {
+    echo '<div class="alert alert-success">'.$msg.'</div>';
+} ?>
           <table class="table table-striped table-hover">
            <tbody>
             <?php

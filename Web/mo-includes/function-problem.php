@@ -103,6 +103,33 @@ function mo_get_problem($pid, $category)
     }
 }
 
+function mo_get_probname_by_pid($pid)
+{
+    global $mo_temp;
+    if (isset($mo_temp['mo-probname-'.$pid])) {
+        return;
+    }
+    $probname = mo_read_cache('mo-probname-'.$pid);
+    if (!$probname) {
+        global $db;
+        $sql = 'SELECT `title` FROM `mo_judge_problem` WHERE `id` = ?';
+        $db->prepare($sql);
+        $db->bind('i', $pid);
+        $result = $db->execute();
+        if (count($result)) {
+            mo_write_cache('mo-probname-'.$pid, $result[0]['title']);
+
+            return $result[0]['title'];
+        } else {
+            $mo_temp['mo-probname-'.$pid] = 1;
+
+            return;
+        }
+    }
+
+    return $probname;
+}
+
 function mo_add_new_solution($pid, $lang, $post, $uid = 0)
 {
     global $user;

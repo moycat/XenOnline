@@ -36,11 +36,22 @@ switch ($action) {
     case 'search':
     $sql = 'SELECT `id`, `pid`, `uid`, `client`, `post_time`, `state`, `language`, `code_length`,'.
     ' `used_time`, `used_memory` FROM `mo_judge_solution` WHERE 1=1';
-        if (isset($_GET['sid']) && $_GET['sid']) {
-            $sql .= ' AND `id` = '.$db->clean($_GET['sid']);
+        if (isset($_GET['pid']) && $_GET['pid']) {
+            $sql .= ' AND `pid` = '.$db->clean((int) $_GET['pid']);
         }
         if (isset($_GET['state']) && $_GET['state']) {
-            $sql .= ' AND `state` = '.$db->clean($_GET['state']);
+            $sql .= ' AND `state` = '.$db->clean((int) $_GET['state']);
+        }
+        if (isset($_GET['lang']) && $_GET['lang']) {
+            $sql .= ' AND `language` = '.$db->clean((int) $_GET['lang']);
+        }
+        if (isset($_GET['user']) && $_GET['user']) {
+            if ($_GET['user_type'] == 'uid') {
+                $sql .= ' AND `uid` = '.$db->clean((int) $_GET['user']);
+            } else {
+                $uid = mo_get_uid_by_username($_GET['user']);
+                $sql .= ' AND `uid` = '.$uid;
+            }
         }
         $sql .= " ORDER BY `id` DESC LIMIT $start,$piece";
         $db->prepare($sql);
@@ -50,12 +61,6 @@ switch ($action) {
 $page = ceil($solution_count / $piece);
 ?>
 <div class="container">
-    <?php if (!$result) {
-    echo '<div class="alert alert-warning">评测记录暂时为空！还没有人提交评测。</div>';
-} ?>
-    <?php if (isset($msg)) {
-    echo '<div class="alert alert-success">'.$msg.'</div>';
-} ?>
     <div class="col-md-3">
         <form method="get" action="view_solution.php">
           <h4>快速查看</h4>
@@ -84,6 +89,7 @@ $page = ceil($solution_count / $piece);
     echo $_GET['user'];
 }?>">
 	        </div>
+          <div class="form-group">
           <label class="checkbox-inline">
              <input type="radio" name="user_type" id="user_type_name"
                 value="username"<?php if (!isset($_GET['user_type']) || $_GET['user_type'] != 'uid') {
@@ -96,6 +102,7 @@ $page = ceil($solution_count / $piece);
     echo ' checked';
 }?>> 用户ID
           </label>
+          </div>
           <div class="form-group">
              <select name="state" class="form-control">
               <option value="">状态不限</option>
@@ -119,11 +126,31 @@ $page = ceil($solution_count / $piece);
 }?>>Time Limit Exceed</option>
              </select>
           </div>
-					<button class="btn btn-default pull-right" type="submit" ><span class="glyphicon glyphicon-search"></span>搜索</button>
+          <div class="form-group">
+             <select name="lang" class="form-control">
+              <option value="">语言不限</option>
+              <option value="1"<?php if (isset($_GET['lang']) && $_GET['lang'] == '1') {
+    echo ' selected';
+}?>>C/C++</option>
+              <option value="2"<?php if (isset($_GET['lang']) && $_GET['lang'] == '2') {
+    echo ' selected';
+}?>>Pascal</option>
+              <option value="3"<?php if (isset($_GET['lang']) && $_GET['lang'] == '3') {
+    echo ' selected';
+}?>>Java</option>
+             </select>
+          </div>
+					<button class="btn btn-default pull-right" type="submit" ><span class="glyphicon glyphicon-search"></span> 搜索</button>
         </form>
     </div>
     <div class="col-md-9">
         <div class="row">
+            <?php if (!$result) {
+    echo '<div class="alert alert-warning">评测记录暂时为空！还没有人提交评测。</div>';
+} ?>
+            <?php if (isset($msg)) {
+    echo '<div class="alert alert-success">'.$msg.'</div>';
+} ?>
           <table class="table table-striped table-hover">
            <tbody>
             <?php
@@ -134,13 +161,12 @@ $page = ceil($solution_count / $piece);
                 echo '
 				'.$tr.'
 				 <td>'.$solution['id'].'</td>
- 				 <td>'.$solution['uid'].'</td>
- 				 <td>'.$solution['pid'].'</td>
- 				 <td class="hidden-xs">'.$solution['language'].'</td>
- 				 <td class="hidden-xs">'.$solution['code_length'].'</td>
- 				 <td>'.mo_state($solution['state']).'</td>
- 				 <td class="hidden-xs">'.$solution['used_time'].'</td>
- 				 <td class="hidden-xs">'.$solution['used_memory'].'</td>
+ 				 <td><a href="edit_user.php?uid='.$solution['uid'].'">'.mo_get_username_by_uid($solution['uid']).'</a></td>
+ 				 <td><a href="edit_problem.php?action=edit&pid='.$solution['uid'].'">'.mo_get_probname_by_pid($solution['pid']).'</a></td>
+ 				 <td class="hidden-xs">'.mo_lang($solution['language']).'</td>
+ 				 <td>'.mo_state_r($solution['state']).'</td>
+ 				 <td class="hidden-xs hidden-sm hidden-md">'.$solution['used_time'].' ms</td>
+ 				 <td class="hidden-xs hidden-sm hidden-md">'.$solution['used_memory'].' KiB</td>
 				 <td>
 				 <button type="button" class="btn btn-warning btn-sm" onclick="rejudge_solution('.$solution['id'].')">重评</button>
          <a class="btn btn-info btn-sm" onClick="window.open(\'view_solution.php?sid='.$solution['id'].'\')">详情</a>
@@ -155,10 +181,9 @@ $page = ceil($solution_count / $piece);
              <th>提交者</th>
              <th>题目</th>
              <th class="hidden-xs">语言</th>
-             <th class="hidden-xs">代码长度</th>
              <th>状态</th>
-             <th class="hidden-xs">运行时间</th>
-             <th class="hidden-xs">使用内存</th>
+             <th class="hidden-xs hidden-sm hidden-md">运行时间</th>
+             <th class="hidden-xs hidden-sm hidden-md">使用内存</th>
              <th>操作</th>
             </tr>
            </thead>
