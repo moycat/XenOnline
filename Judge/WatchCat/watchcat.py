@@ -111,8 +111,8 @@ def mount():
 		os.system("mkdir /judge/stdout")
 	if not os.path.exists('/judge/judge.img'):
 		os.system("dd if=/dev/zero of=/judge/judge.img bs=10M count=" + str(max_thread * 5))
-		os.system("mkfs.ext3 -F /dev/loop20")
-		mkfs -t ext3 /dev/loop20
+		os.system("mount /dev/loop20 /judge/inside")
+		os.system("mkfs -t ext3 /dev/loop20")
 	sig = os.system("losetup /dev/loop20 /judge/judge.img")
 	if sig != 0:
 		global exiting
@@ -276,18 +276,24 @@ def judge(data):
 		error = True
 		all_result = result[0]
 	i = 0
+	wrong_answer = False
+	runtime_error = False
+	mlt_error = False
+	tle_error = False
 	if not error:
 		for row in result:
 			if len(row) < 3:
 				continue
 			now = row
 			now = now.split(" ")
-			if now[0] == RE:
-				all_result = RE
-			elif now[0] == MLE and result != RE:
-				all_result = MLE
-			elif now[0] == TLE and result != RE and result != MLE:
-				all_result = TLE
+			if now[0] == WA:
+				wrong_answer = True
+			elif now[0] == RE:
+				runtime_error = True
+			elif now[0] == MLE:
+				mlt_error = True
+			elif now[0] == TLE:
+				tle_error = True
 			detail_time += now[1] + " "
 			detail_memory += now[2] + " "
 			used_time += int(now[1])
@@ -296,6 +302,7 @@ def judge(data):
 			if now[0] == '0':
 				if not compare(sid, pid, i):
 					detail_result += WA + " "
+					wrong_answer = True
 				else:
 					detail_result += AC + " "
 			elif int(now[0]) < 0:
@@ -303,7 +310,15 @@ def judge(data):
 			else:
 				detail_result += now[0] + " "
 			i += 1
-
+	if all_result == 10:
+		if wrong_answer:
+			all_result = WA
+		elif runtime_error:
+			all_result = RE
+		elif mlt_error:
+			all_result = MLE
+		elif tle_error:
+			all_result = TLE
 	error_log = open("/judge/inside/" + sid + "/out/error.log")
 	detail = error_log.read()
 	update = {'action': 'update', 'sid': sid, 'state': all_result, 'used_time': used_time, 'used_memory': used_memory, 'detail': detail, 'detail_result': detail_result,
