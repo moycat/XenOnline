@@ -31,7 +31,9 @@ function mo_load_solutions($start, $end, $pid = 'all', $uid = 'all', $state = 'a
     foreach ($result as $solution) {
         $rt[] = $solution['id'];
         $mo_solution[$solution['id']] = $solution;
-        mo_cache_solution($solution);
+        if (!mo_exist_cache('mo:solution:'.$solution['id'])) {
+            mo_cache_solution($solution);
+        }
     }
 
     return $rt;
@@ -99,7 +101,7 @@ function mo_get_solution()
 
 function mo_cache_solution($solution)
 {
-    if ((int) $solution['id'] <= 0) {
+    if ((int) $solution['state'] <= 0) {
         return false;
     }
 

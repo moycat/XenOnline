@@ -42,6 +42,13 @@ function mo_del_cache($cache)
     return $redis->delete($cache);
 }
 
+function mo_exist_cache($cache)
+{
+    global $redis;
+
+    return $redis->exists($cache);
+}
+
 function mo_incr_cache($cache, $i = 1)
 {
     global $redis;

@@ -65,17 +65,21 @@
 				</tr>';
             foreach ($solution_list as $sid) {
                 $solution = &$mo_solution[$sid];
+
+                $suid = mo_get_solution_uid($sid);
+                $used_time = mo_get_solution_used_time($sid);
+                $used_memory = mo_get_solution_used_memory($sid);
                 echo '
 				<tr>
 				  <td><a href="/?r=problem/'.mo_get_solution_pid($sid).'">'.mo_get_solution_pid($sid).'</a></td>
-				  <td><a href="/?r=user/'.mo_get_solution_uid($sid).'">'.mo_get_solution_uid($sid).'</a></td>
+				  <td><a href="/?r=user/'.$suid.'">'.$suid.'</a></td>
 				  <td>'.mo_get_solution_post_time($sid).'</td>
 				  <td>'.mo_get_solution_language($sid).'</td>
 				  <td>'.mo_get_solution_code_length($sid).'字节</td>
 				  <td>'.mo_get_solution_state($sid).'</td>
-				  <td>'.(mo_get_solution_used_time($sid) != -1 ? mo_get_solution_used_time($sid).'MS' : '').'</td>
-				  <td>'.(mo_get_solution_used_memory($sid) != -1 ? mo_get_solution_used_memory($sid).'KB' : '').'</td>';
-                if (mo_get_solution_uid($sid) == $user->getUID()) {
+				  <td>'.($used_time != -1 ? $used_time.'MS' : '').'</td>
+				  <td>'.($used_memory != -1 ? $used_time.'KB' : '').'</td>';
+                if ($suid == $user->getUID()) {
                     echo '<td><a href="/?r=solution/'.$solution['id'].'">详情</a></td>';
                 } else {
                     echo '<td></td>';
