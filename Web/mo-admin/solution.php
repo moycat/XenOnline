@@ -162,7 +162,7 @@ $page = ceil($solution_count / $piece);
 				'.$tr.'
 				 <td>'.$solution['id'].'</td>
  				 <td><a href="edit_user.php?uid='.$solution['uid'].'">'.mo_get_username_by_uid($solution['uid']).'</a></td>
- 				 <td><a href="edit_problem.php?action=edit&pid='.$solution['uid'].'">'.mo_get_probname_by_pid($solution['pid']).'</a></td>
+ 				 <td><a href="edit_problem.php?action=edit&pid='.$solution['pid'].'">'.mo_get_probname_by_pid($solution['pid']).'</a></td>
  				 <td class="hidden-xs">'.mo_lang($solution['language']).'</td>
  				 <td>'.mo_state_r($solution['state']).'</td>
  				 <td class="hidden-xs hidden-sm hidden-md">'.$solution['used_time'].' ms</td>

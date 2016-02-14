@@ -19,12 +19,12 @@ define('DB_USER', 'moyoj');
 // The password of the account
 define('DB_PASS', 'moyoj');
 
-// Whether to use memcached
-define('MEM', true);
-// The address of your memcached server
-define('MEM_HOST', '127.0.0.1');
-// The port of the memcached service
-define('MEM_PORT', 11211);
+// The address of your redis server
+define('REDIS_HOST', '127.0.0.1');
+// The port of the redis service
+define('REDIS_PORT', 6379);
+// Leave it empty if no password
+define('REDIS_PASS', '');
 
 // The address of your socket server
 define('SOCK_HOST', '127.0.0.1');

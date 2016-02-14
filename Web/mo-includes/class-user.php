@@ -228,7 +228,7 @@ class User
     public function loadStatus($uid)
     {
         global $db;
-        $this->status = mo_read_cache('mo_user_'.$uid);
+        $this->status = mo_read_cache_array('mo:user:'.$uid);
         if (!$this->status) {
             $sql = 'SELECT * FROM `mo_user` WHERE `id` = ? LIMIT 1';
             $db->prepare($sql);
@@ -238,7 +238,7 @@ class User
             if (!$this->status['nickname']) {
                 $this->status['nickname'] = $this->status['username'];
             }
-            mo_write_cache('mo_user_'.$uid, $this->status);
+            mo_write_cache('mo:user:'.$uid, $this->status);
         }
         $this->uid = $this->status['id'];
     }
@@ -283,7 +283,7 @@ class User
                     $sql .= ' WHERE `id` = '.$this->uid;
                     $db->prepare($sql);
                     call_user_func_array(array($db, 'bind'), $bind);
-                    mo_del_cache('mo_user_'.$this->uid);
+                    mo_del_cache('mo:user:'.$this->uid);
                     break;
                 case 'info':
                     $sql .= '`mo_user_info` SET `info` = ? WHERE `uid` = '.$this->uid;
@@ -322,7 +322,7 @@ class User
         global $db;
         $this->status['mask'] = (int) $this->status['mask'] + 1;
         $this->status['mask'] = (string) $this->status['mask'];
-        mo_del_cache('mo_user_'.$this->uid);
+        mo_del_cache('mo:user:'.$this->uid);
         $sql = 'UPDATE `mo_user` SET mask = mask + 1 WHERE `id` = ?';
         $db->prepare($sql);
         $db->bind('i', $this->uid);

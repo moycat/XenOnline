@@ -15,6 +15,7 @@ require_once MOINC.'function-discussion.php';
 require_once MOINC.'function-data.php';
 require_once MOINC.'function-log.php';
 require_once MOINC.'function-problem.php';
+require_once MOINC.'function-solution.php';
 require_once MOINC.'function-stat.php';
 require_once MOINC.'function-user.php';
 
@@ -291,12 +292,18 @@ function mo_state_r($state)
     return '<span class="visible-lg label label-'.$label.'">'.$info.'</span><span class="hidden-lg label label-'.$label.'">'.$info_short.'</span>';
 }
 
-function mo_lang($lang)
+function mo_lang($lang, $code = true)
 {
+    $rt = '';
     switch ($lang) {
-    case 1:return '<code>C++</code>';
-    case 2:return '<code>Pascal</code>';
-    case 3:return '<code>Java</code>';
-    default:return '<code>Unknown</code>';
+    case 1:$rt = 'C++';break;
+    case 2:$rt = 'Pascal';break;
+    case 3:$rt = 'Java';break;
+    default:$rt = 'Unknown';break;
   }
+    if ($code) {
+        return '<code>'.$rt.'</code>';
+    }
+
+    return $rt;
 }

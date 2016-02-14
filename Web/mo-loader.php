@@ -49,11 +49,16 @@ $mo_theme_file = '';
 
 $mo_user = array();
 $mo_discussion = array();
+
 $mo_problem = array();
+$mo_solution_failed = array();
+$mo_now_solution = null;
+
 $mo_solution = array();
+$mo_solution_failed = array();
+$mo_now_solution = null;
 
 $mo_temp = array();
-
 // Initialise the environment
 if (DEBUG == true) {
     error_reporting(E_ALL);
@@ -64,12 +69,10 @@ if (DEBUG == true) {
 
 $db->init(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 $db->connect();
-if (defined('MEM') && MEM == true) {
-    $mem = new Memcached('moyoj');
-    $mem->setOption(Memcached::OPT_LIBKETAMA_COMPATIBLE, true);
-    if (!count($mem->getServerList())) {
-        $mem->addServer(MEM_HOST, MEM_PORT);
-    }
+$redis = new Redis();
+$redis->connect(REDIS_HOST, REDIS_PORT);
+if (REDIS_PASS) {
+    $redis->auth(REDIS_PASS);
 }
 
 session_start();

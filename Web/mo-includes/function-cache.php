@@ -6,68 +6,58 @@
  *
  */
 
-function mo_read_cache($cache)
+function mo_read_cache_array($cache)
 {
-    if (defined('MEM') && MEM == true) {
-        if (strlen($cache) > 100) {
-            return false;
-        }
-        global $mem;
+    return mo_read_cache($cache, true);
+}
 
-        return $mem->get($cache);
+function mo_read_cache($cache, $isarray = false)
+{
+    global $redis;
+    $data = $redis->get($cache);
+    if ($isarray) {
+        return unserialize($data);
     } else {
-        $cache_file = MOCACHE.$cache.'.php';
-        if (file_exists($cache_file)) {
-            require_once $cache_file;
-
-            return unserialize($mo_cache[$cache]);
-        } else {
-            return false;
-        }
+        return $data;
     }
 }
 
 function mo_write_cache($cache, $data)
 {
-    if (defined('MEM') && MEM == true) {
-        if (strlen($cache) > 100) {
-            return false;
-        }
-        global $mem;
-        if (!$mem->set($cache, $data)) {
-            $mem->replace($cache, $data);
-        }
-
-        return true;
+    global $redis;
+    if (is_array($data)) {
+        $data = serialize($data);
+    }
+    if ($redis->exists($cache)) {
+        return $redis->getset($cache, $data);
     } else {
-        if (!is_writable(MOCACHE)) {
-            return false;
-        }
-        $cache_file = MOCACHE.$cache.'.php';
-        $to_cache = "<?php\n"."\$mo_cache['$cache'] = '".serialize($data)."';\n";
-        $file = fopen($cache_file, 'w');
-        fwrite($file, $to_cache);
-        fclose($file);
-
-        return true;
+        return $redis->set($cache, $data);
     }
 }
 
 function mo_del_cache($cache)
 {
-    if (defined('MEM') && MEM == true) {
-        if (strlen($cache) > 100) {
-            return false;
-        }
-        global $mem;
+    global $redis;
 
-        return $mem->delete($cache);
+    return $redis->delete($cache);
+}
+
+function mo_incr_cache($cache, $i = 1)
+{
+    global $redis;
+    if ($i == 1) {
+        return $redis->incr($cache);
     } else {
-        $cache_file = MOCACHE.$cache.'.php';
-        if (file_exists($cache_file) && is_writable(MOCACHE)) {
-            return unlink($cache_file);
-        }
+        return $redis->incrBy($cache, $i);
+    }
+}
 
-        return false;
+function mo_decr_cache($cache, $i = 1)
+{
+    global $redis;
+    if ($i == 1) {
+        return $redis->decr($cache);
+    } else {
+        return $redis->decrBy($cache, $i);
     }
 }

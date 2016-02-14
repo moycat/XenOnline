@@ -32,6 +32,7 @@ if ($solution['state'] == 1) {
     ?>
 </pre>
 <?php
+
 } ?>
 <?php
 if (in_array($solution['state'], array(10, 6, 4, 2, 3))) {
@@ -91,6 +92,7 @@ $detail_time = explode(' ', $solution['detail_time']);
   </tbody>
 </table>
 <?php
+
 } ?>
 <h3>代码
   <small>长度 <?php echo $solution['code_length']; ?>字节</small>

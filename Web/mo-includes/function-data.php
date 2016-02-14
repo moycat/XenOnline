@@ -3,7 +3,7 @@
 function mo_load_settings()
 {
     global $mo_settings;
-    $mo_settings = mo_read_cache('mo_cache_settings');
+    $mo_settings = mo_read_cache_array('mo_cache_settings');
     if (!$mo_settings) {
         global $db;
         $sql = 'SELECT * FROM `mo_site_options`';

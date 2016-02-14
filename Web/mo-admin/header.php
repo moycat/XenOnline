@@ -4,7 +4,7 @@ if (!isset($_SESSION['aid'])) {
     header('Location: /mo-admin/login.php');
     exit(0);
 }
-define('ABSPATH', dirname(__FILE__).'/../');
+define('ABSPATH', __DIR__.'/../');
 define('MOINC', ABSPATH.'mo-includes/');
 define('MOCON', ABSPATH.'mo-content/');
 define('MOCACHE', MOCON.'cache/');
