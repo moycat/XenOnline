@@ -238,7 +238,7 @@ class User
             if (!$this->status['nickname']) {
                 $this->status['nickname'] = $this->status['username'];
             }
-            mo_write_cache('mo:user:'.$uid, $this->status);
+            mo_write_cache_array('mo:user:'.$uid, $this->status);
         }
         $this->uid = $this->status['id'];
     }

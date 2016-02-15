@@ -3,7 +3,7 @@
 function mo_load_settings()
 {
     global $mo_settings;
-    $mo_settings = mo_read_cache_array('mo_cache_settings');
+    $mo_settings = mo_read_cache_array('mo:settings');
     if (!$mo_settings) {
         global $db;
         $sql = 'SELECT * FROM `mo_site_options`';
@@ -12,7 +12,7 @@ function mo_load_settings()
         foreach ($result as $value) {
             $mo_settings[$value['item']] = $value['value'];
         }
-        mo_write_cache('mo_cache_settings', $mo_settings);
+        mo_write_cache_array('mo:settings', $mo_settings);
     }
     mo_write_note('Site settings have been loaded.');
 
@@ -55,7 +55,7 @@ function mo_set_option($option, $data)
         $db->bind('ss', $option, $to_write);
     }
     $db->execute();
-    mo_write_cache('mo_cache_settings', $mo_settings);
+    mo_write_cache_array('mo:settings', $mo_settings);
     mo_write_note("Site option: '$option' has been update.");
 
     return $rt;

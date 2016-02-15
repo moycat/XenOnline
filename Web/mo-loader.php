@@ -51,8 +51,8 @@ $mo_user = array();
 $mo_discussion = array();
 
 $mo_problem = array();
-$mo_solution_failed = array();
-$mo_now_solution = null;
+$mo_problem_failed = array();
+$mo_now_problem = array();
 
 $mo_solution = array();
 $mo_solution_failed = array();
@@ -70,7 +70,7 @@ if (DEBUG == true) {
 $db->init(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 $db->connect();
 $redis = new Redis();
-$redis->connect(REDIS_HOST, REDIS_PORT);
+$redis->pconnect(REDIS_HOST, REDIS_PORT);
 if (REDIS_PASS) {
     $redis->auth(REDIS_PASS);
 }

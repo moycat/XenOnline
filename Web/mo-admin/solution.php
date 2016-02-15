@@ -16,14 +16,19 @@ switch ($action) {
         $db->prepare($sql);
         $db->bind('i', $sid);
         $db->execute();
+        mo_del_cache('mo:solution:'.$sid);
         $msg = '成功删除评测记录#'.$sid.'。';
     } else {
         $sid = $_GET['sid'];
-        $sql = 'UPDATE `mo_judge_solution` SET `state` = 0 WHERE `id` = ?';
-        $db->prepare($sql);
-        $db->bind('i', $sid);
-        $db->execute();
-        $msg = '提交#'.$sid.'将很快再次评测。';
+        if (mo_load_problem($sid)) {
+            $sql = 'UPDATE `mo_judge_solution` SET `state` = 0 WHERE `id` = ?';
+            $db->prepare($sql);
+            $db->bind('i', $sid);
+            $db->execute();
+            $msg = '提交#'.$sid.'将很快再次评测。';
+        } else {
+            $msg = '原题目已删除，无法重新评测。';
+        }
     }
     default:
     case 'list':
@@ -162,7 +167,7 @@ $page = ceil($solution_count / $piece);
 				'.$tr.'
 				 <td>'.$solution['id'].'</td>
  				 <td><a href="edit_user.php?uid='.$solution['uid'].'">'.mo_get_username_by_uid($solution['uid']).'</a></td>
- 				 <td><a href="edit_problem.php?action=edit&pid='.$solution['pid'].'">'.mo_get_probname_by_pid($solution['pid']).'</a></td>
+ 				 <td><a href="edit_problem.php?action=edit&pid='.$solution['pid'].'">'.mo_get_problem_title($solution['pid']).'</a></td>
  				 <td class="hidden-xs">'.mo_lang($solution['language']).'</td>
  				 <td>'.mo_state_r($solution['state']).'</td>
  				 <td class="hidden-xs hidden-sm hidden-md">'.$solution['used_time'].' ms</td>

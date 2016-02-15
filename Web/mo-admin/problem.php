@@ -15,6 +15,7 @@ switch ($action) {
         $db->prepare($sql);
         $db->bind('i', $pid);
         $db->execute();
+        mo_write_cache_array_item('mo:problem:'.$pid, 'state', ($_GET['action'] == 'lock' ? '1' : '0'));
         $msg = '成功'.($_GET['action'] == 'lock' ? '锁定' : '解锁').'题目#'.$pid.'。';
     case 'del':
         $pid = $_GET['pid'];
@@ -22,6 +23,7 @@ switch ($action) {
         $db->prepare($sql);
         $db->bind('i', $pid);
         $db->execute();
+        mo_del_cache('mo:problem:'.$pid);
         $msg = '成功删除题目#'.$pid.'。';
     default:
     case 'list':

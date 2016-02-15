@@ -38,7 +38,7 @@
 				</p>
 				</form>';
     } else {
-        $problem_list = mo_list_problems(1, 100000000);
+        $problem_list = mo_load_problems(1, 100000000);
         if ($problem_list) {
             echo '<table width="100%" border="1"><tbody>
 			<tr>
@@ -48,14 +48,15 @@
 			  <td width="13%"><strong>尝试人数</strong></td>
 			  <td width="13%"><strong>AC人数</strong></td>
 			</tr>';
-            foreach ($problem_list as $problem) {
+            foreach ($problem_list as $pid) {
+                mo_load_problem($pid);
                 echo '
 				<tr>
-				  <td width=\n14%\n><strong>'.$problem['id'].'</strong></td>
-				  <td width=\n35%\n><strong><a href="/?r=problem/'.$problem['id'].'">'.$problem['title'].'</a></strong></td>
-				  <td width=\n25%\n><strong>'.$problem['tag'].'</strong></td>
-				  <td width=\n13%\n><strong>'.$problem['try'].'</strong></td>
-				  <td width=\n13%\n><strong>'.$problem['solved'].'</strong></td>
+				  <td width=\n14%\n><strong>'.mo_get_problem_id().'</strong></td>
+				  <td width=\n35%\n><strong><a href="/?r=problem/'.mo_get_problem_id().'">'.mo_get_problem_title().'</a></strong></td>
+				  <td width=\n25%\n><strong>'.mo_get_problem_tag().'</strong></td>
+				  <td width=\n13%\n><strong>'.mo_get_problem_try().'</strong></td>
+				  <td width=\n13%\n><strong>'.mo_get_problem_solved().'</strong></td>
 				</tr>';
             }
             echo '</tbody></table>';

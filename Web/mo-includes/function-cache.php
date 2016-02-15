@@ -8,26 +8,51 @@
 
 function mo_read_cache_array($cache)
 {
-    return mo_read_cache($cache, true);
+    global $redis;
+
+    return $redis->hGetAll($cache);
 }
 
-function mo_read_cache($cache, $isarray = false)
+function mo_read_cache_array_item($key, $hashkey)
 {
     global $redis;
-    $data = $redis->get($cache);
-    if ($isarray) {
-        return unserialize($data);
+
+    return $redis->hGet($key, $hashkey);
+}
+
+function mo_read_cache($cache)
+{
+    global $redis;
+
+    return $redis->get($cache);
+}
+
+function mo_write_cache_array($cache, $data)
+{
+    global $redis;
+    if ($redis->exists($cache)) {
+        $old = $redis->hGetAll($cache);
+        $redis->hMSet($cache, $data);
+
+        return $old;
     } else {
-        return $data;
+        return $redis->hMSet($cache, $data);
     }
+}
+
+function mo_write_cache_array_item($key, $hashkey, $value)
+{
+    if (!mo_exist_cache($key)) {
+        return false;
+    }
+    global $redis;
+
+    return $redis->hSet($key, $hashkey, $value);
 }
 
 function mo_write_cache($cache, $data)
 {
     global $redis;
-    if (is_array($data)) {
-        $data = serialize($data);
-    }
     if ($redis->exists($cache)) {
         return $redis->getset($cache, $data);
     } else {
@@ -51,6 +76,9 @@ function mo_exist_cache($cache)
 
 function mo_incr_cache($cache, $i = 1)
 {
+    if (!mo_exist_cache($cache)) {
+        return false;
+    }
     global $redis;
     if ($i == 1) {
         return $redis->incr($cache);
@@ -59,8 +87,20 @@ function mo_incr_cache($cache, $i = 1)
     }
 }
 
+function mo_incr_cache_array($key, $hashkey, $i = 1)
+{
+    if (!mo_exist_cache($key)) {
+        return false;
+    }
+
+    return $redis->hIncrBy($key, $hashkey, $i);
+}
+
 function mo_decr_cache($cache, $i = 1)
 {
+    if (!mo_exist_cache($cache)) {
+        return false;
+    }
     global $redis;
     if ($i == 1) {
         return $redis->decr($cache);

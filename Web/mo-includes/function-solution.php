@@ -9,31 +9,29 @@
  *
  */
 
-function mo_load_solutions($start, $end, $pid = 'all', $uid = 'all', $state = 'all')
+function mo_load_solutions($start, $end, $pid = '', $uid = '', $state = '')
 {
     global $db, $mo_solution;
     $rt = array();
     $start -= 1;
-    $sql = 'SELECT * FROM `mo_judge_solution` WHERE 1=1 ';
-    if (is_numeric($pid)) {
+    $sql = 'SELECT * FROM `mo_judge_solution` WHERE 1=1';
+    $piece = $end - $start + 1;
+    if ($pid) {
         $sql .= " AND `pid` = $pid";
     }
-    if (is_numeric($uid)) {
+    if ($uid) {
         $sql .= " AND `uid` = $uid";
     }
-    if (is_numeric($state)) {
+    if ($state) {
         $sql .= " AND `uid` = $state";
     }
-    $piece = $end - $start + 1;
     $sql .= " ORDER BY `id` DESC LIMIT $start,$piece";
     $db->prepare($sql);
     $result = $db->execute();
     foreach ($result as $solution) {
         $rt[] = $solution['id'];
         $mo_solution[$solution['id']] = $solution;
-        if (!mo_exist_cache('mo:solution:'.$solution['id'])) {
-            mo_cache_solution($solution);
-        }
+        mo_cache_solution($solution);
     }
 
     return $rt;
@@ -44,6 +42,8 @@ function mo_load_solution($sid)
     global $db, $mo_solution, $mo_solution_failed, $mo_now_solution;
     $sid = (string) $sid;
     if (isset($mo_solution_failed[$sid])) {
+        $mo_now_solution = null;
+
         return false;
     }
     if (isset($mo_solution[$sid])) {
@@ -70,6 +70,7 @@ function mo_load_solution($sid)
         return true;
     } else {
         $mo_solution_failed[$sid] = true;
+        $mo_now_solution = null;
 
         return false;
     }
@@ -87,7 +88,7 @@ function mo_get_solution()
             return $mo_solution[$mo_now_solution][$category];
         }
     } else { // 获取指定$sid的solution ==> mo_get_solution($sid, $category)
-    $sid = (string) $args[0];
+        $sid = (string) $args[0];
         $category = $args[1];
         if (!isset($mo_solution[$sid])) {
             if (!mo_load_solution($sid)) {
@@ -101,27 +102,30 @@ function mo_get_solution()
 
 function mo_cache_solution($solution)
 {
-    if ((int) $solution['state'] <= 0) {
+    if ((int) $solution['state'] <= 0 || mo_exist_cache('mo:solution:'.$solution['id'])) {
         return false;
     }
 
-    return mo_write_cache('mo:solution:'.$solution['id'], $solution);
+    return mo_write_cache_array('mo:solution:'.$solution['id'], $solution);
 }
 
 // TODO: 整理代码、利用缓存
 function mo_add_new_solution($pid, $lang, $post, $uid = 0)
 {
     global $user;
+    // Chec permission
     if (!$uid) {
         $uid = $user->getUID();
     }
     if (!($uid && $pid && $post)) {
         return false;
     }
+    // Prepare info
     global $db;
     $length = strlen($post);
     $post = base64_encode($post);
-    $sql = 'SELECT `submit_problem` FROM `mo_stat_user` WHERE `uid` = ?';
+    $sql = 'SELECT `submit_problem` FROM `mo_stat_user` WHERE `uid` = ?'; // Whether a new problem for him
+    // TODO: Read from cache
     $db->prepare($sql);
     $db->bind('i', $uid);
     $result = $db->execute();
@@ -129,9 +133,11 @@ function mo_add_new_solution($pid, $lang, $post, $uid = 0)
     if (!in_array((string) $pid, $submit_problem)) {
         $sql = 'UPDATE `mo_stat_user` SET submit = submit+1, try = try+1, submit_problem = ? WHERE `uid` = ?';
         $result[0]['submit_problem'] .= "$pid ";
+        // TODO: Update the cache
         mo_problem_add_submit($pid, true);
     } else {
         $sql = 'UPDATE `mo_stat_user` SET submit = submit+1, submit_problem = ? WHERE `uid` = ?';
+        // TODO: Update the cache
         mo_problem_add_submit($pid);
     }
     $db->prepare($sql);
@@ -142,6 +148,7 @@ function mo_add_new_solution($pid, $lang, $post, $uid = 0)
     $db->bind('iisii', $pid, $uid, $post, $lang, $length);
     $db->execute();
     $sid = $db->getInsID();
+    // Prepare the data for the clients' server
     $data = array('sid' => $sid, 'pid' => $pid, 'uid' => $uid, 'lang' => $lang, 'code' => $post);
     mo_write_note('A new solution has been added.');
     mo_log_user("User added a new solution (SID = $sid).");
@@ -166,8 +173,15 @@ function mo_problem_add_submit($pid, $add_try = false)
     global $db;
     if ($add_try) {
         $sql = 'UPDATE `mo_judge_problem` SET try = try+1, submit = submit+1 WHERE `id` = ?';
+        if (mo_exist_cache('mo:problem:'.$pid)) {
+            mo_incr_cache_array('mo:problem:'.$pid, 'try');
+            mo_incr_cache_array('mo:problem:'.$pid, 'submit');
+        }
     } else {
         $sql = 'UPDATE `mo_judge_problem` SET submit = submit+1 WHERE `id` = ?';
+        if (mo_exist_cache('mo:problem:'.$pid)) {
+            mo_incr_cache_array('mo:problem:'.$pid, 'submit');
+        }
     }
     $db->prepare($sql);
     $db->bind('i', $pid);

@@ -46,6 +46,7 @@ class DB
     public function prepare($sql)
     {
         $this->query = $this->mysqli->prepare($sql);
+        mo_write_note('SQL Prepared: '.$sql);
     }
 
     // Bind the params of the query if needed
