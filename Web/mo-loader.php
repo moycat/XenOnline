@@ -48,11 +48,16 @@ $mo_theme_floder = '';
 $mo_theme_file = '';
 
 $mo_user = array();
+$mo_user_failed = array();
+$mo_now_user = null;
+
 $mo_discussion = array();
+$mo_discussion_failed = array();
+$mo_now_discussion = null;
 
 $mo_problem = array();
 $mo_problem_failed = array();
-$mo_now_problem = array();
+$mo_now_problem = null;
 
 $mo_solution = array();
 $mo_solution_failed = array();
@@ -92,10 +97,7 @@ if ($mo_theme_file) {
 do_action('loadPT');
 
 // Check if logged in
-if ($user->autoLogin()) {
-    $user->loadAll($_SESSION['uid']);
-    $user->check();
-}
+$user->login('auto');
 
 do_action('loadStart');
 

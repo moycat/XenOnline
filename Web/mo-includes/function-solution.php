@@ -76,6 +76,12 @@ function mo_load_solution($sid)
     }
 }
 
+function mo_set_now_solution($sid)
+{
+    global $mo_now_solution;
+    $mo_now_solution = $sid;
+}
+
 function mo_get_solution()
 {
     global $mo_solution, $mo_now_solution;

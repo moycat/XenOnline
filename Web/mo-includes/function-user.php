@@ -11,10 +11,6 @@
 
 function mo_add_user($username, $password, $email, $nickname = '')
 {
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL) || strlen($username) > 32 || strlen($username) < 3 ||
-        strlen($password) < 6 || strlen($password) > 50) {
-        return false;
-    }
     global $db;
     $password = password_hash($password, PASSWORD_DEFAULT, ['cost' => CRYPT_COST]);
     $ip = mo_get_user_ip();
@@ -26,7 +22,7 @@ function mo_add_user($username, $password, $email, $nickname = '')
     if ($uid == 0) {
         return false;
     }
-    $sql = 'INSERT INTO `mo_user_info` (`uid`, `info`, `preference`) VALUES (\''.$uid.'\', \'a:0:{}\', \'a:0:{}\')';
+    $sql = 'INSERT INTO `mo_user_extra` (`uid`, `info`, `preference`) VALUES (\''.$uid.'\', \'a:0:{}\', \'a:0:{}\')';
     $db->prepare($sql);
     $db->execute();
     $sql = 'INSERT INTO `mo_stat_user` (`uid`) VALUES (\''.$uid.'\')';
@@ -44,7 +40,7 @@ function mo_del_user($uid)
     $db->prepare($sql);
     $db->bind('i', $uid);
     $db->execute();
-    $sql = 'DELETE FROM `mo_user_info` WHERE `uid` = ?';
+    $sql = 'DELETE FROM `mo_user_extra` WHERE `uid` = ?';
     $db->prepare($sql);
     $db->bind('i', $uid);
     $db->execute();
@@ -58,56 +54,30 @@ function mo_del_user($uid)
     return true;
 }
 
-function mo_get_uid_by_username($username)
+function mo_set_now_user($uid)
 {
-    global $mo_temp;
-    if (isset($mo_temp['mo:uid:'.$username])) {
-        return;
-    }
-    $uid = mo_read_cache('mo:uid:'.$username);
-    if (!$uid) {
-        global $db;
-        $sql = 'SELECT `id` FROM `mo_user` WHERE `username` = ?';
-        $db->prepare($sql);
-        $db->bind('s', $username);
-        $result = $db->execute();
-        if (count($result)) {
-            mo_write_cache('mo-uid-'.$username, $result[0]['id']);
-
-            return $result[0]['id'];
-        } else {
-            $mo_temp['mo-username-'.$uid] = 1;
-
-            return 0;
-        }
-    }
-
-    return $uid;
+    global $mo_now_user;
+    $mo_now_user = $uid;
 }
 
-function mo_get_username_by_uid($uid)
+function mo_get_user($uid, $category, $key)
 {
-    global $mo_temp;
-    if (isset($mo_temp['mo:username:'.$uid])) {
+    global $mo_user;
+    if ((int) $uid < 1) {
         return;
     }
-    $username = mo_read_cache('mo:username:'.$uid);
-    if (!$username) {
-        global $db;
-        $sql = 'SELECT `username` FROM `mo_user` WHERE `id` = ?';
-        $db->prepare($sql);
-        $db->bind('i', $uid);
-        $result = $db->execute();
-        if (count($result)) {
-            mo_write_cache('mo:username:'.$uid, $result[0]['username']);
-
-            return $result[0]['username'];
-        } else {
-            $mo_temp['mo:username:'.$uid] = 1;
-
-            return;
-        }
+    if (!isset($mo_user[$uid])) {
+        $mo_user[$uid] = new User($uid);
+    }
+    if (!$mo_user[$uid]->is_loaded()) {
+        return false;
     }
 
-    return $username;
+    return $mo_user[$uid]->get($category, $key);
+}
+
+function mo_get_user_name($sid = -1)
+{
+    //TODO
+    return mo_get_user($sid, 'info', 'nickname');
 }

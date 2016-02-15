@@ -77,6 +77,12 @@ function mo_load_problem($pid)
     return true;
 }
 
+function mo_set_now_problem($pid)
+{
+    global $mo_now_problem;
+    $mo_now_problem = $pid;
+}
+
 function mo_get_problem()
 {
     global $mo_problem, $mo_now_problem;

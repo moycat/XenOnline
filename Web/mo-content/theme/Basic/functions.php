@@ -16,7 +16,7 @@
             if (isset($_POST['login_name']) && isset($_POST['password'])) {
                 global $user;
 
-                return $user->login($_POST['login_name'], $_POST['password']);
+                return $user->login('check', $_POST['login_name'], $_POST['password']);
             }
         }
     }

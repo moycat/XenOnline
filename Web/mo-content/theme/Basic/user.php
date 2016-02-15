@@ -1,7 +1,7 @@
 <?php
     global $user;
     if (isset($mo_request[1]) && $mo_request[1] == 'logout') {
-        if ($user->logout()) {
+        if (has_login() && $user->logout()) {
             echo '登出成功！<br>';
         }
     }
@@ -12,8 +12,8 @@
             echo '注册失败……检查输入是否有误，或重名<br>';
         }
     }
-    if ($user->getUID()) {
-        echo $user->get('status', 'nickname').'，你已登录。<br>';
+    if (has_login()) {
+        echo $user->get('info', 'nickname').'，你已登录。<br>';
         echo '<a href="/?r=user/logout">点此退出</a><br>';
     } else {
         echo '你尚未登录！<br>';

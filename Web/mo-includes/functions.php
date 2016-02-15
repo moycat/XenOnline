@@ -65,6 +65,19 @@ function mo_loadPT()
     }
 }
 
+function has_login()
+{
+    return isset($_SESSION['uid']) ? $_SESSION['uid'] : false;
+}
+
+function getset(&$key, $value)
+{
+    $old = $key;
+    $key = $value;
+
+    return $old;
+}
+
 // Check whether a value is  serialized
 function is_serialized($data, $strict = true) // From WordPress
 {
