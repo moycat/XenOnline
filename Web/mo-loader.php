@@ -18,7 +18,6 @@
 define('ABSPATH', __DIR__.'/');
 define('MOINC', ABSPATH.'mo-includes/');
 define('MOCON', ABSPATH.'mo-content/');
-define('MOCACHE', MOCON.'cache/');
 
 // Check if closed
 if (file_exists(MOCON.'closed.lock')) {

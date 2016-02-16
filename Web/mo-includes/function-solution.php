@@ -115,7 +115,6 @@ function mo_cache_solution($solution)
     return mo_write_cache_array('mo:solution:'.$solution['id'], $solution);
 }
 
-// TODO: 整理代码、利用缓存
 function mo_add_new_solution($pid, $lang, $post, $uid = 0)
 {
     global $user;
@@ -130,24 +129,22 @@ function mo_add_new_solution($pid, $lang, $post, $uid = 0)
     global $db;
     $length = strlen($post);
     $post = base64_encode($post);
-    $sql = 'SELECT `submit_problem` FROM `mo_stat_user` WHERE `uid` = ?'; // Whether a new problem for him
-    // TODO: Read from cache
-    $db->prepare($sql);
-    $db->bind('i', $uid);
-    $result = $db->execute();
-    $submit_problem = explode(' ', $result[0]['submit_problem']);
+    $submit_problem_raw = mo_get_user_submit_problem($uid);
+    $submit_problem = explode(' ', $submit_problem_raw);
     if (!in_array((string) $pid, $submit_problem)) {
         $sql = 'UPDATE `mo_stat_user` SET submit = submit+1, try = try+1, submit_problem = ? WHERE `uid` = ?';
-        $result[0]['submit_problem'] .= "$pid ";
-        // TODO: Update the cache
+        $submit_problem_raw .= "$pid ";
+        mo_write_cache_array_item('mo:user:'.$uid.':stat', 'submit_problem', $submit_problem_raw);
+        mo_incr_cache_array('mo:user:'.$uid.':stat', 'submit');
+        mo_incr_cache_array('mo:user:'.$uid.':stat', 'try');
         mo_problem_add_submit($pid, true);
     } else {
         $sql = 'UPDATE `mo_stat_user` SET submit = submit+1, submit_problem = ? WHERE `uid` = ?';
-        // TODO: Update the cache
+        mo_incr_cache_array('mo:user:'.$uid.':stat', 'submit');
         mo_problem_add_submit($pid);
     }
     $db->prepare($sql);
-    $db->bind('si', $result[0]['submit_problem'],  $uid);
+    $db->bind('si', $submit_problem_raw,  $uid);
     $db->execute();
     $sql = 'INSERT INTO `mo_judge_solution` (`pid`, `uid`, `code`, `post_time`, `language`, `code_length`) VALUES (?, ?, ?, CURRENT_TIMESTAMP, ?, ?)';
     $db->prepare($sql);

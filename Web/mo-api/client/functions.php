@@ -34,6 +34,7 @@ function update($connection, $data)
 
         return false;
     }
+    mo_del_cache('mo:solution:'.$data['sid']);
     $sql = 'UPDATE `mo_judge_solution` SET `client` = ?, `state` = ?, `used_time` = ?, `used_memory` = ?, `detail` = ?, '.
                 '`detail_result` = ?, `detail_time` = ?, `detail_memory` = ? WHERE `id` = ?';
     $mark = $db->prepare($sql);
@@ -53,9 +54,17 @@ function update($connection, $data)
             $user_ac .= "$pid ";
             $sql1 = 'UPDATE `mo_judge_problem` SET solved = solved+1, ac = ac+1 WHERE `id` = ?';
             $sql2 = 'UPDATE `mo_stat_user` SET ac_problem = ?, accept = accept+1, solve = solve+1 WHERE `uid` = ?';
+            mo_incr_cache_array('mo:problem:'.$pid, 'solved');
+            mo_incr_cache_array('mo:problem:'.$pid, 'ac');
+            mo_incr_cache_array('mo:user:'.$uid.':stat', 'accept');
+            mo_incr_cache_array('mo:user:'.$uid.':stat', 'solve');
+            mo_write_cache_array_item('mo:user:'.$uid.':stat', 'ac_problem', $user_ac);
         } else {
             $sql1 = 'UPDATE `mo_judge_problem` SET ac = ac+1 WHERE `id` = ?';
             $sql2 = 'UPDATE `mo_stat_user` SET ac_problem = ?, accept = accept+1 WHERE `uid` = ?';
+            mo_incr_cache_array('mo:problem:'.$pid, 'ac');
+            mo_incr_cache_array('mo:user:'.$uid.':stat', 'accept');
+            mo_write_cache_array_item('mo:user:'.$uid.':stat', 'ac_problem', $user_ac);
         }
         $mark = $db->prepare($sql1);
         $db->bind($mark, 'i', $pid);
@@ -84,15 +93,8 @@ function update_state($connection, $data)
     }
     $task[$sid]->last_time = (int) $data['timestamp'];
     $task[$sid]->got = 1;
-    $task[$sid]->state = (int) $data['state'];
-    if (MEM) {
-        set('solution-state-'.$sid, $data['state']);
-    } else {
-        $sql = 'UPDATE `mo_judge_solution` SET `state` = ? WHERE `mo_judge_solution`.`id` = ?';
-        $mark = $db->prepare($sql);
-        $db->bind($mark, 'ii', $data['state'], $data['sid']);
-        $db->execute($mark);
-    }
+    $task[$sid]->state = $data['state'];
+    mo_write_cache_array_item('mo:solution:'.$sid, 'state', $task[$sid]->state);
     p("Get a update-state. ( sid = $sid, cid = $connection->cid, IP = $connection->IP )");
 
     return true;
@@ -185,52 +187,12 @@ function check_lost()
     }
 }
 
-function get_prob($sid)
+function get_prob($pid)
 {
-    global $db;
-    $result = get('client-problem-'.$sid);
-    if (!$result) {
-        $sql = 'SELECT `id`, `hash`, `ver`, `time_limit`, `memory_limit`, `test_turn` FROM `mo_judge_problem` WHERE `id` = ?';
-        $mark = $db->prepare($sql);
-        $db->bind($mark, 'i', $sid);
-        $result = $db->execute($mark);
-        set('client-problem-'.$sid, $result);
-    }
+    mo_load_problem($pid);
+    $result = mo_read_cache_array('mo:problem:'.$pid);
 
     return $result;
-}
-
-function get($key)
-{
-    if (!MEM) {
-        return false;
-    }
-    global $mem;
-
-    return $mem->get($key);
-}
-
-function set($key, $data)
-{
-    if (!MEM) {
-        return false;
-    }
-    global $mem;
-    if (!$mem->set($key, $data)) {
-        $mem->replace($key, $data);
-    }
-
-    return true;
-}
-
-function del($key)
-{
-    if (!MEM) {
-        return false;
-    }
-    global $mem;
-
-    return $mem->delete($key);
 }
 
 function p($to_write)

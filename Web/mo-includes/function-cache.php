@@ -76,10 +76,10 @@ function mo_exist_cache($cache)
 
 function mo_incr_cache($cache, $i = 1)
 {
+    global $redis;
     if (!mo_exist_cache($cache)) {
         return false;
     }
-    global $redis;
     if ($i == 1) {
         return $redis->incr($cache);
     } else {
@@ -89,6 +89,7 @@ function mo_incr_cache($cache, $i = 1)
 
 function mo_incr_cache_array($key, $hashkey, $i = 1)
 {
+    global $redis;
     if (!mo_exist_cache($key)) {
         return false;
     }
@@ -98,10 +99,10 @@ function mo_incr_cache_array($key, $hashkey, $i = 1)
 
 function mo_decr_cache($cache, $i = 1)
 {
+    global $redis;
     if (!mo_exist_cache($cache)) {
         return false;
     }
-    global $redis;
     if ($i == 1) {
         return $redis->decr($cache);
     } else {

@@ -4,17 +4,17 @@ use Workerman\Lib\Timer;
 
 $worker_tasker->onWorkerStart = function($worker_tasker)
 {
-	global $db, $mem;
+	global $db, $redis;
 	$db = new DB();
 	$db->init(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 	while (!$db->connect())
 	{
 		sleep(1);
 	}
-	if (MEM)
-	{
-		$mem = new Memcached;
-		$mem->setOption(Memcached::OPT_LIBKETAMA_COMPATIBLE, true);
+	$redis = new Redis();
+	$redis->pconnect(REDIS_HOST, REDIS_PORT);
+	if (REDIS_PASS) {
+	    $redis->auth(REDIS_PASS);
 	}
 	Timer::add(5, 'check_lost'); // 每5秒，检查无响应的评测请求
 	Timer::add(20, 'check_forgotten'); // 每20秒，在数据库中寻找丢失的请求

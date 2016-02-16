@@ -28,6 +28,7 @@ function mo_load_problems($start, $end, $tag = '')
     foreach ($result as $problem) {
         $rt[] = $problem['id'];
         $mo_problem[$problem['id']] = $problem;
+        $mo_problem[$problem['id']]['extra'] = unserialize($mo_problem[$pid]['extra']);
         mo_cache_problem($problem);
     }
 

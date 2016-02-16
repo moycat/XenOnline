@@ -21,6 +21,7 @@ switch ($action) {
     } else {
         $sid = $_GET['sid'];
         if (mo_load_problem($sid)) {
+            mo_write_cache_array_item('mo:solution:'.$sid, 'state', '0');
             $sql = 'UPDATE `mo_judge_solution` SET `state` = 0 WHERE `id` = ?';
             $db->prepare($sql);
             $db->bind('i', $sid);
@@ -166,7 +167,7 @@ $page = ceil($solution_count / $piece);
                 echo '
 				'.$tr.'
 				 <td>'.$solution['id'].'</td>
- 				 <td><a href="edit_user.php?uid='.$solution['uid'].'">'.mo_get_user_name($solution['uid']).'</a></td>
+ 				 <td><a href="edit_user.php?uid='.$solution['uid'].'">'.mo_get_user_nickname($solution['uid']).'</a></td>
  				 <td><a href="edit_problem.php?action=edit&pid='.$solution['pid'].'">'.mo_get_problem_title($solution['pid']).'</a></td>
  				 <td class="hidden-xs">'.mo_lang($solution['language']).'</td>
  				 <td>'.mo_state_r($solution['state']).'</td>

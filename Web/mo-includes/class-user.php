@@ -248,10 +248,12 @@ class User
 
     private function load()
     {
+        global $db, $mo_user_failed, $mo_now_user;
         if ($this->loaded) {
+            $mo_now_user = $this->uid;
+
             return true;
         }
-        global $db, $mo_user_failed, $mo_now_user;
         if (isset($mo_user_failed[$this->uid]) || $this->uid < 1) {
             $mo_now_user = null;
 

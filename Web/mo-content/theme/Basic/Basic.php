@@ -2,10 +2,10 @@
     /*
      * MoyOJ Theme: Basic
      * Author: Moycat
-     * 
+     *
      * The theme is very simple and pretty ugly.
      * Just for test.
-     * 
+     *
      */
 
     require_once $mo_theme_floder.'functions.php';
@@ -32,6 +32,10 @@
             break;
             case 'discuss':
             require_once $mo_theme_floder.'discuss.php';
+            break;
+            case 'refresh':
+            global $redis;
+            $redis->flushAll();
             break;
             default:
             require_once $mo_theme_floder.'404.php';

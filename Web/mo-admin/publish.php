@@ -48,6 +48,7 @@ function edit_problem()
     }
     $sql = 'UPDATE `mo_judge_problem` SET `title` = ?, `description` = ?, `tag` = ?, `extra` = ?, `ver` = ?, `time_limit` = ?, '.
                 '`memory_limit` = ?, `test_turn` = ? WHERE `mo_judge_problem`.`id` = ?';
+    mo_del_cache('mo:problem:'.$_POST['edit_id']);
     global $db;
     $db->prepare($sql);
     $db->bind('ssssiiiii', $_POST['title'], $_POST['test-editormd-markdown-doc'], $_POST['tag'], serialize($extra), $ver, $_POST['time_limit'],

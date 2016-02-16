@@ -25,7 +25,7 @@ class Solution
         list($this->sid, $this->pid, $this->uid, $this->send['lang'], $this->send['code']) = array((int) $data['sid'], (int) $data['pid'], $data['uid'], $data['lang'], $data['code']);
         $result = get_prob($this->pid);
         list($this->send['sid'], $this->send['pid'], $this->send['version'], $this->send['hash'], $this->send['time_limit'], $this->send['memory_limit'], $this->send['test_turn']) =
-                array($this->sid, $this->pid, $result[0]['ver'], $result[0]['hash'], $result[0]['time_limit'], $result[0]['memory_limit'], $result[0]['test_turn']);
+                array($this->sid, $this->pid, $result['ver'], $result['hash'], $result['time_limit'], $result['memory_limit'], $result['test_turn']);
         $task[$this->sid] = &$this;
         p("Get a new solution! ( sid = $this->sid )");
     }

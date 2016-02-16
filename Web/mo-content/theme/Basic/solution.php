@@ -78,7 +78,7 @@
 				  <td>'.mo_get_solution_code_length($sid).'字节</td>
 				  <td>'.mo_get_solution_state($sid).'</td>
 				  <td>'.($used_time != -1 ? $used_time.'MS' : '').'</td>
-				  <td>'.($used_memory != -1 ? $used_time.'KB' : '').'</td>';
+				  <td>'.($used_memory != -1 ? $used_memory.'KB' : '').'</td>';
                 if ($suid == $user->getUID()) {
                     echo '<td><a href="/?r=solution/'.$solution['id'].'">详情</a></td>';
                 } else {
