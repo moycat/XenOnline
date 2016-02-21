@@ -95,165 +95,165 @@ function mo_get_user()
     return htmlspecialchars($mo_user[$uid]->get($category, $key));
 }
 
-function mo_get_user_nickname($sid = '-1')
+function mo_get_user_nickname($uid = '')
 {
-    if ($sid == '-1') {
+    if (!$uid) {
         return mo_get_user('info', 'nickname');
     } else {
-        return mo_get_user($sid, 'info', 'nickname');
+        return mo_get_user($uid, 'info', 'nickname');
     }
 }
 
-function mo_get_user_username($sid = '-1')
+function mo_get_user_username($uid = '')
 {
-    if ($sid == '-1') {
+    if (!$uid) {
         return mo_get_user('info', 'username');
     } else {
-        return mo_get_user($sid, 'info', 'username');
+        return mo_get_user($uid, 'info', 'username');
     }
 }
 
-function mo_get_user_password($sid = '-1')
+function mo_get_user_password($uid = '')
 {
-    if ($sid == '-1') {
+    if (!$uid) {
         return mo_get_user('info', 'password');
     } else {
-        return mo_get_user($sid, 'info', 'password');
+        return mo_get_user($uid, 'info', 'password');
     }
 }
 
-function mo_get_user_mask($sid = '-1')
+function mo_get_user_mask($uid = '')
 {
-    if ($sid == '-1') {
+    if (!$uid) {
         return mo_get_user('info', 'mask');
     } else {
-        return mo_get_user($sid, 'info', 'mask');
+        return mo_get_user($uid, 'info', 'mask');
     }
 }
 
-function mo_get_user_email($sid = '-1')
+function mo_get_user_email($uid = '')
 {
-    if ($sid == '-1') {
+    if (!$uid) {
         return mo_get_user('info', 'email');
     } else {
-        return mo_get_user($sid, 'info', 'email');
+        return mo_get_user($uid, 'info', 'email');
     }
 }
 
-function mo_get_user_reg_time($sid = '-1')
+function mo_get_user_reg_time($uid = '')
 {
-    if ($sid == '-1') {
+    if (!$uid) {
         return mo_get_user('info', 'reg_time');
     } else {
-        return mo_get_user($sid, 'info', 'reg_time');
+        return mo_get_user($uid, 'info', 'reg_time');
     }
 }
 
-function mo_get_user_last_time($sid = '-1')
+function mo_get_user_last_time($uid = '')
 {
-    if ($sid == '-1') {
+    if (!$uid) {
         return mo_get_user('info', 'last_time');
     } else {
-        return mo_get_user($sid, 'info', 'last_time');
+        return mo_get_user($uid, 'info', 'last_time');
     }
 }
 
-function mo_get_user_user_group($sid = '-1')
+function mo_get_user_user_group($uid = '')
 {
-    if ($sid == '-1') {
+    if (!$uid) {
         return mo_get_user('info', 'user_group');
     } else {
-        return mo_get_user($sid, 'info', 'user_group');
+        return mo_get_user($uid, 'info', 'user_group');
     }
 }
 
-function mo_get_user_reg_ip($sid = '-1')
+function mo_get_user_reg_ip($uid = '')
 {
-    if ($sid == '-1') {
+    if (!$uid) {
         return mo_get_user('info', 'reg_ip');
     } else {
-        return mo_get_user($sid, 'info', 'reg_ip');
+        return mo_get_user($uid, 'info', 'reg_ip');
     }
 }
 
-function mo_get_user_last_ip($sid = '-1')
+function mo_get_user_last_ip($uid = '')
 {
-    if ($sid == '-1') {
+    if (!$uid) {
         return mo_get_user('info', 'last_ip');
     } else {
-        return mo_get_user($sid, 'info', 'last_ip');
+        return mo_get_user($uid, 'info', 'last_ip');
     }
 }
 
-function mo_get_user_extra_info($sid, $key)
+function mo_get_user_extra_info($uid, $key)
 {
-    return mo_get_user($sid, 'extra_info', $key);
+    return mo_get_user($uid, 'extra_info', $key);
 }
 
-function mo_get_user_preference($sid, $key)
+function mo_get_user_preference($uid, $key)
 {
-    return mo_get_user($sid, 'preference', $key);
+    return mo_get_user($uid, 'preference', $key);
 }
 
-function mo_get_user_submit($sid = '-1')
+function mo_get_user_submit($uid = '')
 {
-    if ($sid == '-1') {
+    if (!$uid) {
         return mo_get_user('stat', 'submit');
     } else {
-        return mo_get_user($sid, 'stat', 'submit');
+        return mo_get_user($uid, 'stat', 'submit');
     }
 }
 
-function mo_get_user_accept($sid = '-1')
+function mo_get_user_accept($uid = '')
 {
-    if ($sid == '-1') {
+    if (!$uid) {
         return mo_get_user('stat', 'accept');
     } else {
-        return mo_get_user($sid, 'stat', 'accept');
+        return mo_get_user($uid, 'stat', 'accept');
     }
 }
 
-function mo_get_user_try($sid = '-1')
+function mo_get_user_try($uid = '')
 {
-    if ($sid == '-1') {
+    if (!$uid) {
         return mo_get_user('stat', 'try');
     } else {
-        return mo_get_user($sid, 'stat', 'try');
+        return mo_get_user($uid, 'stat', 'try');
     }
 }
 
-function mo_get_user_solved($sid = '-1')
+function mo_get_user_solved($uid = '')
 {
-    if ($sid == '-1') {
+    if (!$uid) {
         return mo_get_user('stat', 'solved');
     } else {
-        return mo_get_user($sid, 'stat', 'solved');
+        return mo_get_user($uid, 'stat', 'solved');
     }
 }
 
-function mo_get_user_submit_problem($sid = '-1')
+function mo_get_user_submit_problem($uid = '')
 {
-    if ($sid == '-1') {
+    if (!$uid) {
         return mo_get_user('stat', 'submit_problem');
     } else {
-        return mo_get_user($sid, 'stat', 'submit_problem');
+        return mo_get_user($uid, 'stat', 'submit_problem');
     }
 }
 
-function mo_get_user_ac_problem($sid = '-1')
+function mo_get_user_ac_problem($uid = '')
 {
-    if ($sid == '-1') {
+    if (!$uid) {
         return mo_get_user('stat', 'ac_problem');
     } else {
-        return mo_get_user($sid, 'stat', 'ac_problem');
+        return mo_get_user($uid, 'stat', 'ac_problem');
     }
 }
 
-function mo_get_user_msg_session($sid = '-1')
+function mo_get_user_msg_session($uid = '')
 {
-    if ($sid == '-1') {
+    if (!$uid) {
         return mo_get_user('stat', 'msg_session');
     } else {
-        return mo_get_user($sid, 'stat', 'msg_session');
+        return mo_get_user($uid, 'stat', 'msg_session');
     }
 }

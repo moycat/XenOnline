@@ -109,7 +109,9 @@ function mo_cache_solution($solution)
         return false;
     }
 
-    return mo_write_cache_array('mo:solution:'.$solution['id'], $solution);
+    $rt = mo_write_cache_array('mo:solution:'.$solution['id'], $solution);
+    mo_set_cache_timeout('mo:solution:'.$solution['id'], 2592000);
+    return $rt;
 }
 
 function mo_add_new_solution($pid, $lang, $post, $uid = 0)

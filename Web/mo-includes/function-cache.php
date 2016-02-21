@@ -6,6 +6,12 @@
  *
  */
 
+function mo_set_cache_timeout($key, $timeout)
+{
+    global $redis;
+    return $redis->setTimeout($key, $timeout);
+}
+
 function mo_read_cache_array($cache)
 {
     global $redis;
