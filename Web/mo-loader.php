@@ -45,6 +45,7 @@ $mo_plugin_file = array();
 $mo_theme = '';
 $mo_theme_floder = '';
 $mo_theme_file = '';
+$mo_time = microtime();
 
 $mo_user = array();
 $mo_user_failed = array();

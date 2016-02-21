@@ -19,9 +19,6 @@ require_once MOINC.'function-solution.php';
 require_once MOINC.'function-stat.php';
 require_once MOINC.'function-user.php';
 
-$mo_time = microtime();
-$mo_settings = array();
-
 // Analyze the request to be handlered by the theme
 function mo_analyze()
 {
@@ -78,7 +75,7 @@ function getset(&$key, $value)
     return $old;
 }
 
-// Check whether a value is  serialized
+// Check whether a value is serialized
 function is_serialized($data, $strict = true) // From WordPress
 {
     // if it isn't a string, it isn't serialized
