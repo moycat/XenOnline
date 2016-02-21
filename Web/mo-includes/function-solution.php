@@ -42,7 +42,7 @@ function mo_load_solution($sid)
     global $db, $mo_solution, $mo_solution_failed, $mo_now_solution;
     $sid = (string) $sid;
     if (isset($mo_solution_failed[$sid])) {
-        $mo_now_solution = null;
+        $mo_now_solution = NULL;
 
         return false;
     }
@@ -87,19 +87,16 @@ function mo_get_solution()
     global $mo_solution, $mo_now_solution;
     $args = func_get_args();
     if (count($args) == 1) { // 获取当前指向的solution ==> mo_get_solution($category)
-    $category = $args[0];
-        if ($mo_now_solution == null) {
-            return;
-        } else {
-            return $mo_solution[$mo_now_solution][$category];
+        $category = $args[0];
+        if ($mo_now_solution == NULL || !mo_load_solution($mo_now_solution)) {
+            return NULL;
         }
+        return $mo_solution[$mo_now_solution][$category];
     } else { // 获取指定$sid的solution ==> mo_get_solution($sid, $category)
         $sid = (string) $args[0];
         $category = $args[1];
-        if (!isset($mo_solution[$sid])) {
-            if (!mo_load_solution($sid)) {
-                return;
-            }
+        if (!mo_load_solution($sid)) {
+            return NULL;
         }
 
         return $mo_solution[$sid][$category];
@@ -108,7 +105,7 @@ function mo_get_solution()
 
 function mo_cache_solution($solution)
 {
-    if ((int) $solution['state'] <= 0 || mo_exist_cache('mo:solution:'.$solution['id'])) {
+    if (mo_exist_cache('mo:solution:'.$solution['id'])) {
         return false;
     }
 
@@ -118,7 +115,7 @@ function mo_cache_solution($solution)
 function mo_add_new_solution($pid, $lang, $post, $uid = 0)
 {
     global $user;
-    // Chec permission
+    // Check permission
     if (!$uid) {
         $uid = $user->getUID();
     }
@@ -191,135 +188,135 @@ function mo_problem_add_submit($pid, $add_try = false)
     $db->execute();
 }
 
-function mo_get_solution_id($sid = '-1')
+function mo_get_solution_id($sid = '')
 {
-    if ($sid == '-1') {
+    if (!$sid) {
         return mo_get_solution('id');
     } else {
         return mo_get_solution($sid, 'id');
     }
 }
 
-function mo_get_solution_pid($sid = '-1')
+function mo_get_solution_pid($sid = '')
 {
-    if ($sid == '-1') {
+    if (!$sid) {
         return mo_get_solution('pid');
     } else {
         return mo_get_solution($sid, 'pid');
     }
 }
 
-function mo_get_solution_uid($sid = '-1')
+function mo_get_solution_uid($sid = '')
 {
-    if ($sid == '-1') {
+    if (!$sid) {
         return mo_get_solution('uid');
     } else {
         return mo_get_solution($sid, 'uid');
     }
 }
 
-function mo_get_solution_client($sid = '-1')
+function mo_get_solution_client($sid = '')
 {
-    if ($sid == '-1') {
+    if (!$sid) {
         return apply_filter('solutionClient', mo_get_solution('client'));
     } else {
         return apply_filter('solutionClient', mo_get_solution($sid, 'client'));
     }
 }
 
-function mo_get_solution_code($sid = '-1')
+function mo_get_solution_code($sid = '')
 {
-    if ($sid == '-1') {
+    if (!$sid) {
         return apply_filter('solutionCode', mo_get_solution('code'));
     } else {
         return apply_filter('solutionCode', mo_get_solution($sid, 'code'));
     }
 }
 
-function mo_get_solution_post_time($sid = '-1')
+function mo_get_solution_post_time($sid = '')
 {
-    if ($sid == '-1') {
+    if (!$sid) {
         return apply_filter('solutionPostTime', mo_get_solution('post_time'));
     } else {
         return apply_filter('solutionPostTime', mo_get_solution($sid, 'post_time'));
     }
 }
 
-function mo_get_solution_state($sid = '-1')
+function mo_get_solution_state($sid = '')
 {
-    if ($sid == '-1') {
+    if (!$sid) {
         return apply_filter('solutionState', mo_get_solution('state'));
     } else {
         return apply_filter('solutionState', mo_get_solution($sid, 'state'));
     }
 }
 
-function mo_get_solution_language($sid = '-1')
+function mo_get_solution_language($sid = '')
 {
-    if ($sid == '-1') {
+    if (!$sid) {
         return apply_filter('solutionLanguage', mo_get_solution('language'));
     } else {
         return apply_filter('solutionLanguage', mo_get_solution($sid, 'language'));
     }
 }
 
-function mo_get_solution_code_length($sid = '-1')
+function mo_get_solution_code_length($sid = '')
 {
-    if ($sid == '-1') {
+    if (!$sid) {
         return apply_filter('solutionCodeLength', mo_get_solution('code_length'));
     } else {
         return apply_filter('solutionCodeLength', mo_get_solution($sid, 'code_length'));
     }
 }
 
-function mo_get_solution_used_time($sid = '-1')
+function mo_get_solution_used_time($sid = '')
 {
-    if ($sid == '-1') {
+    if (!$sid) {
         return apply_filter('solutionUsedTime', mo_get_solution('used_time'));
     } else {
         return apply_filter('solutionUsedTime', mo_get_solution($sid, 'used_time'));
     }
 }
 
-function mo_get_solution_used_memory($sid = '-1')
+function mo_get_solution_used_memory($sid = '')
 {
-    if ($sid == '-1') {
+    if (!$sid) {
         return apply_filter('solutionUsedMemory', mo_get_solution('used_memory'));
     } else {
         return apply_filter('solutionUsedMemory', mo_get_solution($sid, 'used_memory'));
     }
 }
 
-function mo_get_solution_detail($sid = '-1')
+function mo_get_solution_detail($sid = '')
 {
-    if ($sid == '-1') {
+    if (!$sid) {
         return apply_filter('solutionDetail', mo_get_solution('detail'));
     } else {
         return apply_filter('solutionDetail', mo_get_solution($sid, 'detail'));
     }
 }
 
-function mo_get_solution_detail_result($sid = '-1')
+function mo_get_solution_detail_result($sid = '')
 {
-    if ($sid == '-1') {
+    if (!$sid) {
         return apply_filter('solutionDetailResult', mo_get_solution('detail_result'));
     } else {
         return apply_filter('solutionDetailResult', mo_get_solution($sid, 'detail_result'));
     }
 }
 
-function mo_get_solution_detail_time($sid = '-1')
+function mo_get_solution_detail_time($sid = '')
 {
-    if ($sid == '-1') {
+    if (!$sid) {
         return apply_filter('solutionDetailTime', mo_get_solution('detail_time'));
     } else {
         return apply_filter('solutionDetailTime', mo_get_solution($sid, 'detail_time'));
     }
 }
 
-function mo_get_solution_detail_memory($sid = '-1')
+function mo_get_solution_detail_memory($sid = '')
 {
-    if ($sid == '-1') {
+    if (!$sid) {
         return apply_filter('solutionDetailMemory', mo_get_solution('detail_memory'));
     } else {
         return apply_filter('solutionDetailMemory', mo_get_solution($sid, 'detail_memory'));

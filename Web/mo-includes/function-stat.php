@@ -9,6 +9,8 @@
  *
  */
 
+// TODO: Change all
+
 function mo_get_solution_count($pid = 'all', $uid = 'all', $state = 'all')
 {
     global $db;
