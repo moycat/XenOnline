@@ -91,7 +91,7 @@ function mo_get_solution()
         if ($mo_now_solution == NULL || !mo_load_solution($mo_now_solution)) {
             return NULL;
         }
-        return $mo_solution[$mo_now_solution][$category];
+        return htmlspecialchars($mo_solution[$mo_now_solution][$category]);
     } else { // 获取指定$sid的solution ==> mo_get_solution($sid, $category)
         $sid = (string) $args[0];
         $category = $args[1];
@@ -99,7 +99,7 @@ function mo_get_solution()
             return NULL;
         }
 
-        return $mo_solution[$sid][$category];
+        return htmlspecialchars($mo_solution[$sid][$category]);
     }
 }
 

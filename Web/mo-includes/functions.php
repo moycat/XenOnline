@@ -320,3 +320,14 @@ function mo_lang($lang, $code = true)
 
     return $rt;
 }
+
+// To print texts safely.
+function e($text, $not_show = false)
+{
+    if ($not_show)
+    {
+        return htmlspecialchars($text);
+    } else {
+        echo htmlspecialchars($text);
+    }
+}

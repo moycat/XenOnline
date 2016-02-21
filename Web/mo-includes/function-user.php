@@ -12,7 +12,7 @@
 function mo_add_user($username, $password, $email, $nickname = '')
 {
     global $db;
-    $password = password_hash($password, PASSWORD_DEFAULT, ['cost' => CRYPT_COST]);
+    $password = mo_password($password, $username);
     $ip = mo_get_user_ip();
     $sql = 'INSERT INTO `mo_user` (`username`, `password`, `email`, `nickname`, `reg_time`, `reg_ip`) VALUES ( ?, ?, ?, ?, CURRENT_TIMESTAMP, ?)';
     $db->prepare($sql);
@@ -54,6 +54,11 @@ function mo_del_user($uid)
     return true;
 }
 
+function mo_password($password, $salt)
+{
+    return sha1(md5($password.$salt).$salt);
+}
+
 function mo_set_now_user($uid)
 {
     global $mo_now_user;
@@ -87,7 +92,7 @@ function mo_get_user()
         return false;
     }
 
-    return $mo_user[$uid]->get($category, $key);
+    return htmlspecialchars($mo_user[$uid]->get($category, $key));
 }
 
 function mo_get_user_nickname($sid = '-1')

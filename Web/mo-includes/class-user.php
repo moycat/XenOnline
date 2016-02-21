@@ -198,7 +198,7 @@ class User
         $db->prepare($sql);
         $db->bind('s', $username);
         $result = $db->execute();
-        if (!$result || !$this->setUID($result[0]['id']) || !password_verify($password, $this->info['password'])) {
+        if (!$result || !$this->setUID($result[0]['id']) || mo_password($password, $this->info['username']) != $this->info['password']) {
             mo_log_login($this->uid, 0, false);
 
             return false;

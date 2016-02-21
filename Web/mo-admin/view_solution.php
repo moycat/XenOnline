@@ -28,7 +28,7 @@ if ($solution['state'] == 1) {
     ?>
 <h3>错误详情</h3>
 <pre>
-  <?php echo $solution['detail'];
+  <?php e($solution['detail']);
     ?>
 </pre>
 <?php
@@ -99,7 +99,7 @@ $detail_time = explode(' ', $solution['detail_time']);
 </h3>
 <div id="editor"></div>
 <script>
-    var code = atob('<?php echo $solution['code'];?>');
+    var code = atob('<?php e($solution['code']);?>');
     var editor = ace.edit("editor");
     editor.setReadOnly(true);
     editor.getSession().setUseWrapMode(true);

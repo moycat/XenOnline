@@ -93,7 +93,7 @@ function mo_get_problem()
         if ($mo_now_problem == NULL || !mo_load_problem($mo_now_problem)) {
             return NULL;
         }
-        return $mo_problem[$mo_now_problem][$category];
+        return htmlspecialchars($mo_problem[$mo_now_problem][$category]);
     } else { // 获取指定$pid的problem ==> mo_get_problem($pid, $category)
         $pid = (string) $args[0];
         $category = $args[1];
@@ -101,7 +101,7 @@ function mo_get_problem()
             return NULL;
         }
 
-        return $mo_problem[$pid][$category];
+        return htmlspecialchars($mo_problem[$pid][$category]);
     }
 }
 
