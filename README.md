@@ -1,6 +1,18 @@
 MoyOJ - 开源的信息学竞赛在线评测系统
 ======================
 
+> 当前工作分支：Yuki
+
+> 将进行一些重大更新，主要内容如下：
+
+> 1. 切换数据库至MongoDB（受不了MySQL了）
+
+> 2. 重写评测端的具体实现（果然自己写的代码都是黑历史）
+
+> 3. 完成程序功能
+
+> 以下信息适用于旧版本
+
 ![MoyOJ](https://raw.githubusercontent.com/moycat/MoyOJ/master/MoyOJ.png)
 
 MoyOJ（将）是一个美观、实用、强大的Online Judge，并且完全开源。
