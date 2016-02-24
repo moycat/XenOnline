@@ -5,14 +5,17 @@
         if (!mo_load_solution($sid) || mo_get_solution('uid') != $user->getUID()) {
             require_once $mo_theme_floder.'404.php';
         }
-        echo '<h2>提交：#'.mo_get_solution_id().'</h2>';
-        echo '用户：#'.mo_get_solution_uid().'<br>';
-        echo '问题：#<a href="/?r=problem/'.mo_get_solution_pid().'">'.mo_get_solution_pid().
+$uid = mo_get_solution_uid();
+$pid = mo_get_solution_pid();
+$state = mo_get_solution_state();
+        echo '<h2>提交：#'.$sid.'</h2>';
+        echo '用户：#'.$uid.'<br>';
+        echo '问题：#<a href="/?r=problem/'.$pid.'">'.$pid.
                     '</a><br>';
         echo '语言：#'.mo_get_solution_language().'<br>';
         echo '评测机：#'.mo_get_solution_client().'<br><br>';
-        if (mo_get_solution('state') <= 0) {
-            echo '评测中，当前状态：'.mo_get_solution_state().'<br>';
+        if ($state <= 0) {
+            echo '评测中，当前状态：'.$state.'<br>';
         } else {
             echo '总耗时：'.mo_get_solution_used_time().'MS 最大使用内存：'.
                         mo_get_solution_used_memory().'KB<br>';
@@ -69,9 +72,10 @@
                 $suid = mo_get_solution_uid($sid);
                 $used_time = mo_get_solution_used_time($sid);
                 $used_memory = mo_get_solution_used_memory($sid);
+		$pid = mo_get_solution_pid($sid);
                 echo '
 				<tr>
-				  <td><a href="/?r=problem/'.mo_get_solution_pid($sid).'">'.mo_get_solution_pid($sid).'</a></td>
+				  <td><a href="/?r=problem/'.$pid.'">'.$pid.'</a></td>
 				  <td><a href="/?r=user/'.$suid.'">'.$suid.'</a></td>
 				  <td>'.mo_get_solution_post_time($sid).'</td>
 				  <td>'.mo_get_solution_language($sid).'</td>

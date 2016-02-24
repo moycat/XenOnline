@@ -1,0 +1,3 @@
+[submodule "Web/mo-api/client/workerman"]
+	path = Web/mo-api/client/workerman
+	url = https://github.com/walkor/workerman

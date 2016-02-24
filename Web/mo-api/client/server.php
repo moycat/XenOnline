@@ -6,7 +6,7 @@ define('ABSPATH', '../../');
 define('MOINC', ABSPATH.'mo-includes/');
 define('MOCON', ABSPATH.'mo-content/');
 
-require_once './Workerman/Autoloader.php';
+require_once './workerman/Autoloader.php';
 require_once './class-db.php';
 require_once './class-solution.php';
 require_once './functions.php';
