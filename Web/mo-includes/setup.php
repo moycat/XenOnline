@@ -1,19 +1,105 @@
 <?php session_start();
+
+// Autoload MongoDB lib
+function mongodb($classname) {
+  $class = explode('\\', $classname);
+  $file = 'mongolib/src';
+  $c = count($class);
+  for ($i = 1; $i < $c; ++$i) {
+    $file .= '/'.$class[$i];
+  }
+  $file .= '.php';
+  if (is_file($file)) {
+    require $file;
+  }
+}
+
 if (isset($_GET['action']) && $_GET['action'] == 'check') {
   if (!isset($_SESSION['mo_install']) || $_SESSION['mo_install'] < 2) {
     exit(0);
   }
-  $result = array('result' => True, 'detail' => array(), 'loc' => array());
+  
+  // Register autoload MongoDB library function
+  spl_autoload_register('mongodb');
+  require_once 'mongolib/src/functions.php';
+  
+  $result = array('ok' => True, 'detail' => array(), 'loc' => array());
+  $_GET['admin_name'] = base64_decode($_GET['admin_name']);
+  $_GET['admin_pwd'] = base64_decode($_GET['admin_pwd']);
+  $_GET['mongodb_pwd'] = base64_decode($_GET['mongodb_pwd']);
+  $_GET['redis_pwd'] = base64_decode($_GET['redis_pwd']);
   // Check MongoDB
   $m_q = 'mongodb://';
   if ($_GET['mongodb_user'] || $_GET['mongodb_pwd']) {
     $m_q .= $_GET['mongodb_user'].':'.$_GET['mongodb_pwd'].'@';
   }
   $m_q .= $_GET['mongodb_host'].':'.$_GET['mongodb_port'];
-  $m = new MongoDB\Driver\Client($m_q);
-  $m->connect();
+  try
+  {
+    $m = new MongoDB\Client($m_q);
+    $m->listDatabases();
+  }
+  catch(Exception $e)
+  {
+    $result['ok'] = False;
+    $result['detail'][] = '<b>MongoDB</b><br>'.$e->getMessage();
+    $result['loc'][] = 'mongodb_host';
+    $result['loc'][] = 'mongodb_port';
+    $result['loc'][] = 'mongodb_user';
+    $result['loc'][] = 'mongodb_pwd';
+  }
+  // Check Redis
+  $r = new Redis();
+  if (!$r->pconnect($_GET['redis_host'], $_GET['redis_port'])) {
+    $result['ok'] = False;
+    $result['detail'][] = '<b>Redis</b><br>创造到'.$_GET['redis_host'].':'.$_GET['redis_port'].'的连接失败。';
+    $result['loc'][] = 'redis_host';
+    $result['loc'][] = 'redis_port';
+  } elseif ($_GET['redis_pwd'] && !$r->auth($_GET['redis_pwd'])) {
+    $result['ok'] = False;
+    $result['detail'][] = '<b>Redis</b><br>'.$_GET['redis_host'].':'.$_GET['redis_port'].'的密码错误。';
+    $result['loc'][] = 'redis_pwd';
+  }
+  // Check cilent server
+  if(!$_GET['server_host']) {
+    $result['ok'] = False;
+    $result['loc'][] = 'server_host';
+    $result['detail'][] = '必须填入评测端Server地址。';
+  }
+  if($_GET['server_port'] < 1 || $_GET['server_port'] > 65535) {
+    $result['ok'] = False;
+    $result['loc'][] = 'server_port';
+    $result['detail'][] = '必须填入合法的评测端Server端口。';
+  }
+  // Check the new admim
+  if(!$_GET['admin_name']) {
+    $result['ok'] = False;
+    $result['loc'][] = 'admin_name';
+    $result['detail'][] = '必须填入管理员的用户名。';
+  }
+  if(!$_GET['admin_pwd'] || strlen($_GET['admin_pwd']) < 8) {
+    $result['ok'] = False;
+    $result['loc'][] = 'admin_pwd';
+    $result['detail'][] = '必须设定合法的管理员密码。';
+  }
+  // Record
+  if ($result['ok']) {
+    $_SESSION['mo_install'] = 3;
+    $_SESSION['mongodb_user'] = $_GET['mongodb_user'];
+    $_SESSION['mongodb_pwd'] = $_GET['mongodb_pwd'];
+    $_SESSION['mongodb_host'] = $_GET['mongodb_host'];
+    $_SESSION['mongodb_port'] = $_GET['mongodb_port'];
+    $_SESSION['redis_host'] = $_GET['redis_host'];
+    $_SESSION['redis_port'] = $_GET['redis_port'];
+    $_SESSION['redis_pwd'] = $_GET['redis_pwd'];
+    $_SESSION['server_host'] = $_GET['server_host'];
+    $_SESSION['server_port'] = $_GET['server_port'];
+    $_SESSION['admin_name'] = $_GET['server_host'];
+    $_SESSION['admin_pwd'] = $_GET['server_port'];
+  }
   echo json_encode($result);
   exit(0);
+  // Check section ends
 }
 ?>
 <!doctype html>
@@ -40,6 +126,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'check') {
 define('HAVE_INSTALLED', 100);
 define('STEP1', 1);
 define('STEP2', 2);
+define('STEP3', 3);
 
 $step = isset($_GET['step']) ? (int)$_GET['step'] : 1;
 if (!isset($_SESSION['mo_install'])) {
@@ -85,6 +172,7 @@ if (file_exists('../mo-content/install.lock')) {
       <h5>先来一发环境检测吧~</h5>
       </p>
       <?php
+      // Check environment
       $fail = 0;
       $now['php'] = phpversion();
       $php_ver = explode('.', $now['php']);
@@ -119,8 +207,8 @@ if (file_exists('../mo-content/install.lock')) {
         $advice['redis'] = '无';
         $info['redis'] = 'success';
       }
-      $now['permission'] = is_writeable('../mo-content') && is_writeable('../mo-content/upload') &&
-                            is_writeable('../mo-content/data');
+      $now['permission'] = is_writeable('../mo-content/') && is_writeable('../mo-content/upload/') &&
+                            is_writeable('../mo-content/data/');
       if (!$now['permission']) {
         $now['permission'] = '不可写';
         $advice['permission'] = '调整权限';
@@ -173,6 +261,7 @@ if (file_exists('../mo-content/install.lock')) {
       </table>
       <?php
       if ($fail > 0) {
+          $_SESSION['mo_install'] = 1;
       ?>
       <h5>噫(つд⊂)，环境检测中有不通过的地方。<br>
         解决后才能继续安装。</h5>
@@ -193,7 +282,7 @@ if (file_exists('../mo-content/install.lock')) {
       done_percent=50;
       </script>
       <h5>接下来请提供数据库等一堆信息……</h5>
-      <div name="info"></div>
+      <div id="info"></div>
       <form class="form-horizontal" role="form">
         <h6><span class="label label-default">MongoDB配置</span></h6>
         <div class="form-group">
@@ -261,8 +350,34 @@ if (file_exists('../mo-content/install.lock')) {
             placeholder="6666" value="6666">
           </div>
         </div>
-      <input type="button" class="btn btn-block btn-lg btn-info" onClick="check_info" value="验证配置信息">
+        <h6><span class="label label-default">添加一只管理员</span></h6>
+        <div class="form-group">
+          <label for="admin_name" class="col-sm-2 control-label">用户名</label>
+          <div class="col-sm-8">
+            <input type="text" class="form-control" id="admin_name" name="admin_name" 
+            placeholder="可用字母/数字">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="admin_pwd" class="col-sm-2 control-label">密码</label>
+          <div class="col-sm-8">
+            <input type="text" class="form-control" id="admin_pwd" name="admin_pwd" 
+            placeholder="至少8位，可用字母/数字/标点">
+          </div>
+        </div>
+        <input type="button" class="btn btn-block btn-lg btn-info" onClick="check_info()" value="验证配置信息">
       </form>
+      <?php
+      break;
+      case STEP3:
+      ?>
+      <script>
+      done_percent=75;
+      </script>
+      <h5>正在安装……</h5>
+      <p>正在设置MongoDB数据……</p>
+      <p>正在生成配置文件……</p>
+      <p>正在加锁……</p>
       <?php
       break;
       default: ?>

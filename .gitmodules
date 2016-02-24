@@ -1,3 +1,6 @@
 [submodule "Web/mo-api/client/workerman"]
 	path = Web/mo-api/client/workerman
 	url = https://github.com/walkor/workerman
+[submodule "Web/mo-includes/mongolib"]
+	path = Web/mo-includes/mongolib
+	url = https://github.com/mongodb/mongo-php-library.git
