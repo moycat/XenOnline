@@ -1,4 +1,15 @@
-<?php session_start();
+<?php
+/*
+ * mo-includes/setup.php @ MoyOJ
+ *
+ * This file is to install MoyOJ web & database.
+ *
+ * Licensed under GNU General Public License, version 2:
+ * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+ *
+ */
+
+session_start();
 
 // Autoload MongoDB lib
 function mongodb($classname) {
@@ -23,81 +34,8 @@ if (isset($_GET['action']) && $_GET['action'] == 'check') {
   spl_autoload_register('mongodb');
   require_once 'mongolib/src/functions.php';
   
-  $result = array('ok' => True, 'detail' => array(), 'loc' => array());
-  $_GET['admin_name'] = base64_decode($_GET['admin_name']);
-  $_GET['admin_pwd'] = base64_decode($_GET['admin_pwd']);
-  $_GET['mongodb_pwd'] = base64_decode($_GET['mongodb_pwd']);
-  $_GET['redis_pwd'] = base64_decode($_GET['redis_pwd']);
-  // Check MongoDB
-  $m_q = 'mongodb://';
-  if ($_GET['mongodb_user'] || $_GET['mongodb_pwd']) {
-    $m_q .= $_GET['mongodb_user'].':'.$_GET['mongodb_pwd'].'@';
-  }
-  $m_q .= $_GET['mongodb_host'].':'.$_GET['mongodb_port'];
-  try
-  {
-    $m = new MongoDB\Client($m_q);
-    $m->listDatabases();
-  }
-  catch(Exception $e)
-  {
-    $result['ok'] = False;
-    $result['detail'][] = '<b>MongoDB</b><br>'.$e->getMessage();
-    $result['loc'][] = 'mongodb_host';
-    $result['loc'][] = 'mongodb_port';
-    $result['loc'][] = 'mongodb_user';
-    $result['loc'][] = 'mongodb_pwd';
-  }
-  // Check Redis
-  $r = new Redis();
-  if (!$r->pconnect($_GET['redis_host'], $_GET['redis_port'])) {
-    $result['ok'] = False;
-    $result['detail'][] = '<b>Redis</b><br>创造到'.$_GET['redis_host'].':'.$_GET['redis_port'].'的连接失败。';
-    $result['loc'][] = 'redis_host';
-    $result['loc'][] = 'redis_port';
-  } elseif ($_GET['redis_pwd'] && !$r->auth($_GET['redis_pwd'])) {
-    $result['ok'] = False;
-    $result['detail'][] = '<b>Redis</b><br>'.$_GET['redis_host'].':'.$_GET['redis_port'].'的密码错误。';
-    $result['loc'][] = 'redis_pwd';
-  }
-  // Check cilent server
-  if(!$_GET['server_host']) {
-    $result['ok'] = False;
-    $result['loc'][] = 'server_host';
-    $result['detail'][] = '必须填入评测端Server地址。';
-  }
-  if($_GET['server_port'] < 1 || $_GET['server_port'] > 65535) {
-    $result['ok'] = False;
-    $result['loc'][] = 'server_port';
-    $result['detail'][] = '必须填入合法的评测端Server端口。';
-  }
-  // Check the new admim
-  if(!$_GET['admin_name']) {
-    $result['ok'] = False;
-    $result['loc'][] = 'admin_name';
-    $result['detail'][] = '必须填入管理员的用户名。';
-  }
-  if(!$_GET['admin_pwd'] || strlen($_GET['admin_pwd']) < 8) {
-    $result['ok'] = False;
-    $result['loc'][] = 'admin_pwd';
-    $result['detail'][] = '必须设定合法的管理员密码。';
-  }
-  // Record
-  if ($result['ok']) {
-    $_SESSION['mo_install'] = 3;
-    $_SESSION['mongodb_user'] = $_GET['mongodb_user'];
-    $_SESSION['mongodb_pwd'] = $_GET['mongodb_pwd'];
-    $_SESSION['mongodb_host'] = $_GET['mongodb_host'];
-    $_SESSION['mongodb_port'] = $_GET['mongodb_port'];
-    $_SESSION['redis_host'] = $_GET['redis_host'];
-    $_SESSION['redis_port'] = $_GET['redis_port'];
-    $_SESSION['redis_pwd'] = $_GET['redis_pwd'];
-    $_SESSION['server_host'] = $_GET['server_host'];
-    $_SESSION['server_port'] = $_GET['server_port'];
-    $_SESSION['admin_name'] = $_GET['server_host'];
-    $_SESSION['admin_pwd'] = $_GET['server_port'];
-  }
-  echo json_encode($result);
+  check_info();
+  
   exit(0);
   // Check section ends
 }
@@ -375,9 +313,9 @@ if (file_exists('../mo-content/install.lock')) {
       done_percent=75;
       </script>
       <h5>正在安装……</h5>
-      <p>正在设置MongoDB数据……</p>
-      <p>正在生成配置文件……</p>
-      <p>正在加锁……</p>
+      <p>正在设置MongoDB数据……<?php install_db() ?>完成！</p>
+      <p>正在生成配置文件……完成！</p>
+      <p>正在加锁……完成！</p>
       <?php
       break;
       default: ?>
@@ -396,3 +334,88 @@ $(function(){
 });
 </script>
 </html>
+
+<?php
+
+function install_db(){
+  global $m;
+}
+
+function check_info(){
+  global $m;
+  $result = array('ok' => True, 'detail' => array(), 'loc' => array());
+  $_GET['admin_name'] = base64_decode($_GET['admin_name']);
+  $_GET['admin_pwd'] = base64_decode($_GET['admin_pwd']);
+  $_GET['mongodb_pwd'] = base64_decode($_GET['mongodb_pwd']);
+  $_GET['redis_pwd'] = base64_decode($_GET['redis_pwd']);
+  // Check MongoDB
+  $m_q = 'mongodb://';
+  if ($_GET['mongodb_user'] || $_GET['mongodb_pwd']) {
+    $m_q .= $_GET['mongodb_user'].':'.$_GET['mongodb_pwd'].'@';
+  }
+  $m_q .= $_GET['mongodb_host'].':'.$_GET['mongodb_port'];
+  try
+  {
+    $m = new MongoDB\Client($m_q);
+    $m->listDatabases();
+  }
+  catch(Exception $e)
+  {
+    $result['ok'] = False;
+    $result['detail'][] = '<b>MongoDB</b><br>'.$e->getMessage();
+    $result['loc'][] = 'mongodb_host';
+    $result['loc'][] = 'mongodb_port';
+    $result['loc'][] = 'mongodb_user';
+    $result['loc'][] = 'mongodb_pwd';
+  }
+  // Check Redis
+  $r = new Redis();
+  if (!$r->pconnect($_GET['redis_host'], $_GET['redis_port'])) {
+    $result['ok'] = False;
+    $result['detail'][] = '<b>Redis</b><br>创造到'.$_GET['redis_host'].':'.$_GET['redis_port'].'的连接失败。';
+    $result['loc'][] = 'redis_host';
+    $result['loc'][] = 'redis_port';
+  } elseif ($_GET['redis_pwd'] && !$r->auth($_GET['redis_pwd'])) {
+    $result['ok'] = False;
+    $result['detail'][] = '<b>Redis</b><br>'.$_GET['redis_host'].':'.$_GET['redis_port'].'的密码错误。';
+    $result['loc'][] = 'redis_pwd';
+  }
+  // Check cilent server
+  if(!$_GET['server_host']) {
+    $result['ok'] = False;
+    $result['loc'][] = 'server_host';
+    $result['detail'][] = '必须填入评测端Server地址。';
+  }
+  if($_GET['server_port'] < 1 || $_GET['server_port'] > 65535) {
+    $result['ok'] = False;
+    $result['loc'][] = 'server_port';
+    $result['detail'][] = '必须填入合法的评测端Server端口。';
+  }
+  // Check the new admim
+  if(!$_GET['admin_name']) {
+    $result['ok'] = False;
+    $result['loc'][] = 'admin_name';
+    $result['detail'][] = '必须填入管理员的用户名。';
+  }
+  if(!$_GET['admin_pwd'] || strlen($_GET['admin_pwd']) < 8) {
+    $result['ok'] = False;
+    $result['loc'][] = 'admin_pwd';
+    $result['detail'][] = '必须设定合法的管理员密码。';
+  }
+  // Record
+  if ($result['ok']) {
+    $_SESSION['mo_install'] = 3;
+    $_SESSION['mongodb_user'] = $_GET['mongodb_user'];
+    $_SESSION['mongodb_pwd'] = $_GET['mongodb_pwd'];
+    $_SESSION['mongodb_host'] = $_GET['mongodb_host'];
+    $_SESSION['mongodb_port'] = $_GET['mongodb_port'];
+    $_SESSION['redis_host'] = $_GET['redis_host'];
+    $_SESSION['redis_port'] = $_GET['redis_port'];
+    $_SESSION['redis_pwd'] = $_GET['redis_pwd'];
+    $_SESSION['server_host'] = $_GET['server_host'];
+    $_SESSION['server_port'] = $_GET['server_port'];
+    $_SESSION['admin_name'] = $_GET['server_host'];
+    $_SESSION['admin_pwd'] = $_GET['server_port'];
+  }
+  echo json_encode($result);
+}

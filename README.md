@@ -5,22 +5,20 @@ MoyOJ - 开源的信息学竞赛在线评测系统
 
 MoyOJ（将）是一个美观、实用、强大的Online Judge，并且完全开源。
 
-MoyOJ支持分布式评测，评测端与主服务器通过socket连接，推送式获取提交，减轻数据库负担，支持memcached缓存以进一步提高性能。
+主要特性：推送式、分布式评测，主题、插件的二次开发、缓存提速、Docker沙盒。
 
-MoyOJ评测支持多线程评测，子程序在Docker容器中运行，安全，性能损耗极低。
-
-MoyOJ带有主题、插件功能，降低了二次开发的难度。如果不满意自带主题，你可以自己编写主题，调用MoyOJ的API即可。
+主要技术：PHP/HHVM、MongoDB、Redis、Docker、Socket。
 
 更多信息和文档请访问本项目的[Wiki](https://github.com/moycat/MoyOJ/wiki)(有待补全)。
 
 Demo: [MoyOJ](https://moyoj.xyz/)
 
-寒假冒泡
+前方高能
 -----------
 
 有坑先声明，作为一个苦逼天朝高中生的一员，不会有太多的时间更新……
 
-而且这是一个悲惨的寒假……
+而且这是一个悲惨的寒假……悲惨过后我又把坑挖得更深……
 
 \_(:3 」∠ )_
 
@@ -29,43 +27,20 @@ Demo: [MoyOJ](https://moyoj.xyz/)
 
 都没写完，木有安装说明…… (つд⊂)
 
-当前的TODO
+Plan Yuki:
 -----------
 
- 1. 优化数据库结构
- 1. 优化Web封装，改进界面
- 1. 完成后台程序！`Important`
+ 1. 切换数据库至MongoDB
+ 1. 重写评测端的具体实现
+ 1. 完成程序！`Important`
 
-未来的Feature
+未来Feature
 -----------
 
 **纯属脑洞，请勿指望**
 
-1. 多种编程语言的支持
+1. 更多种编程语言的支持
 1. 手机客户端
-
-构架实现情况
------------
-
-- [X] 判题后端
-
-    - [X] 判题/通信程序 `Python`
-
-    - [X] 沙盒环境 `Docker`
-
-    - [X] 编译/运行/控制程序 `C++`
-
-- [ ] 网页前端 `PHP` `CSS+JS`
-
-    - [X] 基本API
-
-    - [ ] 主题/插件系统
-
-    - [ ] 后台管理
-
-- [X] 提交分发服务端 `PHP`
-
-- [X] 数据库 `MySQL`
 
 本程序使用/借鉴的开源项目
 -----------
@@ -80,4 +55,6 @@ Demo: [MoyOJ](https://moyoj.xyz/)
 
 [Workerman](http://www.workerman.net/)：开源的PHP Socket框架
 
-[Editor.md](https://pandao.github.io/editor.md/)：开源的Markdown在线编辑器
+[MongoDB PHP Driver](https://github.com/mongodb/mongo-php-driver)：PHP编写的MongoDB API
+
+...
