@@ -158,6 +158,7 @@ if (file_exists('../mo-content/install.lock')) {
         $info['permission'] = 'success';
       }
       ?>
+      <div class="table-responsive">
       <table class="table">
         <thead>
           <tr>
@@ -197,6 +198,7 @@ if (file_exists('../mo-content/install.lock')) {
           </tr>
         </tbody>
       </table>
+      </div>
       <?php
       if ($fail > 0) {
           $_SESSION['mo_install'] = 1;
@@ -222,7 +224,7 @@ if (file_exists('../mo-content/install.lock')) {
       <h5>接下来请提供数据库等一堆信息……</h5>
       <div id="info"></div>
       <form class="form-horizontal" role="form">
-        <h6><span class="label label-default">MongoDB配置</span></h6>
+        <h6><span class="label label-primary">MongoDB配置</span></h6>
         <div class="form-group">
           <label for="mongodb_host" class="col-sm-2 control-label">主机地址</label>
           <div class="col-sm-8">
@@ -251,7 +253,7 @@ if (file_exists('../mo-content/install.lock')) {
             placeholder="默认无须验证">
           </div>
         </div>
-        <h6><span class="label label-default">Redis配置</span></h6>
+        <h6><span class="label label-primary">Redis配置</span></h6>
         <div class="form-group">
           <label for="redis_host" class="col-sm-2 control-label">主机地址</label>
           <div class="col-sm-8">
@@ -273,7 +275,7 @@ if (file_exists('../mo-content/install.lock')) {
             placeholder="默认无须验证">
           </div>
         </div>
-        <h6><span class="label label-default">评测端Server配置</span></h6>
+        <h6><span class="label label-primary">评测端Server配置</span></h6>
         <div class="form-group">
           <label for="server_host" class="col-sm-2 control-label">主机地址</label>
           <div class="col-sm-8">
@@ -288,7 +290,7 @@ if (file_exists('../mo-content/install.lock')) {
             placeholder="6666" value="6666">
           </div>
         </div>
-        <h6><span class="label label-default">添加一只管理员</span></h6>
+        <h6><span class="label label-primary">添加一只管理员</span></h6>
         <div class="form-group">
           <label for="admin_name" class="col-sm-2 control-label">用户名</label>
           <div class="col-sm-8">
@@ -323,7 +325,10 @@ if (file_exists('../mo-content/install.lock')) {
       <?php
        }
       ?>
-      <div class="footer"> MoyOJ是一个开源项目，托管于GitHub。<a href="https://github.com/moycat/MoyOJ">项目地址</a> </div>
+      <div class="footer"> 
+        <p>MoyOJ是一个开源项目，托管于GitHub。<br>
+        如需查询Wiki、提交反馈，请访问<a href="https://github.com/moycat/MoyOJ">项目地址</a>。</p>
+      </div>
     </div>
   </div>
 </div>
