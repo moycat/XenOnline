@@ -187,7 +187,7 @@ class User
             return $uid;
         }
         mo_log_login($uid, 1, false);
-        setcookie("mo_auth", "", time() - 3600);
+        setcookie('mo_auth', '', time() - 3600);
 
         return false;
     }

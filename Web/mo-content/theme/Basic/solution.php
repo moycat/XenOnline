@@ -5,9 +5,9 @@
         if (!mo_load_solution($sid) || mo_get_solution('uid') != $user->getUID()) {
             require_once $mo_theme_floder.'404.php';
         }
-$uid = mo_get_solution_uid();
-$pid = mo_get_solution_pid();
-$state = mo_get_solution_state();
+        $uid = mo_get_solution_uid();
+        $pid = mo_get_solution_pid();
+        $state = mo_get_solution_state();
         echo '<h2>提交：#'.$sid.'</h2>';
         echo '用户：#'.$uid.'<br>';
         echo '问题：#<a href="/?r=problem/'.$pid.'">'.$pid.
@@ -72,7 +72,7 @@ $state = mo_get_solution_state();
                 $suid = mo_get_solution_uid($sid);
                 $used_time = mo_get_solution_used_time($sid);
                 $used_memory = mo_get_solution_used_memory($sid);
-		$pid = mo_get_solution_pid($sid);
+                $pid = mo_get_solution_pid($sid);
                 echo '
 				<tr>
 				  <td><a href="/?r=problem/'.$pid.'">'.$pid.'</a></td>

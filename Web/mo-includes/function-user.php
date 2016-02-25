@@ -72,8 +72,8 @@ function mo_get_user()
     if (count($args) == 2) { // ==>mo_get_user($category, $key)
         $category = $args[0];
         $key = $args[1];
-        if ($mo_now_user == NULL) {
-            return NULL;
+        if ($mo_now_user == null) {
+            return;
         } else {
             $uid = $mo_now_user;
         }
@@ -83,7 +83,7 @@ function mo_get_user()
         $key = $args[2];
     }
     if ((int) $uid < 1) {
-        return NULL;
+        return;
     }
     if (!isset($mo_user[$uid])) {
         $mo_user[$uid] = new User($uid);

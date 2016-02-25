@@ -29,13 +29,13 @@ if (isset($_GET['action']) && $_GET['action'] == 'check') {
   if (!isset($_SESSION['mo_install']) || $_SESSION['mo_install'] < 2) {
     exit(0);
   }
-  
+
   // Register autoload MongoDB library function
   spl_autoload_register('mongodb');
   require_once 'mongolib/src/functions.php';
-  
+
   check_info();
-  
+
   exit(0);
   // Check section ends
 }
@@ -228,28 +228,28 @@ if (file_exists('../mo-content/install.lock')) {
         <div class="form-group">
           <label for="mongodb_host" class="col-sm-2 control-label">主机地址</label>
           <div class="col-sm-8">
-            <input type="text" class="form-control" id="mongodb_host" name="mongodb_host" 
+            <input type="text" class="form-control" id="mongodb_host" name="mongodb_host"
             placeholder="localhost" value="localhost">
           </div>
         </div>
         <div class="form-group">
           <label for="mongodb_port" class="col-sm-2 control-label">主机端口</label>
           <div class="col-sm-8">
-            <input type="text" class="form-control" id="mongodb_port" name="mongodb_port" 
+            <input type="text" class="form-control" id="mongodb_port" name="mongodb_port"
             placeholder="27017" value="27017">
           </div>
         </div>
         <div class="form-group">
           <label for="mongodb_user" class="col-sm-2 control-label">用户名</label>
           <div class="col-sm-8">
-            <input type="text" class="form-control" id="mongodb_user" name="mongodb_user" 
+            <input type="text" class="form-control" id="mongodb_user" name="mongodb_user"
             placeholder="默认无须验证">
           </div>
         </div>
         <div class="form-group">
           <label for="mongodb_pwd" class="col-sm-2 control-label">密码</label>
           <div class="col-sm-8">
-            <input type="text" class="form-control" id="mongodb_pwd" name="mongodb_pwd" 
+            <input type="text" class="form-control" id="mongodb_pwd" name="mongodb_pwd"
             placeholder="默认无须验证">
           </div>
         </div>
@@ -257,21 +257,21 @@ if (file_exists('../mo-content/install.lock')) {
         <div class="form-group">
           <label for="redis_host" class="col-sm-2 control-label">主机地址</label>
           <div class="col-sm-8">
-            <input type="text" class="form-control" id="redis_host" name="redis_host" 
+            <input type="text" class="form-control" id="redis_host" name="redis_host"
             placeholder="localhost" value="localhost">
           </div>
         </div>
         <div class="form-group">
           <label for="redis_port" class="col-sm-2 control-label">主机端口</label>
           <div class="col-sm-8">
-            <input type="text" class="form-control" id="redis_port" name="redis_port" 
+            <input type="text" class="form-control" id="redis_port" name="redis_port"
             placeholder="6379" value="6379">
           </div>
         </div>
         <div class="form-group">
           <label for="redis_pwd" class="col-sm-2 control-label">密码</label>
           <div class="col-sm-8">
-            <input type="text" class="form-control" id="redis_pwd" name="redis_pwd" 
+            <input type="text" class="form-control" id="redis_pwd" name="redis_pwd"
             placeholder="默认无须验证">
           </div>
         </div>
@@ -279,14 +279,14 @@ if (file_exists('../mo-content/install.lock')) {
         <div class="form-group">
           <label for="server_host" class="col-sm-2 control-label">主机地址</label>
           <div class="col-sm-8">
-            <input type="text" class="form-control" id="server_host" name="server_host" 
+            <input type="text" class="form-control" id="server_host" name="server_host"
             placeholder="localhost" value="localhost">
           </div>
         </div>
         <div class="form-group">
           <label for="server_port" class="col-sm-2 control-label">主机端口</label>
           <div class="col-sm-8">
-            <input type="text" class="form-control" id="server_port" name="server_port" 
+            <input type="text" class="form-control" id="server_port" name="server_port"
             placeholder="6666" value="6666">
           </div>
         </div>
@@ -294,14 +294,14 @@ if (file_exists('../mo-content/install.lock')) {
         <div class="form-group">
           <label for="admin_name" class="col-sm-2 control-label">用户名</label>
           <div class="col-sm-8">
-            <input type="text" class="form-control" id="admin_name" name="admin_name" 
+            <input type="text" class="form-control" id="admin_name" name="admin_name"
             placeholder="可用字母/数字">
           </div>
         </div>
         <div class="form-group">
           <label for="admin_pwd" class="col-sm-2 control-label">密码</label>
           <div class="col-sm-8">
-            <input type="text" class="form-control" id="admin_pwd" name="admin_pwd" 
+            <input type="text" class="form-control" id="admin_pwd" name="admin_pwd"
             placeholder="至少8位，可用字母/数字/标点">
           </div>
         </div>
@@ -315,7 +315,7 @@ if (file_exists('../mo-content/install.lock')) {
       done_percent=75;
       </script>
       <h5>正在安装……</h5>
-      <p>正在设置MongoDB数据……<?php install_db() ?>完成！</p>
+      <p>正在设置数据库……<?php install_db() ?></p>
       <p>正在生成配置文件……完成！</p>
       <p>正在加锁……完成！</p>
       <?php
@@ -325,7 +325,7 @@ if (file_exists('../mo-content/install.lock')) {
       <?php
        }
       ?>
-      <div class="footer"> 
+      <div class="footer">
         <p>MoyOJ是一个开源项目，托管于GitHub。<br>
         如需查询Wiki、提交反馈，请访问<a href="https://github.com/moycat/MoyOJ">项目地址</a>。</p>
       </div>
@@ -334,7 +334,7 @@ if (file_exists('../mo-content/install.lock')) {
 </div>
 </body>
 <script>
-$(function(){  
+$(function(){
     change_progress('progress', done_percent);
 });
 </script>
@@ -342,12 +342,39 @@ $(function(){
 
 <?php
 
-function install_db(){
-  global $m;
+function install_db()
+{
+  spl_autoload_register('mongodb');
+  $m_q = 'mongodb://';
+  if ($_SESSION['mongodb_user'] || $_SESSION['mongodb_pwd']) {
+    $m_q .= $_SESSION['mongodb_user'].':'.$_SESSION['mongodb_pwd'].'@';
+  }
+  $m_q .= $_SESSION['mongodb_host'].':'.$_SESSION['mongodb_port'];
+  $m = new MongoDB\Client($m_q);
+  $db = $m->selectDatabase('moyoj');
+  try {
+      $db->createCollection('mo_admin');
+      $db->createCollection('mo_client');
+      $db->createCollection('mo_count');
+      $db->createCollection('mo_discussion');
+      $db->createCollection('mo_log');
+      $db->createCollection('mo_message');
+      $db->createCollection('mo_problem');
+      $db->createCollection('mo_setting');
+      $db->createCollection('mo_solution');
+      $db->createCollection('mo_user');
+      catch(Exception $e)
+      {
+          echo '安装失败！';
+      }
+      finally
+      {
+          echo '完成！';
+      }
 }
 
-function check_info(){
-  global $m;
+function check_info()
+{
   $result = array('ok' => True, 'detail' => array(), 'loc' => array());
   $_GET['admin_name'] = base64_decode($_GET['admin_name']);
   $_GET['admin_pwd'] = base64_decode($_GET['admin_pwd']);

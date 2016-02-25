@@ -321,8 +321,7 @@ function mo_lang($lang, $code = true)
 // To print texts safely.
 function e($text, $not_show = false)
 {
-    if ($not_show)
-    {
+    if ($not_show) {
         return htmlspecialchars($text);
     } else {
         echo htmlspecialchars($text);

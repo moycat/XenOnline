@@ -90,15 +90,16 @@ function mo_get_problem()
     $args = func_get_args();
     if (count($args) == 1) { // 获取当前指向的problem ==> mo_get_problem($category)
     $category = $args[0];
-        if ($mo_now_problem == NULL || !mo_load_problem($mo_now_problem)) {
-            return NULL;
+        if ($mo_now_problem == null || !mo_load_problem($mo_now_problem)) {
+            return;
         }
+
         return htmlspecialchars($mo_problem[$mo_now_problem][$category]);
     } else { // 获取指定$pid的problem ==> mo_get_problem($pid, $category)
         $pid = (string) $args[0];
         $category = $args[1];
         if (!mo_load_problem($pid)) {
-            return NULL;
+            return;
         }
 
         return htmlspecialchars($mo_problem[$pid][$category]);
@@ -120,23 +121,23 @@ function mo_get_problem_extra()
     $args = func_get_args();
     if (count($args) == 1) { // 获取当前指向的problem ==> mo_get_problem_extra($category)
         $piece = $args[0];
-        if ($mo_now_problem == NULL) {
-            return NULL;
+        if ($mo_now_problem == null) {
+            return;
         } else {
             return isset($mo_problem[$mo_now_problem]['extra'][$piece]) ?
-                        base64_decode($mo_problem[$mo_now_problem]['extra'][$piece]) : NULL;
+                        base64_decode($mo_problem[$mo_now_problem]['extra'][$piece]) : null;
         }
     } else { // 获取指定$pid的problem ==> mo_get_problem_extra($pid, $piece)
         $pid = (string) $args[0];
         $piece = $args[1];
         if (!isset($mo_problem[$pid])) {
             if (!mo_load_problem($pid)) {
-                return NULL;
+                return;
             }
         }
 
         return isset($mo_problem[$pid]['extra'][$piece]) ?
-                    base64_decode($mo_problem[$pid]['extra'][$piece]) : NULL;
+                    base64_decode($mo_problem[$pid]['extra'][$piece]) : null;
     }
 }
 

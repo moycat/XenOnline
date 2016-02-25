@@ -42,7 +42,7 @@ function mo_load_solution($sid)
     global $db, $mo_solution, $mo_solution_failed, $mo_now_solution;
     $sid = (string) $sid;
     if (isset($mo_solution_failed[$sid])) {
-        $mo_now_solution = NULL;
+        $mo_now_solution = null;
 
         return false;
     }
@@ -88,15 +88,16 @@ function mo_get_solution()
     $args = func_get_args();
     if (count($args) == 1) { // 获取当前指向的solution ==> mo_get_solution($category)
         $category = $args[0];
-        if ($mo_now_solution == NULL || !mo_load_solution($mo_now_solution)) {
-            return NULL;
+        if ($mo_now_solution == null || !mo_load_solution($mo_now_solution)) {
+            return;
         }
+
         return htmlspecialchars($mo_solution[$mo_now_solution][$category]);
     } else { // 获取指定$sid的solution ==> mo_get_solution($sid, $category)
         $sid = (string) $args[0];
         $category = $args[1];
         if (!mo_load_solution($sid)) {
-            return NULL;
+            return;
         }
 
         return htmlspecialchars($mo_solution[$sid][$category]);
@@ -111,6 +112,7 @@ function mo_cache_solution($solution)
 
     $rt = mo_write_cache_array('mo:solution:'.$solution['id'], $solution);
     mo_set_cache_timeout('mo:solution:'.$solution['id'], 2592000);
+
     return $rt;
 }
 
