@@ -7,3 +7,6 @@
 [submodule "Web/mo-includes/editor.md"]
 	path = Web/mo-includes/editor.md
 	url = https://github.com/pandao/editor.md
+[submodule "Yuki-Web/mo-includes/mongolib"]
+	path = Yuki-Web/mo-includes/mongolib
+	url = https://github.com/mongodb/mongo-php-library.git
