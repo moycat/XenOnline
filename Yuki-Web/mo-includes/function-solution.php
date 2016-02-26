@@ -12,24 +12,23 @@
 //TODO
 function mo_load_solutions($start, $end, $pid = '', $uid = '', $state = '')
 {
-
 }
 
 function mo_load_solution($sid)
 {
     if (!$sid || !is_string($sid)) {
-        return False;
+        return false;
     }
     global $mo_solution, $mo_solution_failed, $mo_now_solution;
     if (isset($mo_solution_failed[$sid])) {
-        $mo_now_solution = NULL;
+        $mo_now_solution = null;
 
-        return False;
+        return false;
     }
     if (isset($mo_solution[$sid])) {
         $mo_now_solution = $sid;
 
-        return True;
+        return true;
     }
     $solution = mo_read_cache_array('mo:solution:'.$sid);
     if ($solution) {
@@ -37,20 +36,20 @@ function mo_load_solution($sid)
         $mo_now_solution = $sid;
         mo_set_cache_timeout('mo:solution:'.$sid, WEEK);
 
-        return True;
+        return true;
     }
-    $result = mo_db_readone('mo_solution', array('_id'=>new MongoDB\BSON\ObjectID($sid)));
+    $result = mo_db_readone('mo_solution', array('_id' => new MongoDB\BSON\ObjectID($sid)));
     if (count($result)) {
-        $mo_solution[$sid] = $result;
         mo_cache_solution($result, $sid);
+        $mo_solution[$sid] = mo_read_cache_array('mo:solution:'.$sid);
         $mo_now_solution = $sid;
 
-        return True;
+        return true;
     } else {
-        $mo_solution_failed[$sid] = True;
-        $mo_now_solution = NULL;
+        $mo_solution_failed[$sid] = true;
+        $mo_now_solution = null;
 
-        return False;
+        return false;
     }
 }
 
@@ -66,9 +65,9 @@ function mo_get_solution()
     $args = func_get_args();
     if (count($args) == 1) { // 获取当前指向的solution ==> mo_get_solution($category)
         $category = $args[0];
-        if ($mo_now_solution == NULL || !mo_load_solution($mo_now_solution)
+        if ($mo_now_solution == null || !mo_load_solution($mo_now_solution)
             || !isset($mo_solution[$mo_now_solution][$category])) {
-            return NULL;
+            return;
         }
 
         return apply_filter('solution_'.$category,
@@ -77,7 +76,7 @@ function mo_get_solution()
         $sid = $args[0];
         $category = $args[1];
         if (!mo_load_solution($sid) || !isset($mo_solution[$sid][$category])) {
-            return NULL;
+            return;
         }
 
         return apply_filter('solution_'.$category,
@@ -108,16 +107,17 @@ function mo_add_new_solution($pid, $lang, $post, $uid = '')
     $uid = new MongoDB\BSON\ObjectID($uid);
 
     // Add to mo_solution
-    $solution = array('pid'=>$pid,
-                        'uid'=>$uid,
-                        'code'=>$post, 'code_length'=>$length,
-                        'language'=>$lang,
-                        'post_time'=>$_SERVER['REQUEST_TIME'],
-                        'result'=>0);
+    $solution = array('pid' => $pid,
+                        'uid' => $uid,
+                        'code' => $post, 'code_length' => $length,
+                        'language' => $lang,
+                        'post_time' => $_SERVER['REQUEST_TIME'],
+                        'result' => 0, );
     $result = mo_db_insertone('mo_solution', $solution);
     if (!$result->getInsertedCount()) {
         mo_log("Fail to add a solution. (PID=$pid)", $uid);
-        return False;
+
+        return false;
     }
     $sid = $result->getInsertedId();
 
@@ -126,23 +126,24 @@ function mo_add_new_solution($pid, $lang, $post, $uid = '')
     $result = mo_db_insertone('mo_solution_pending', $solution);
     if (!$result->getInsertedCount()) {
         mo_log("Fail to add a solution. (PID=$pid)", $uid);
-        return False;
+
+        return false;
     }
     $spid = $result->getInsertedId();
 
     // Update the user & the problem
-    mo_db_updateone('mo_problem', array('_id'=>$pid),
-                    array('$inc'=>array('submit'=>1)));
-    mo_db_updateone('mo_user', array('_id'=>$uid),
-                    array('$inc'=>array('submit'=>1)));
+    mo_db_updateone('mo_problem', array('_id' => $pid),
+                    array('$inc' => array('submit' => 1)));
+    mo_db_updateone('mo_user', array('_id' => $uid),
+                    array('$inc' => array('submit' => 1)));
 
-    $result = mo_db_updateone('mo_user', array('_id'=>$uid),
-                    array('$addToSet'=>array('try_list'=>(string) $pid)));
+    $result = mo_db_updateone('mo_user', array('_id' => $uid),
+                    array('$addToSet' => array('try_list' => (string) $pid)));
     if ($result->getModifiedCount()) {
-        mo_db_updateone('mo_user', array('_id'=>$uid),
-                        array('$inc'=>array('try'=>1)));
-        mo_db_updateone('mo_problem', array('_id'=>$pid),
-                        array('$inc'=>array('try'=>1)));
+        mo_db_updateone('mo_user', array('_id' => $uid),
+                        array('$inc' => array('try' => 1)));
+        mo_db_updateone('mo_problem', array('_id' => $pid),
+                        array('$inc' => array('try' => 1)));
     }
 
     // Publish the new solution
@@ -161,9 +162,9 @@ function mo_add_new_solution($pid, $lang, $post, $uid = '')
 function mo_get_solution_id($sid = '')
 {
     if (!$sid) {
-        return mo_get_solution('id');
+        return mo_get_solution('_id');
     } else {
-        return mo_get_solution($sid, 'id');
+        return mo_get_solution($sid, '_id');
     }
 }
 

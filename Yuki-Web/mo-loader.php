@@ -24,7 +24,7 @@ if (file_exists(MOCON.'closed.lock')) {
 }
 
 if (!file_exists(ABSPATH.'mo-config.php')) {
-    header("Location: /mo-includes/setup.php");
+    header('Location: /mo-includes/setup.php');
     die('MoyOJ not installed! Go to /mo-includes/setup.php.');
 }
 
@@ -36,11 +36,11 @@ require_once 'mo-config.php';
 session_start();
 $mo_time = microtime();
 
-$redis = NULL;
+$redis = null;
 $db = new NoDB();
-$db_conn = NULL;
+$db_conn = null;
 $db_col = array();
-$user_logged = NULL;
+$user_logged = null;
 
 mo_connect_redis();
 
@@ -93,13 +93,15 @@ if ($mo_theme_file) {
 // Check if logged in
 mo_user_login('auto');
 
-//mo_user_login('check', 'moycat', 'qing981203', 36000);
+//mo_user_login('check', 'moycat', '', 36000);
 //mo_user_logout();
 //mo_set_user('56cf012f8a028d49f68c753f', 'username', 'moycat');
-var_dump($_SESSION);
+//mo_set_extra('56cf012f8a028d49f68c753f', 'username', 'moycat');
+var_dump($mo_user);
 var_dump($user_logged);
 //mo_add_new_solution('56cfde268a028d49f68c7541',1,'qwert','56cf012f8a028d49f68c753f');
 //echo mo_oid_to_timestamp('56cf07b38a028d49f68c7540');
+
 echo mo_time();
 
 // Hand over the job to the theme

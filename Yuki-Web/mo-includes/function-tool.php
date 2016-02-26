@@ -37,7 +37,7 @@ function mo_analyze()
         }
     }
     if (!isset($rt[0])) {
-         return array('index');
+        return array('index');
     }
 
     return $rt;
@@ -99,7 +99,8 @@ function mo_flat(&$foo)
 function mo_has_login()
 {
     global $user_logged;
-    return $user_logged != NULL;
+
+    return $user_logged != null;
 }
 
 function mo_lang($lang, $code = true)
@@ -118,25 +119,39 @@ function mo_lang($lang, $code = true)
     return $rt;
 }
 
-//TODO
 // Load all plugins and the using theme to global variables
 function mo_loadPT()
 {
-
+    global $mo_plugin, $mo_plugin_file, $mo_theme, $mo_theme_floder, $mo_theme_file;
+    $mo_plugin = mo_get_setting('plugin');
+    $plugin_floder = MOCON.'plugin/';
+    if ($mo_plugin) {
+        foreach ($mo_plugin as $now_plugin) {
+            if (file_exists("$plugin_floder$now_plugin/$now_plugin.php")) {
+                $mo_plugin_file[] = "$plugin_floder$now_plugin/$now_plugin.php";
+            }
+        }
+    }
+    $mo_theme = mo_get_setting('theme');
+    $mo_theme_floder = MOCON."theme/$mo_theme/";
+    $mo_theme_file = $mo_theme_floder."$mo_theme.php";
+    if (!file_exists($mo_theme_file)) {
+        $mo_theme_file = '';
+    }
 }
 
 function mo_load_setting()
 {
-   global $db, $db_col, $mo_setting;
-   $mo_setting = mo_read_cache_array('mo:setting');
-   if (!$mo_setting) {
-       $db_col['setting'] = $db->selectCollection('mo_setting');
-       $mo_setting_raw = $db_col['setting']->find();
-       foreach ($mo_setting_raw as $setting) {
-           $mo_setting[$setting['item']] = $setting['value'];
-       }
-       mo_write_cache_array('mo:setting', $mo_setting);
-   }
+    global $db, $db_col, $mo_setting;
+    $mo_setting = mo_read_cache_array('mo:setting');
+    if (!$mo_setting) {
+        $db_col['setting'] = $db->selectCollection('mo_setting');
+        $mo_setting_raw = $db_col['setting']->find();
+        foreach ($mo_setting_raw as $setting) {
+            $mo_setting[$setting['item']] = $setting['value'];
+        }
+        mo_write_cache_array('mo:setting', $mo_setting);
+    }
 }
 
 // Return the timestamp from an ObjectID
@@ -154,8 +169,9 @@ function mo_publish($channel, $msg)
 
 function mo_get_setting($key)
 {
-   global $mo_setting;
-   return isset($mo_setting[$key]) ? $mo_setting[$key] : NULL;
+    global $mo_setting;
+
+    return isset($mo_setting[$key]) ? $mo_setting[$key] : null;
 }
 
 // Generate a password with salt

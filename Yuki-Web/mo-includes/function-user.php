@@ -26,6 +26,7 @@ function mo_user_login($type, $username = '', $password = '', $cookie_timeout = 
         $id = mo_user_passauth($username, $password, $cookie_timeout);
         break;
     }
+
     return mo_user_check();
 }
 
@@ -34,13 +35,13 @@ function mo_user_memauth($cookie)
     global $mo_user, $user_logged;
     $input = explode('&', $cookie);
     if (count($input) != 3 || !is_numeric($input[1])) {
-        return False;
+        return false;
     }
     $uid = $input[0];
     $random = $input[1];
     $pass = $input[2];
     if (!mo_load_user($uid)) {
-        return False;
+        return false;
     }
     $check = md5($mo_user[$uid]['password'].$random.$mo_user[$uid]['mask']);
     if ($check == $pass) {
@@ -53,10 +54,10 @@ function mo_user_memauth($cookie)
 
         return $uid;
     }
-    mo_log_login($uid, 1, False);
+    mo_log_login($uid, 1, false);
     setcookie('mo_auth', '', time() - 3600);
 
-    return False;
+    return false;
 }
 
 function mo_user_passauth($username, $password, $cookie_timeout = 0)
@@ -64,11 +65,11 @@ function mo_user_passauth($username, $password, $cookie_timeout = 0)
     global $mo_user, $user_logged;
     $uid = mo_read_cache_array_item('mo:user:username', $username);
     if (!$uid) {
-        $result = mo_db_readone('mo_user', array('username'=>$username));
+        $result = mo_db_readone('mo_user', array('username' => $username));
         if (!$result) {
             mo_log_login($username, 0, false);
 
-            return False;
+            return false;
         }
         $uid = (string) $result['_id'];
     }
@@ -76,7 +77,7 @@ function mo_user_passauth($username, $password, $cookie_timeout = 0)
     if ($mo_user[$uid]['password'] != mo_password($password, $mo_user[$uid]['username'])) {
         mo_log_login($uid, 0, false);
 
-        return False;
+        return false;
     }
     $_SESSION['uid'] = $uid;
     $_SESSION['mask'] = $mo_user[$uid]['mask'];
@@ -97,18 +98,18 @@ function mo_user_passauth($username, $password, $cookie_timeout = 0)
 function mo_load_user($uid)
 {
     if (!$uid || !is_string($uid)) {
-        return False;
+        return false;
     }
     global $mo_user, $mo_user_failed, $mo_now_user;
     if (isset($mo_user[$uid])) {
         $mo_now_user = $uid;
 
-        return True;
+        return true;
     }
     if (isset($mo_user_failed[$uid])) {
-        $mo_now_user = NULL;
+        $mo_now_user = null;
 
-        return False;
+        return false;
     }
     $user = mo_read_cache_array('mo:user:'.$uid);
     if ($user) {
@@ -116,50 +117,51 @@ function mo_load_user($uid)
         $mo_now_user = $uid;
         mo_set_cache_timeout('mo:user:'.$uid, WEEK);
 
-        return True;
+        return true;
     }
-    $result = mo_db_readone('mo_user', array('_id'=>new MongoDB\BSON\ObjectID($uid)));
+    $result = mo_db_readone('mo_user', array('_id' => new MongoDB\BSON\ObjectID($uid)));
     if (count($result)) {
-        $mo_user[$uid] = $result;
         mo_write_cache_array('mo:user:'.$uid, $result);
-        mo_write_cache_array_item('mo:user:username', $mo_user[$uid]['username'], $uid, True);
+        mo_write_cache_array_item('mo:user:username', $mo_user[$uid]['username'], $uid, true);
         mo_set_cache_timeout('mo:user:'.$uid, WEEK);
+        $mo_user[$uid] = mo_read_cache_array('mo:user:'.$uid);
         $mo_now_user = $uid;
 
-        return True;
+        return true;
     } else {
-        $mo_user_failed[$uid] = True;
-        $mo_now_user = NULL;
+        $mo_user_failed[$uid] = true;
+        $mo_now_user = null;
 
-        return False;
+        return false;
     }
 
-    return True;
+    return true;
 }
 
 function mo_user_check()
 {
     global $mo_user, $user_logged;
     if (!isset($_SESSION['uid'], $_SESSION['mask'], $_SESSION['password']) || !$user_logged) {
-        return False;
+        return false;
     }
     if (!mo_load_user($_SESSION['uid']) || ($_SESSION['mask'] != $mo_user[$user_logged]['mask']) ||
         ($_SESSION['password'] != $mo_user[$user_logged]['password'])) {
         mo_log('Logged out by force.', $_SESSION['uid']);
-        mo_user_logout(True);
+        mo_user_logout(true);
 
-        return False;
+        return false;
     }
 
     do_action('login');
-    return True;
+
+    return true;
 }
 
 // Change a user's mask, causing all cookies of him to expire
 function mo_user_refresh_mask($uid)
 {
-    mo_db_updateone('mo_user', array('_id'=>new MongoDB\BSON\ObjectID($uid)),
-                    array('$inc'=>array('mask'=>1)));
+    mo_db_updateone('mo_user', array('_id' => new MongoDB\BSON\ObjectID($uid)),
+                    array('$inc' => array('mask' => 1)));
     mo_incr_cache_array_item('mo:user:'.$uid, 'mask', 1);
     mo_log('Mask Refreshed.', $uid);
 }
@@ -172,7 +174,7 @@ function mo_user_logout($forced = false)
     unset($_SESSION['password']);
     unset($_SESSION['mask']);
     setcookie('mo_auth', '', time() - 3600);
-    $user_logged = NULL;
+    $user_logged = null;
     if (!$forced) {
         mo_log('Logout.', $uid);
         do_action('logout');
@@ -191,9 +193,9 @@ function mo_get_user()
     $args = func_get_args();
     if (count($args) == 1) { // 获取当前指向的user ==> mo_get_user($category)
         $category = $args[0];
-        if ($mo_now_user == NULL || !mo_load_user($mo_now_user)
+        if ($mo_now_user == null || !mo_load_user($mo_now_user)
             || !isset($mo_user[$mo_now_user][$category])) {
-            return NULL;
+            return;
         }
 
         return apply_filter('user_'.$category,
@@ -202,7 +204,7 @@ function mo_get_user()
         $uid = $args[0];
         $category = $args[1];
         if (!mo_load_user($uid) || !isset($mo_user[$uid][$category])) {
-            return NULL;
+            return;
         }
 
         return apply_filter('user_'.$category,
@@ -215,8 +217,143 @@ function mo_set_user($uid, $category, $value)
 {
     global $mo_user;
     if (!mo_load_user($uid)) {
-        return False;
+        return false;
     }
     $mo_user[$uid][$category] = $value;
-    mo_db_updateone('mo_user', array('_id'=>new MongoDB\BSON\ObjectID($uid)), array('$set'=>array($category=>$value)));
+    mo_db_updateone('mo_user', array('_id' => new MongoDB\BSON\ObjectID($uid)), array('$set' => array($category => $value)));
+}
+
+function mo_get_user_id($uid = '')
+{
+    if (!$uid) {
+        return mo_get_user('_id');
+    } else {
+        return mo_get_user($uid, '_id');
+    }
+}
+
+function mo_get_user_username($uid = '')
+{
+    if (!$uid) {
+        return mo_get_user('username');
+    } else {
+        return mo_get_user($uid, 'username');
+    }
+}
+
+function mo_get_user_email($uid = '')
+{
+    if (!$uid) {
+        return mo_get_user('email');
+    } else {
+        return mo_get_user($uid, 'email');
+    }
+}
+
+function mo_get_user_reg_time($uid = '')
+{
+    if (!$uid) {
+        return mo_get_user('reg_time');
+    } else {
+        return mo_get_user($uid, 'reg_time');
+    }
+}
+
+function mo_get_user_last_time($uid = '')
+{
+    if (!$uid) {
+        return mo_get_user('last_time');
+    } else {
+        return mo_get_user($uid, 'last_time');
+    }
+}
+
+function mo_get_user_reg_ip($uid = '')
+{
+    if (!$uid) {
+        return mo_get_user('reg_ip');
+    } else {
+        return mo_get_user($uid, 'reg_ip');
+    }
+}
+
+function mo_get_user_last_ip($uid = '')
+{
+    if (!$uid) {
+        return mo_get_user('last_ip');
+    } else {
+        return mo_get_user($uid, 'last_ip');
+    }
+}
+
+function mo_get_user_try($uid = '')
+{
+    if (!$uid) {
+        return mo_get_user('try');
+    } else {
+        return mo_get_user($uid, 'try');
+    }
+}
+
+function mo_get_user_ac($uid = '')
+{
+    if (!$uid) {
+        return mo_get_user('ac');
+    } else {
+        return mo_get_user($uid, 'ac');
+    }
+}
+
+function mo_get_user_submit($uid = '')
+{
+    if (!$uid) {
+        return mo_get_user('submit');
+    } else {
+        return mo_get_user($uid, 'submit');
+    }
+}
+
+function mo_get_user_solved($uid = '')
+{
+    if (!$uid) {
+        return mo_get_user('solved');
+    } else {
+        return mo_get_user($uid, 'solved');
+    }
+}
+
+function mo_get_user_try_list($uid = '')
+{
+    if (!$uid) {
+        return mo_get_user('try_list');
+    } else {
+        return mo_get_user($uid, 'try_list');
+    }
+}
+
+function mo_get_user_ac_list($uid = '')
+{
+    if (!$uid) {
+        return mo_get_user('ac_list');
+    } else {
+        return mo_get_user($uid, 'ac_list');
+    }
+}
+
+function mo_get_user_msg_session($uid = '')
+{
+    if (!$uid) {
+        return mo_get_user('msg_session');
+    } else {
+        return mo_get_user($uid, 'msg_session');
+    }
+}
+
+function mo_get_user_new_msg($uid = '')
+{
+    if (!$uid) {
+        return mo_get_user('new_msg');
+    } else {
+        return mo_get_user($uid, 'new_msg');
+    }
 }

@@ -17,13 +17,13 @@
 
  function mo_log_login($uid, $mode, $success = true)
  {
-     return mo_db_insertone('mo_log_login', array('uid'=>$uid, 'time'=>$_SERVER['REQUEST_TIME'],
-                                                    'mode'=>$mode, 'success'=>$success,
-                                                    'ip'=>$_SERVER['REMOTE_ADDR'],
-                                                    'agent'=>$_SERVER['HTTP_USER_AGENT']));
+     return mo_db_insertone('mo_log_login', array('uid' => $uid, 'time' => $_SERVER['REQUEST_TIME'],
+                                                    'mode' => $mode, 'success' => $success,
+                                                    'ip' => $_SERVER['REMOTE_ADDR'],
+                                                    'agent' => $_SERVER['HTTP_USER_AGENT'], ));
  }
 
- function mo_log($content, $uid = NULL)
+ function mo_log($content, $uid = null)
  {
-     return mo_db_insertone('mo_log', array('uid'=>$uid, 'ip'=>$_SERVER['REMOTE_ADDR'], 'content'=>$content));
+     return mo_db_insertone('mo_log', array('uid' => $uid, 'ip' => $_SERVER['REMOTE_ADDR'], 'content' => $content));
  }
