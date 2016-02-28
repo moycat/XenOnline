@@ -30,6 +30,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | MoyOJ Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Here you can set some basic values that the site will use.
+    | Or it's better to set them in the .env file.
+    |
+    */
+
+    'site_name' => env('SITE_NAME', 'MoyOJ'),
+    'theme' => env('THEME', 'Yuki'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application URL
     |--------------------------------------------------------------------------
     |
@@ -156,7 +169,15 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
+        /*
+         * The third-party providers
+         */
         Jenssegers\Mongodb\MongodbServiceProvider::class,
+
+        /*
+         * My service providers
+         */
+        App\Providers\RouteServiceProvider::class,
 
     ],
 

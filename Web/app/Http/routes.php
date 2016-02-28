@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Http\Response;
+
 /*
 |--------------------------------------------------------------------------
 | Routes File
@@ -28,4 +30,10 @@ Route::get('/', function () {
 
 Route::group(['middleware' => ['web']], function () {
     //
+});
+
+Route::group(['middleware' => 'web'], function () {
+    Route::auth();
+
+    Route::get('/home', 'HomeController@index');
 });
