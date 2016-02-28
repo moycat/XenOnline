@@ -28,6 +28,16 @@ class CreateSolutionTable extends Migration
             $table->string('detail_memory');
             $table->timestamps();
             $table->softDeletes();
+            $table->index(['problem_id', 'user_id']);
+        });
+        Schema::create('solutions_pending', function (Blueprint $table) {
+            $table->increments('id');
+            $table->integer('solution_id');
+            $table->integer('problem_id');
+            $table->integer('user_id');
+            $table->integer('language');
+            $table->string('code');
+            $table->timestamps();
         });
     }
 
@@ -38,6 +48,7 @@ class CreateSolutionTable extends Migration
      */
     public function down()
     {
-        //
+        Schema::drop('solutions');
+        Schema::drop('solutions_pending');
     }
 }
