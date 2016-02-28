@@ -41,7 +41,9 @@ function mo_read_cache_array($key)
 {
     global $redis;
     $result = $redis->hGetAll($key);
-    mo_unflat($result);
+    if ($result) {
+        mo_unflat($result);
+    }
 
     return $result;
 }

@@ -12,8 +12,7 @@
 spl_autoload_register('mongodb');
 
 // Autoload MongoDB lib
-function mongodb($classname)
-{
+function mongodb($classname) {
     $class = explode('\\', $classname);
     $file = MOINC.'mongolib/src';
     $c = count($class);
@@ -31,7 +30,6 @@ function mo_db_insertone($col, $content, $option = array())
 {
     global $db_col;
     mo_db_select($col);
-
     return $db_col[$col]->insertOne($content, $option);
 }
 
@@ -41,9 +39,11 @@ function mo_db_readone($col, $filter, $option = array())
     mo_db_select($col);
     $result = $db_col[$col]->findOne($filter, $option);
     if ($result) {
-        return iterator_to_array($result);
+        $result = iterator_to_array($result);
+        mo_arrayfy($result);
+        return $result;
     } else {
-        return;
+        return NULL;
     }
 }
 
@@ -51,7 +51,6 @@ function mo_db_updateone($col, $filter, $content, $option = array())
 {
     global $db_col;
     mo_db_select($col);
-
     return $db_col[$col]->updateOne($filter, $content, $option);
 }
 
@@ -59,7 +58,6 @@ function mo_db_count($col)
 {
     global $db_col;
     mo_db_select($col);
-
     return $db_col[$col]->count();
 }
 
@@ -85,11 +83,9 @@ function mo_connect_database()
 
 class NoDB
 {
-    public function __call($method, $args)
-    {
+    public function __call($method, $args) {
         mo_connect_database();
         global $db;
-
         return call_user_func_array(array($db, $method), $args);
     }
 }

@@ -43,9 +43,9 @@ $db_col = array();
 $user_logged = null;
 
 mo_connect_redis();
+mo_load_setting();
 
 $mo_request = mo_analyze();
-$mo_setting = mo_load_setting();
 
 $mo_plugin = array();
 $mo_plugin_file = array();
@@ -93,16 +93,15 @@ if ($mo_theme_file) {
 // Check if logged in
 mo_user_login('auto');
 
-//mo_user_login('check', 'moycat', '', 36000);
+//mo_user_login('check', 'moycat', '123456', 36000);
 //mo_user_logout();
 //mo_set_user('56cf012f8a028d49f68c753f', 'username', 'moycat');
 //mo_set_extra('56cf012f8a028d49f68c753f', 'username', 'moycat');
-var_dump($mo_user);
-var_dump($user_logged);
+//mo_load_problems();
+//var_dump($mo_problem);
+//var_dump($user_logged);
 //mo_add_new_solution('56cfde268a028d49f68c7541',1,'qwert','56cf012f8a028d49f68c753f');
-//echo mo_oid_to_timestamp('56cf07b38a028d49f68c7540');
-
-echo mo_time();
+//echo mo_password('123456', 'moycat');
 
 // Hand over the job to the theme
 if (defined('OUTPUT') && OUTPUT && $mo_theme_file) {

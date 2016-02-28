@@ -9,35 +9,43 @@
  *
  */
 
-function mo_load_problems($start, $end, $tag = '')
+function mo_load_problems($size = 20, $start = '000000000000000000000000')
 {
-    //TODO
+    if (strlen($start) != 24) {
+        return NULL;
+    }
+    global $db_col, $mo_problem;
+    $rt = array();
+    $start = new MongoDB\BSON\ObjectID($start);
+    mo_db_select('mo_problem');
+    $result = $db_col['mo_problem']->find(array('_id'=>array('$gt'=>$start)), array('limit'=>$size));
+    return iterator_to_array($result);
 }
 
 function mo_load_problem($pid)
 {
-    if (!$pid || !is_numeric($pid)) {
-        return false;
+    if (!$pid) {
+        return False;
     }
     global $mo_problem, $mo_problem_failed, $mo_now_problem;
     if (isset($mo_problem_failed[$pid])) {
-        $mo_now_problem = null;
+        $mo_now_problem = NULL;
 
-        return false;
+        return False;
     }
     if (isset($mo_problem[$pid])) {
         $mo_now_problem = $pid;
 
-        return true;
+        return True;
     }
     $problem = mo_read_cache_array('mo:problem:'.$pid);
     if (!$problem) { // Not in cache, read it from the database
-        $result = mo_db_readone('mo_problem', array('_id' => new MongoDB\BSON\ObjectID($pid)));
+        $result = mo_db_readone('mo_problem', array('_id'=>new MongoDB\BSON\ObjectID($pid)));
         if (!$result) {
-            $mo_problem_failed[$pid] = true;
-            $mo_now_problem == null;
+            $mo_problem_failed[$pid] = True;
+            $mo_now_problem == NULL;
 
-            return false;
+            return False;
         }
         mo_cache_problem($result, $pid);
         $mo_problem[$pid] = mo_read_cache_array('mo:problem:'.$pid);
@@ -45,16 +53,16 @@ function mo_load_problem($pid)
         $mo_problem[$pid] = $problem;
     }
     if ($mo_problem[$pid]['state'] == 0) { // Return true only if available
-        $mo_problem_failed[$pid] = true;
-        $mo_now_problem = null;
+        $mo_problem_failed[$pid] = True;
+        $mo_now_problem = NULL;
         mo_set_cache_timeout('mo:problem:'.$pid, 60);
 
-        return false;
+        return False;
     }
     $mo_now_problem = $pid;
     mo_set_cache_timeout('mo:problem:'.$pid, MOUTH);
 
-    return true;
+    return True;
 }
 
 function mo_set_now_problem($pid)
@@ -69,29 +77,39 @@ function mo_get_problem()
     $args = func_get_args();
     if (count($args) == 1) { // 获取当前指向的problem ==> mo_get_problem($category)
     $category = $args[0];
-        if ($mo_now_problem == null || !mo_load_problem($mo_now_problem)
+        if ($mo_now_problem == NULL || !mo_load_problem($mo_now_problem)
             || !isset($mo_problem[$mo_now_problem][$category])) {
-            return;
+            return NULL;
         }
 
-        return apply_filter('problem_'.$category,
-                                htmlspecialchars($mo_problem[$mo_now_problem][$category]));
+        if (is_string($mo_problem[$mo_now_problem][$category])) {
+            return apply_filter('problem_'.$category,
+                                    htmlspecialchars($mo_problem[$mo_now_problem][$category]));
+        } else {
+            return apply_filter('problem_'.$category,
+                                    $mo_problem[$mo_now_problem][$category]);
+        }
     } else { // 获取指定$pid的problem ==> mo_get_problem($pid, $category)
         $pid = $args[0];
         $category = $args[1];
         if (!mo_load_problem($pid) || !isset($mo_problem[$mo_now_problem][$category])) {
-            return;
+            return NULL;
         }
 
-        return apply_filter('problem_'.$category,
-                                htmlspecialchars($mo_problem[$pid][$category]));
+        if (is_string($mo_problem[$pid][$category])) {
+            return apply_filter('problem_'.$category,
+                                    htmlspecialchars($mo_problem[$pid][$category]));
+        } else {
+            return apply_filter('problem_'.$category,
+                                    $mo_problem[$pid][$category]);
+        }
     }
 }
 
 function mo_cache_problem($problem, $pid)
 {
     if (mo_exist_cache('mo:problem:'.$pid)) {
-        return false;
+        return False;
     }
 
     $rt = mo_write_cache_array('mo:problem:'.$pid, $problem);

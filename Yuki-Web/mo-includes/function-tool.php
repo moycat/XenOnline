@@ -37,10 +37,28 @@ function mo_analyze()
         }
     }
     if (!isset($rt[0])) {
-        return array('index');
+         return array('index');
     }
 
     return $rt;
+}
+
+// Turn the xxxxxxx MongoDB type into array
+function mo_arrayfy(&$obj)
+{
+    if (!is_array($obj)) {
+        return;
+    }
+    foreach ($obj as $key => $value) {
+        if (is_array($value)) {
+            mo_arrayfy($obj[$key]);
+        } elseif ($value instanceof ArrayObject) {
+            $obj[$key] = $value->getArrayCopy();
+            mo_arrayfy($obj[$key]);
+        } elseif ($value instanceof MongoDB\BSON\ObjectID) {
+            $obj[$key] = (string) $value;
+        }
+    }
 }
 
 // Get a friendly expression of time
@@ -80,27 +98,23 @@ function mo_date($time = null)
     return $text;
 }
 
-function mo_flat(&$foo)
+function mo_flat(&$data)
 {
-    if (!is_array($foo)) {
-        return;
-    }
-    foreach ($foo as $key => $value) {
+    unset($data['flat']);
+    $flat = array();
+    foreach ($data as $key => $value) {
         if (is_array($value)) {
-            $foo[$key] = json_encode($value);
-        } elseif ($value instanceof MongoDB\Model\BSONArray) {
-            $foo[$key] = json_encode($value->getArrayCopy());
-        } elseif ($value instanceof MongoDB\BSON\ObjectID) {
-            $foo[$key] = (string) $value;
+            $data[$key] = json_encode($value);
+            $flat[] = $key;
         }
     }
+    $data['flat'] = json_encode($flat);
 }
 
 function mo_has_login()
 {
     global $user_logged;
-
-    return $user_logged != null;
+    return $user_logged != NULL;
 }
 
 function mo_lang($lang, $code = true)
@@ -142,16 +156,16 @@ function mo_loadPT()
 
 function mo_load_setting()
 {
-    global $db, $db_col, $mo_setting;
-    $mo_setting = mo_read_cache_array('mo:setting');
-    if (!$mo_setting) {
-        $db_col['setting'] = $db->selectCollection('mo_setting');
-        $mo_setting_raw = $db_col['setting']->find();
-        foreach ($mo_setting_raw as $setting) {
-            $mo_setting[$setting['item']] = $setting['value'];
-        }
-        mo_write_cache_array('mo:setting', $mo_setting);
-    }
+   global $db, $db_col, $mo_setting;
+   $mo_setting = mo_read_cache_array('mo:setting');
+   if (!$mo_setting) {
+       $db_col['setting'] = $db->selectCollection('mo_setting');
+       $mo_setting_raw = $db_col['setting']->find();
+       foreach ($mo_setting_raw as $setting) {
+           $mo_setting[$setting['item']] = $setting['value'];
+       }
+       mo_write_cache_array('mo:setting', $mo_setting);
+   }
 }
 
 // Return the timestamp from an ObjectID
@@ -169,9 +183,8 @@ function mo_publish($channel, $msg)
 
 function mo_get_setting($key)
 {
-    global $mo_setting;
-
-    return isset($mo_setting[$key]) ? $mo_setting[$key] : null;
+   global $mo_setting;
+   return isset($mo_setting[$key]) ? $mo_setting[$key] : NULL;
 }
 
 // Generate a password with salt
@@ -251,16 +264,12 @@ function mo_time($p = 3)
     return round(($s1 + $m1 - $s0 - $m0) * 1000, $p);
 }
 
-function mo_unflat(&$foo)
+function mo_unflat(&$data)
 {
-    if (!is_array($foo)) {
-        return;
-    }
-    foreach ($foo as $key => $value) {
-        $t = json_decode($value, true);
-        if ($t) {
-            $foo[$key] = $t;
-        }
+    $flat = json_decode($data['flat']);
+    unset($data['flat']);
+    foreach ($flat as $key) {
+        $data[$key] = json_decode($data[$key]);
     }
 }
 
