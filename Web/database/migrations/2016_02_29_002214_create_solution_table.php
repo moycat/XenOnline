@@ -20,6 +20,7 @@ class CreateSolutionTable extends Migration
             $table->integer('language');
             $table->string('code');
             $table->integer('code_length');
+            $table->integer('result');
             $table->integer('used_time');
             $table->integer('used_memory');
             $table->string('detail');
@@ -31,13 +32,19 @@ class CreateSolutionTable extends Migration
             $table->index(['problem_id', 'user_id']);
         });
         Schema::create('solutions_pending', function (Blueprint $table) {
+            // Solution information
             $table->increments('id');
             $table->integer('solution_id');
-            $table->integer('problem_id');
             $table->integer('user_id');
             $table->integer('language');
             $table->string('code');
             $table->timestamps();
+            // Problem information
+            $table->string('hash');
+            $table->integer('ver');
+            $table->integer('test_turn');
+            $table->integer('time_limit');
+            $table->integer('memory_limit');
         });
     }
 

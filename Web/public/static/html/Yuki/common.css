@@ -1,0 +1,255 @@
+@charset "utf-8";
+/* CSS Document */
+
+/*
+* The common things
+*/
+
+body {
+    color: #413f3f;
+    padding-bottom: 10px;
+    font-family: "Helvetica Neue", Helvetica, Arial, "Hiragino Sans GB", "Hiragino Sans GB W3", "WenQuanYi Micro Hei", "Microsoft YaHei UI", "Microsoft YaHei", sans-serif;
+    font-size: 16px;
+}
+a {
+    color: #337ab7;
+}
+* {
+    padding: 0;
+    margin: 0;
+}
+small {
+    color: rgba(0, 0, 0, 0.6) !important;
+}
+.container {
+    padding: 0 40px;
+}
+.card {
+    background: #FFF;
+    border-radius: 1px;
+    padding: 3%;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+.tip-card {
+    background: #FFF;
+    border-radius: 1px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+.footer {
+    margin-top: 30px;
+    padding: 30px 40px 20px 40px;
+    background-color: white;
+    box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.05);
+}
+@media (max-width: 768px) {
+    .container {
+        margin-top: 65px;
+    }
+}
+@media (min-width: 768px) {
+    .container {
+        width: auto;
+        max-width: 1000px;
+    }
+}
+
+/*
+* The gotop button
+*/
+
+.gotop{
+    position:fixed;
+    bottom:50px;
+    right:40px;
+    text-decoration:none;
+    display:none;
+    width: 50px;
+    height: 50px;
+    background-color: #14B9FF;
+    z-index: 9;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+.gotop:hover{
+    background-color: #14B0FF;
+}
+.gotop span{
+    width:50px;
+    height:50px;
+    color:white;
+    padding-top: 10px;
+    font-size:27px;
+    text-align:center;
+    padding-right: 2.3px;
+}
+
+.sidebar {
+    padding-left: 12.5px;
+    max-width: 200px;
+}
+
+/*
+* The left-nav things
+*/
+
+.Naving {
+    overflow-x: hidden;
+}
+.wrapper {
+    margin-left: 240px;
+    transition-duration: 0.5s;
+    transition-timing-function: swing;
+    background: #F6F6F6 !important;
+    width: auto;
+    height: 100%;
+    position: relative;
+    padding-top: 20px;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.1);
+}
+.wrapper.foo {
+    width: 100%;
+    transform: translateX(-240px);
+    -webkit-transform: translateX(-240px);
+}
+.openNav {
+    margin-left: 240px;
+    transition-duration: 0.5s;
+    transition-timing-function: swing;
+    width: 50px;
+    height: 50px;
+    background-color: #14B9FF;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 9;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+.openNav.foo {
+    transform: translateX(-240px);
+    -webkit-transform: translateX(-240px);
+}
+.openNav:hover {
+    background-color: #14B0FF;
+    cursor: pointer;
+}
+.openNav .icon {
+    background-color: transparent;
+    transition-duration: 0.2s;
+    position: absolute;
+    width: 30px;
+    height: 2px;
+    top: 24px;
+    left: 10px;
+}
+.openNav .icon:before,
+.openNav .icon:after {
+    transition-duration: 0.5s;
+    background-color: white;
+    position: absolute;
+    content: "";
+    width: 30px;
+    height: 2px;
+    left: 0px;
+}
+.openNav.foo .icon:after,
+.openNav.foo .icon:before {
+    transform: rotate(0deg);
+    -webkit-transform: rotate(0deg);
+}
+.openNav.foo .icon:before {
+    top: -7px;
+}
+.openNav.foo .icon:after {
+    top: 7px;
+}
+.openNav.foo .icon {
+    background-color: white;
+}
+.openNav .icon:before {
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+}
+.openNav .icon:after {
+    transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+}
+.left-nav {
+    background-color: #14B9FF;
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    left: 0;
+    top: 0;
+}
+.left-nav ul {
+    width: 225px;
+    margin-top: 50px;
+}
+.left-nav ul:hover li {
+    color: rgba(255, 255, 255, 0.5);
+}
+.left-nav ul li {
+    transition-duration: 0.25s;
+    display: block;
+    padding: 5px 40px;
+    color: white;
+    letter-spacing: 0.02em;
+    text-align: right;
+    font-size: 20px;
+}
+.left-nav ul li:hover {
+    cursor: pointer;
+    color: white;
+}
+
+/* For mobile devices */
+@media (max-width: 768px) {
+    .gotop span {
+        bottom: 30px;
+        right: 10px;
+    }
+    .Naving {
+        overflow: hidden;
+    }
+    .wrapper {
+        margin-left: 0px;
+    }
+    .wrapper.foo {
+        transform: translateX(240px);
+        -webkit-transform: translateX(240px);
+    }
+    .openNav {
+        margin-left: 0px;
+    }
+    .openNav.foo {
+        transform: translateX(240px);
+        -webkit-transform: translateX(240px);
+    }
+    .openNav .icon:before {
+        transform: rotate(0deg);
+        -webkit-transform: rotate(0deg);
+        top: -7px;
+    }
+    .openNav .icon:after {
+        transform: rotate(0deg);
+        -webkit-transform: rotate(0deg);
+        top: 7px;
+    }
+    .openNav .icon {
+        background-color: white;
+    }
+    .openNav.foo .icon {
+        background-color: transparent;
+    }
+    .openNav.foo .icon:before,
+    .openNav.foo .icon:after {
+        top: 0;
+    }
+    .openNav.foo .icon:before {
+        transform: rotate(-45deg);
+        -webkit-transform: rotate(-45deg);
+    }
+    .openNav.foo .icon:after {
+        transform: rotate(45deg);
+        -webkit-transform: rotate(45deg);
+    }
+}

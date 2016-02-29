@@ -2,8 +2,11 @@
 
 namespace App\Providers;
 
-use Illuminate\Http\Response;
 use Illuminate\Support\ServiceProvider;
+
+use Auth;
+use Config;
+use Response;
 
 class NiceCat extends ServiceProvider
 {
@@ -16,12 +19,20 @@ class NiceCat extends ServiceProvider
     public function boot()
     {
         // Add theme feature & Bring some values for the views
-        Response::macro('theme', function($templet, $data=array()) {
+        Response::macro('theme', function($view, $data=array()) {
             // Prepare the theme path
             $theme = Config::get('theme', 'Yuki');
-            $path = 'themes.'.$theme.'.'.$templet;
+            $path = 'themes.'.$theme.'.'.$view;
+
             // Add some values for the view
-            $data['siteName']=Config::get('site_name');
+            $data['siteName'] = Config::get('app.site_name');
+            $data['user'] = Auth::user();
+            if (isset($data['title'])) {
+                $data['title'] .= ' - '.$data['siteName'];
+            } else {
+                $data['title'] = $data['siteName'];
+            }
+
             return Response::view($path, $data);
         });
     }

@@ -1,7 +1,5 @@
 <?php
 
-use Illuminate\Http\Response;
-
 /*
 |--------------------------------------------------------------------------
 | Routes File
@@ -13,8 +11,36 @@ use Illuminate\Http\Response;
 |
 */
 
+// Public Pages
+
 Route::get('/', function () {
-    return view('welcome');
+    return Response::theme('index');
+});
+
+Route::get('/problem', 'ProblemController@index');
+Route::get('/solution', 'SolutionController@index');
+Route::get('/discussion', 'DiscussionController@index');
+
+Route::get('/problem/{pid}', ['as' => 'problem', 'uses' => 'ProblemController@show']);
+Route::get('/discussion/{did}', ['as' => 'discussion', 'uses' => 'DiscussionController@show']);
+
+// Protected Pages
+
+Route::group(['middleware' => 'auth'], function () {
+
+    Route::post('/problem/{pid}/submit', 'ProblemController@submit');
+
+    Route::get('/solution/{sid}', ['as' => 'solution', 'uses' => 'SolutionController@show']);
+
+});
+
+// APIs
+
+Route::group(['prefix' => 'api'], function () {
+
+    Route::get('getProblemList', 'ProblemController@apiList');
+    Route::get('getSolutionList', 'SolutionController@apiList');
+
 });
 
 /*
@@ -28,12 +54,4 @@ Route::get('/', function () {
 |
 */
 
-Route::group(['middleware' => ['web']], function () {
-    //
-});
 
-Route::group(['middleware' => 'web'], function () {
-    Route::auth();
-
-    Route::get('/home', 'HomeController@index');
-});

@@ -2,9 +2,9 @@
 
 namespace App;
 
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 
-class User extends Authenticatable
+class Problem extends Eloquent
 {
     /**
      * The attributes that are mass assignable.
@@ -12,7 +12,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'title', 'content', 'tag', 'test_turn', 'time_limit', 'memory_limit',
     ];
 
     /**
@@ -21,11 +21,12 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'hash', 'ver',
     ];
 
     public function solutions()
     {
         return $this->hasMany('App\Solution');
     }
+
 }
