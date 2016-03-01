@@ -178,6 +178,7 @@ return [
          * My service providers
          */
         App\Providers\NiceCat::class,
+        App\Providers\CellFacadeProvider::class,
 
     ],
 
@@ -228,8 +229,9 @@ return [
         // My aliases
         'Input'     => Illuminate\Support\Facades\Input::class,
         'Cell'      => App\Repositories\Contracts\Cell::class,
-        'ProblemCell'   => App\Repositories\ProblemCell::class,
-        'SolutionCell'  => App\Repositories\SolutionCell::class,
+        'ProblemCell'   => App\Facades\ProblemCell::class,
+        'SolutionCell'  => App\Facades\SolutionCell::class,
+        'UserCell'  => App\Facades\UserCell::class,
 
     ],
 

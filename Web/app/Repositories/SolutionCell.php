@@ -63,4 +63,9 @@ class SolutionCell implements Cell
         return $result;
     }
 
+    public function count($filter = array())
+    {
+        return Solution::count();
+    }
+
 }

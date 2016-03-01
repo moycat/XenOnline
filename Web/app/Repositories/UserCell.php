@@ -3,20 +3,20 @@
 namespace App\Repositories;
 
 use Cell;
-use App\Problem;
+use App\User;
 
-class ProblemCell implements Cell
+class UserCell implements Cell
 {
     public function index($size, $startID, $filter = array())
     {
-        $result = Problem::where('_id', '>', $startID)->take($size)->get();
+        $result = User::where('_id', '>', $startID)->take($size)->get();
 
         return $result;
     }
 
     public function find($id)
     {
-        return Problem::findOrFail($id);
+        return User::findOrFail($id);
     }
 
     public function add($info, $option)
@@ -26,6 +26,6 @@ class ProblemCell implements Cell
 
     public function count($filter = array())
     {
-        return Problem::count();
+        return User::count();
     }
 }

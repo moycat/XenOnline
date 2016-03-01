@@ -13,18 +13,18 @@ use SolutionCell;
 class SolutionController extends Controller
 {
 
-    public function apiList(SolutionCell $cell)
+    public function apiList()
     {
         $size = (int)Input::get('size', 20);
         $startID = (string)Input::get('startID', '000000000000000000000000');
-        $list = $cell->index($size, $startID);
+        $list = SolutionCell::index($size, $startID);
 
         return response()->json($list);
     }
 
-    public function show(SolutionCell $cell, $sid)
+    public function show($sid)
     {
-        $solution = $cell->find($sid);
+        $solution = SolutionCell::find($sid);
 
         return Response::theme('solution.view', ['solution'=>$solution]);
     }
