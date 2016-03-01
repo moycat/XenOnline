@@ -18,9 +18,6 @@
     <div class="openNav" onclick="toggleMenu()">
         <div class="icon"></div>
     </div>
-    <a class="gotop" onclick="gotop()" href="#">
-        <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
-    </a>
     <div class="wrapper">
         <div class="container">
             @section('container')
@@ -30,11 +27,15 @@
         @show
         @include('themes.Yuki.common.footer')
     </div>
+    <a class="gotop" onclick="gotop()" href="#">
+        <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
+    </a>
 </body>
 <script src="//cdn.bootcss.com/jquery/2.2.1/jquery.min.js"></script>
 <script src="//cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.js"></script>
 <script src="/static/html/Yuki/common.js"></script>
 @yield('extra_js')
+<script src="//cdn.bootcss.com/iCheck/1.0.2/icheck.min.js"></script>
 <script src="//cdn.bootcss.com/js-cookie/2.1.0/js.cookie.min.js"></script>
 <script src="//cdn.bootcss.com/jquery.sticky/1.0.3/jquery.sticky.min.js"></script>
 @if (isset($ready_js))

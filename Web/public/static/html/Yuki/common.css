@@ -33,6 +33,7 @@ small {
     margin-top: 35px;
     padding: 3%;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    transition-duration: 0.5s;
 }
 .tight {
     padding: 0;
@@ -64,6 +65,35 @@ small {
 }
 
 /*
+* The rotating things
+*/
+
+.back-hidden {
+    transform: rotateY(90deg);
+}
+.front-hidden {
+    transform: rotateY(-90deg);
+}
+
+/*
+* The form things
+*/
+
+.form-group {
+    margin-bottom: 0;
+}
+.form-submit-group {
+    margin-top: 20px;
+}
+.form-control:focus {
+    border: 2px solid #FF7373;
+}
+label {
+    color: rgba(0, 0, 0, 0.9);
+    margin-bottom: 0;
+}
+
+/*
 * The border things
 */
 
@@ -82,19 +112,25 @@ small {
 */
 
 .gotop{
+    text-align: center;
+    text-align: -webkit-center;
     position:fixed;
     bottom:50px;
-    right:40px;
+    right:-60px;
     text-decoration:none;
-    display:none;
     width: 50px;
     height: 50px;
-    background-color: #14B9FF;
+    background-color: #E74C3C;
     z-index: 9;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
 }
 .gotop:hover{
-    background-color: #14B0FF;
+    background-color: #E73934;
+}
+.gotop-show {
+    transition-duration: 0.5s;
+    transform: translateX(-100px);
+    -webkit-transform: translateX(-100px);
 }
 .gotop span{
     width:50px;
@@ -124,7 +160,6 @@ small {
 .wrapper {
     margin-left: 240px;
     transition-duration: 0.5s;
-    transition-timing-function: swing;
     background: #F6F6F6 !important;
     width: auto;
     height: 100%;
@@ -140,10 +175,9 @@ small {
 .openNav {
     margin-left: 240px;
     transition-duration: 0.5s;
-    transition-timing-function: swing;
     width: 50px;
     height: 50px;
-    background-color: #14B9FF;
+    background-color: #E74C3C;
     position: fixed;
     top: 20px;
     left: 20px;
@@ -155,7 +189,7 @@ small {
     -webkit-transform: translateX(-240px);
 }
 .openNav:hover {
-    background-color: #14B0FF;
+    background-color: #E73934;
     cursor: pointer;
 }
 .openNav .icon {
@@ -200,7 +234,7 @@ small {
     -webkit-transform: rotate(-45deg);
 }
 .left-nav {
-    background-color: #14B9FF;
+    background-color: #34495E;
     text-shadow: 0 2px 3px rgba(0, 0, 0, 0.15);
     width: 100%;
     height: 100%;
@@ -247,17 +281,22 @@ small {
 */
 
 .panel-heading {
-    background-color: #0099FF;
+    background-color: #3498DB;
     border: none;
     color: #fff;
+}
+.penel-heading a:link,
+.penel-heading a:visited,
+.penel-heading a:hover,
+.penel-heading a:active {
+    color: white;
+}
+.panel-collapse {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
 }
 
 /* For mobile devices */
 @media (max-width: 992px) {
-    .gotop span {
-        bottom: 30px;
-        right: 10px;
-    }
     .Naving {
         overflow: hidden;
     }
@@ -302,5 +341,17 @@ small {
     .openNav.foo .icon:after {
         transform: rotate(45deg);
         -webkit-transform: rotate(45deg);
+    }
+}
+/* And smaller */
+@media (max-width: 768px) {
+    .mysbr {
+        display: block;
+    }
+}
+/* And smallllller */
+@media (max-width: 400px) {
+    .container {
+        padding: 0 15px 0 15px;
     }
 }

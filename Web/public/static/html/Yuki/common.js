@@ -6,18 +6,31 @@ function toggleMenu() {
     $('.openNav').toggleClass('foo');
 }
 // Go top
-var display_gotop = false;
 function gotop() {
     $("html,body").animate({scrollTop:"0px"}, 200);
 }
 function gotopanywhere(){
-    var scrollt = document.documentElement.scrollTop + document.body.scrollTop;
-    if (scrollt > 200 && !display_gotop) {
-        $(".gotop").fadeIn(600);
-        display_gotop = true;
-    } else if (scrollt < 100 && display_gotop){
-        $(".gotop").fadeOut(600);
-        display_gotop = false;
+    var scrollt = $("body").scrollTop();
+    if (scrollt > 200) {
+        $(".gotop").addClass("gotop-show");
+    } else if (scrollt < 200){
+        $(".gotop").removeClass("gotop-show");
+    }
+}
+// Rotate a card
+function toggleCard(frontID, backID) {
+    var front = $('#'+frontID);
+    var back = $('#'+backID);
+    if (front.hasClass('front-hidden')) {
+        back.addClass('back-hidden');
+        setTimeout("$('#"+backID+"').hide()",400);
+        setTimeout("$('#"+frontID+"').show()",400);
+        setTimeout("$('#"+frontID+"').removeClass('front-hidden')",450);
+    } else {
+        front.addClass('front-hidden');
+        setTimeout("$('#"+frontID+"').hide()",400);
+        setTimeout("$('#"+backID+"').show()",400);
+        setTimeout("$('#"+backID+"').removeClass('back-hidden')",450);
     }
 }
 // Add some self-start things...
@@ -31,4 +44,8 @@ $(function() {
         .on('hide.bs.collapse', function(a) {
             $(a.target).prev('.panel-heading').removeClass('active');
         });
+    $('input').iCheck({
+        checkboxClass: 'icheckbox_flat-red',
+        radioClass: 'iradio_flat-red'
+    });
 });
