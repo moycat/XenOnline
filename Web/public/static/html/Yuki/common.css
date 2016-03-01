@@ -60,8 +60,14 @@ small {
     }
 }
 .side-avatar {
+    transition-duration: 0.3s;
     height: 110px;
     width: 110px;
+    margin-bottom: 5px;
+}
+.side-avatar:hover {
+    transform: translateY(-7px);
+    -webkit-transform: translateY(-7px);
 }
 
 /*

@@ -5,8 +5,11 @@ namespace App\Repositories;
 use Cell;
 use App\Problem;
 
-class ProblemCell implements Cell
+class ProblemCell extends Cell
 {
+    protected $load;
+    protected $failedToLoad;
+
     public function index($size, $startID, $filter = array())
     {
         $result = Problem::where('_id', '>', $startID)->take($size)->get();

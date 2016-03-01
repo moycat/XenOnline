@@ -28,7 +28,7 @@ class AuthController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/';
+    protected $redirectTo = '/user';
 
     /**
      * Create a new authentication controller instance.
@@ -49,7 +49,7 @@ class AuthController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'name' => 'required|max:255',
+            'nickname' => 'required|min:3|max:10|unique:users',
             'email' => 'required|email|max:255|unique:users',
             'password' => 'required|confirmed|min:6',
         ]);
@@ -63,10 +63,31 @@ class AuthController extends Controller
      */
     protected function create(array $data)
     {
+        $avatar = $this->getAvatar($data['email']);
+
         return User::create([
-            'name' => $data['name'],
+            'nickname' => $data['nickname'],
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
+            'avatar' => $avatar,
+            'try' => 0,
+            'solved' => 0,
+            'submit' => 0,
+            'ac' => 0,
         ]);
+    }
+
+    protected function getAvatar($email)
+    {
+        $avatar_path = public_path().'/data/avatar/';
+        $hash = md5($email);
+        $gravatar_url = 'http://www.gravatar.com/avatar/'.$hash.'?s=512&d=identicon&f=y';
+        $filename = sha1(time().rand(100,1000)).'.png';
+        $file = fopen($avatar_path.$filename, 'w');
+        $ch = curl_init($gravatar_url);
+        curl_setopt($ch, CURLOPT_FILE, $file);
+        curl_exec($ch);
+        curl_close($ch);
+        return '/data/avatar/'.$filename;
     }
 }

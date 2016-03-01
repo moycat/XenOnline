@@ -18,6 +18,8 @@ class NiceCat extends ServiceProvider
      */
     public function boot()
     {
+        // Add the current user to every view
+        view()->share('user', Auth::user());
         // Add theme feature & Bring some values for the views
         Response::macro('theme', function($view, $data=array()) {
             // Prepare the theme path

@@ -2,11 +2,15 @@
 
 namespace App\Repositories;
 
+use Auth;
 use Cell;
 use App\User;
 
-class UserCell implements Cell
+class UserCell extends Cell
 {
+    protected $load;
+    protected $failedToLoad;
+
     public function index($size, $startID, $filter = array())
     {
         $result = User::where('_id', '>', $startID)->take($size)->get();
@@ -14,9 +18,9 @@ class UserCell implements Cell
         return $result;
     }
 
-    public function find($id)
+    public function find($uid)
     {
-        return User::findOrFail($id);
+        return User::findOrFail($uid);
     }
 
     public function add($info, $option)
@@ -27,5 +31,15 @@ class UserCell implements Cell
     public function count($filter = array())
     {
         return User::count();
+    }
+
+    public function save($user)
+    {
+        if (is_object($user)) {
+            $user->save();
+            // TODO: Update the cache
+        } else {
+
+        }
     }
 }

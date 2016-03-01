@@ -26,6 +26,11 @@
     <div class="row">
         <div class="col-md-6">
             @if(Auth::check())
+            <div id="user-card" class="card top-border-red">
+                <h5>
+                    Hi, {{ $user->nickname }} ヽ(✿ﾟ▽ﾟ)ノ
+                </h5>
+            </div>
             @else
             <div id="login-card" class="card top-border-red">
                 <h5>
@@ -72,9 +77,8 @@
                     <div class="form-group">
                         <label for="RetypePassword">重复密码</label>
                         <small class="pull-right">再来一遍啦</small>
-                        <input type="password" class="form-control" name="password2" id="RetypePassword" placeholder="Password Again" required>
+                        <input type="password" class="form-control" name="password_confirmation" id="RetypePassword" placeholder="Password Again" required>
                     </div>
-
                     <div class="form-submit-group">
                         <button type="submit" class="btn btn-warning">注册</button>　
                         <div class="pull-right">

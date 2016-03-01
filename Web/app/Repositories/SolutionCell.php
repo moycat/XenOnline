@@ -10,8 +10,11 @@ use App\Solution;
 use App\SolutionPending;
 use App\Problem;
 
-class SolutionCell implements Cell
+class SolutionCell extends Cell
 {
+    protected $load;
+    protected $failedToLoad;
+
     public function index($size, $startID, $filter = array())
     {
         $result = Solution::where('_id', '>', $startID)->take($size)->get();
