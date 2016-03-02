@@ -66,7 +66,7 @@
                     </div>
                     <div class="form-group">
                         <label for="nickname">昵称</label>
-                        <small class="pull-right">3-10字节，中英文不限</small>
+                        <small class="pull-right">3-10字，中英文不限</small>
                         <input type="text" class="form-control" name="nickname" id="nickname" placeholder="神犇">
                     </div>
                     <div class="form-group">
