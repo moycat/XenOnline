@@ -21,15 +21,6 @@ Route::group(['prefix' => 'api'], function () {
 
 Route::group(['middleware' => 'web'], function () {
 
-    // Authentication Routes...
-    Route::get('login', 'Auth\AuthController@showLoginForm');
-    Route::post('login', 'Auth\AuthController@login');
-    Route::get('logout', 'Auth\AuthController@logout');
-
-    // Registration Routes...
-    Route::get('register', 'Auth\AuthController@showRegistrationForm');
-    Route::post('register', 'Auth\AuthController@register');
-
     // Password Reset Routes...
     Route::get('password/reset/{token?}', 'Auth\PasswordController@showResetForm');
     Route::post('password/email', 'Auth\PasswordController@sendResetLinkEmail');
@@ -39,27 +30,30 @@ Route::group(['middleware' => 'web'], function () {
     Route::get('/', function () {
         return Response::theme('index');
     });
+
+    // Problems
     Route::get('/problem', 'ProblemController@index');
-    Route::get('/solution', 'SolutionController@index');
-    Route::get('/discussion', 'DiscussionController@index');
+    Route::get('/problem/page/{page}', 'ProblemController@index');
     Route::get('/problem/{pid}', ['as' => 'problem', 'uses' => 'ProblemController@show']);
+
+    // Solutions
+    Route::get('/solution', 'SolutionController@index');
+
+    // Discussions
+    Route::get('/discussion', 'DiscussionController@index');
     Route::get('/discussion/{did}', ['as' => 'discussion', 'uses' => 'DiscussionController@show']);
+
+    // Users
+    Route::get('user', 'UserController@index');
+    Route::post('user', 'UserController@login');
+    Route::put('user', 'Auth\AuthController@register');
+    //Route::get('register', 'UserController@ApiRegister');
+    Route::get('logout', 'Auth\AuthController@logout');
 
     // Protected Pages
     Route::group(['middleware' => 'auth'], function () {
-        Route::post('/problem/{pid}/submit', 'ProblemController@submit');
+        Route::put('/solution', 'SolutionController@submit');
         Route::get('/solution/{sid}', ['as' => 'solution', 'uses' => 'SolutionController@show']);
-    });
-
-    // APIs
-    Route::group(['prefix' => 'api'], function () {
-        Route::get('login', 'UserController@ApiLogin');
-        Route::get('register', 'UserController@ApiRegister');
-    });
-
-    Route::get('/home', 'HomeController@Index');
-    Route::get('/test', function(){
-
     });
 
 });

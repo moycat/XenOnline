@@ -34,6 +34,23 @@ small {
     padding: 3%;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
     transition-duration: 0.5s;
+    display: block;
+}
+.user-op-card {
+    width: 320px;
+    height: 320px;
+    position: fixed;
+    top: -20px;
+    left: -570px;
+    z-index: 10;
+    padding: 1%;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.18);
+}
+.user-op-card-foo {
+    margin-left: 820px;
+}
+#side-register {
+    height: 460px;
 }
 .tight {
     padding: 0;
@@ -105,40 +122,46 @@ label {
 
 .top-border-red {
     border-top: 5px solid #FF7373;
+    padding-top: 10px;
 }
 .top-border-blue {
     border-top: 5px solid #0066FF;
+    padding-top: 10px;
 }
 .top-border-orange {
     border-top: 5px solid #FF6600;
+    padding-top: 10px;
+}
+.left-border-red {
+    border-left: 6px solid #FF7373;
+    padding-left: 5px;
+}
+.left-border-blue {
+    border-left: 6px solid #56A5EB;
+    padding-left: 5px;
+}
+.left-border-orange {
+    border-left: 6px solid #FF6600;
+    padding-left: 5px;
 }
 
 /*
-* The gotop button
+* The gotop & goback button
 */
-
-.gotop{
+.tool-button {
     text-align: center;
     text-align: -webkit-center;
     position:fixed;
-    bottom:50px;
-    right:-60px;
     text-decoration:none;
-    width: 50px;
-    height: 50px;
     background-color: #E74C3C;
     z-index: 9;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+    transition-duration: 0.5s;
 }
-.gotop:hover{
+.tool-button:hover {
     background-color: #E73934;
 }
-.gotop-show {
-    transition-duration: 0.5s;
-    transform: translateX(-100px);
-    -webkit-transform: translateX(-100px);
-}
-.gotop span{
+.tool-button span {
     width:50px;
     height:50px;
     color:white;
@@ -147,12 +170,30 @@ label {
     text-align:center;
     padding-right: 2.3px;
 }
+.gotop {
+    bottom:50px;
+    right:-60px;
+    width: 50px;
+    height: 50px;
+}
+.gotop-show {
+    transform: translateX(-100px);
+    -webkit-transform: translateX(-100px);
+}
+.goback {
+    top: 85px;
+    left: 20px;
+    margin-left: 240px;
+}
 
 .sidebar {
     margin-top: 30px;
     padding-left: 12.5px;
     max-width: 215px;
     text-align: center;
+    color: white;
+}
+.sidebar a {
     color: white;
 }
 
@@ -190,7 +231,8 @@ label {
     z-index: 9;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
 }
-.openNav.foo {
+.openNav.foo,
+.goback.foo {
     transform: translateX(-240px);
     -webkit-transform: translateX(-240px);
 }
@@ -282,6 +324,16 @@ label {
     transform: translateX(20px);
 }
 
+.page-nav {
+    text-align: center;
+}
+.pagination {
+    display: inline-block;
+}
+.pagination li {
+    background-color: transparent !important;
+}
+
 /*
 * The list things
 */
@@ -316,7 +368,8 @@ label {
     .openNav {
         margin-left: 0px;
     }
-    .openNav.foo {
+    .openNav.foo,
+    .goback.foo {
         transform: translateX(240px);
         -webkit-transform: translateX(240px);
     }
@@ -348,16 +401,67 @@ label {
         transform: rotate(45deg);
         -webkit-transform: rotate(45deg);
     }
-}
-/* And smaller */
-@media (max-width: 768px) {
-    .mysbr {
+    .new-line-992 {
         display: block;
     }
 }
-/* And smallllller */
-@media (max-width: 400px) {
+/* And smaller */
+@media (max-width: 768px) {
+    .new-line-768 {
+        display: block;
+    }
+    .mysbr {
+        display: block;
+    }
     .container {
         padding: 0 15px 0 15px;
     }
+    .user-op-card-foo {
+        margin-left: 330px;
+    }
+}
+/* Such smalllllll */
+@media (max-width: 400px) {
+    .new-line-400 {
+        display: block;
+    }
+}
+
+/*
+* The problem things
+*/
+
+.problem-list-na {
+    width: 15%;
+}
+.problems-tag h6 {
+    display: inline;
+}
+
+/*
+* The solution things
+*/
+
+.solution-area {
+    padding-left: 5px;
+    padding-top: 0;
+    margin-top: 20px;
+}
+.solution-area p {
+    line-height: 1;
+    padding-left: 10px;
+}
+.solution-area pre {
+    margin-top: 5px;
+}
+.solution-bigheading {
+    padding: 6px 4px 6px 5px;
+}
+.solution-heading {
+    margin-top: 10px;
+}
+.solution-post {
+    text-align: right;
+    margin-bottom: 5px;
+    margin-top: 5px;
 }

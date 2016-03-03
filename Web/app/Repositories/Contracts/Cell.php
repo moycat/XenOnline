@@ -16,4 +16,8 @@ abstract class Cell implements Protein {
     abstract public function find($id);
     abstract public function add($info, $option);
     abstract public function count($filter = array());
+
+    public function oidToTimestamp($oid) {
+        return hexdec(substr((string) $oid, 0, 8));
+    }
 }

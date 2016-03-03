@@ -2,9 +2,9 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
+use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 
-class SolutionPending extends Model
+class SolutionPending extends Eloquent
 {
     protected $table = 'solutions_pending';
 

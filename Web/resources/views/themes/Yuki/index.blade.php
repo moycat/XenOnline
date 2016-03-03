@@ -30,13 +30,14 @@
                 <h5>
                     Hi, {{ $user->nickname }} ヽ(✿ﾟ▽ﾟ)ノ
                 </h5>
+                <h5><small>//TODO: 用户信息板尚未上线</small></h5>
             </div>
             @else
             <div id="login-card" class="card top-border-red">
                 <h5>
                     登入网站ヽ(✿ﾟ▽ﾟ)ノ
                 </h5>
-                <form>
+                <form action="/user" method="post">
                     <div class="form-group">
                         <label for="Email">Email地址</label>
                         <input type="email" class="form-control" name="email" id="Email" placeholder="Email">
@@ -52,13 +53,14 @@
                             <input class="btn btn-warning" type="button" value="还没注册？" onclick="toggleCard('login-card','register-card')">
                         </div>
                     </div>
+                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
                 </form>
             </div>
             <div id="register-card" class="card top-border-orange back-hidden" style="display: none;">
                 <h5>
                     加入我们ヽ(๑•̀ω•́)ノ
                 </h5>
-                <form>
+                <form action="/user" method="post">
                     <div class="form-group">
                         <label for="Email">Email地址</label>
                         <small class="pull-right">就是你的Email地址……啦</small>
@@ -85,9 +87,16 @@
                             <input class="btn btn-danger" type="button" value="需要登录？" onclick="toggleCard('login-card','register-card')">
                         </div>
                     </div>
+                    <input type="hidden" name="_method" value="PUT">
+                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
                 </form>
             </div>
             @endif
+        </div>
+        <div class="col-md-6">
+            <div class="card top-border-blue">
+                <h5><small>//TODO: 我也不知道是啥的信息板尚未上线</small></h5>
+            </div>
         </div>
     </div>
 @stop

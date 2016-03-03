@@ -11,21 +11,20 @@ use Input;
 use Response;
 use ProblemCell;
 use SolutionCell;
+use pRedis;
 
 class ProblemController extends Controller
 {
-    public function index()
+    public function index(Request $request, $page = 1)
     {
+        $size = 20;
+        $startID = ($page - 1) * $size;
+        $filter = array_filter(explode(' ', $request->input('tag')));
+        $result = ProblemCell::index($size, $startID, $filter);
+        $result['page'] = $page;
+        $result['filter'] = $filter;
 
-    }
-
-    public function apiList()
-    {
-        $size = (int)Input::get('size', 20);
-        $startID = (string)Input::get('startID', '000000000000000000000000');
-        $list = ProblemCell::index($size, $startID);
-
-        return response()->json($list);
+        return Response::theme('problem.list', $result);
     }
 
     public function show($pid)
@@ -33,12 +32,5 @@ class ProblemController extends Controller
         $problem = ProblemCell::find($pid);
 
         return Response::theme('problem.view', ['problem'=>$problem]);
-    }
-
-    public function submit(Request $request, $pid)
-    {
-        $result = SolutionCell::add($request, ['pid'=>$pid]);
-
-        return Response::json($result);
     }
 }

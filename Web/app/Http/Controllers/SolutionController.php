@@ -29,9 +29,11 @@ class SolutionController extends Controller
         return Response::theme('solution.view', ['solution'=>$solution]);
     }
 
-    public function submit()
+    public function submit(Request $request)
     {
+        $result = SolutionCell::add($request);
 
+        return Response::json($result);
     }
 
 }
