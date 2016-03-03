@@ -18,7 +18,6 @@ Route::group(['prefix' => 'api'], function () {
     Route::get('getSolutionList', 'SolutionController@apiList');
 });
 
-
 Route::group(['middleware' => 'web'], function () {
 
     // Password Reset Routes...
@@ -28,7 +27,7 @@ Route::group(['middleware' => 'web'], function () {
 
     // Public Pages
     Route::get('/', function () {
-        return Response::theme('index');
+        return view('index');
     });
 
     // Problems

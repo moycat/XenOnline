@@ -132,10 +132,9 @@
             <h4>
                 <span class="glyphicon glyphicon-th-large" aria-hidden="true"></span>
                 {{ $siteName }} <small>About</small>
-                @include('themes.Yuki.common.about')
+                @include('common.about')
             </h4>
-            <p>An online judge system.</p>
-            <p>Powered by <a href="https://github.com/moycat/MoyOJ">MoyOJ</a>.</p>
+            <p>An online judge system powered by <a href="https://github.com/moycat/MoyOJ">MoyOJ</a>.</p>
         </div>
     </div>
 </div>

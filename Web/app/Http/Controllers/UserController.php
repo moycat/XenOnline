@@ -15,7 +15,7 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
-        return Response::theme('user.index');
+        return view('user.index');
     }
 
     public function login(Request $request)

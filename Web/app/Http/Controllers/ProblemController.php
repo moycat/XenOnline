@@ -24,13 +24,13 @@ class ProblemController extends Controller
         $result['page'] = $page;
         $result['filter'] = $filter;
 
-        return Response::theme('problem.list', $result);
+        return view('problem.list', $result);
     }
 
     public function show($pid)
     {
         $problem = ProblemCell::find($pid);
 
-        return Response::theme('problem.view', ['problem'=>$problem]);
+        return view('problem.view', ['problem'=>$problem]);
     }
 }

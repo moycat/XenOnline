@@ -26,7 +26,7 @@ class SolutionController extends Controller
     {
         $solution = SolutionCell::find($sid);
 
-        return Response::theme('solution.view', ['solution'=>$solution]);
+        return view('solution.view', ['solution'=>$solution]);
     }
 
     public function submit(Request $request)

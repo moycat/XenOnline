@@ -1,4 +1,4 @@
-@extends('themes.Yuki.common.page')
+@extends('page')
 @section('container')
     <div class="row">
         <div class="col-md-8">

@@ -1,4 +1,4 @@
-@extends('themes.Yuki.common.page')
+@extends('page')
 @section('container')
 <?php
 $totalPage = ceil($count / 20);

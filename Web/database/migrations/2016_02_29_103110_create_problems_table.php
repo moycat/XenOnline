@@ -24,7 +24,7 @@ class CreateProblemsTable extends Migration
             $table->integer('time_limit');
             $table->integer('memory_limit');
             $table->integer('try');
-            $table->integer('solved');
+            $table->integer('solve');
             $table->integer('submit');
             $table->integer('ac');
         });
