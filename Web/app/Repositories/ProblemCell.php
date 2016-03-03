@@ -28,6 +28,7 @@ class ProblemCell extends Cell
             $result['count'] = pRedis::zcard('mo:problem');
             $problems = pRedis::zrange('mo:problem', $startID, $startID + $size - 1);
         }
+        $result['problems'] = array();
         foreach ($problems as $pid) {
             $result['problems'][] = $this->find($pid);
         }
