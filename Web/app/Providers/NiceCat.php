@@ -19,9 +19,13 @@ class NiceCat extends ServiceProvider
     public function boot()
     {
         // Add some to every view
-        view()->share('user', Auth::user());
         view()->share('siteName', Config::get('app.site_name'));
-        view()->share('title', Config::get('app.site_name'));
+        view()->composer('*', function ($view) {
+            $view->with('user', Auth::user());
+            $data = $view->getData();
+            $header_title = isset($data['title']) ? $data['title'].' - '.Config::get('app.site_name') : Config::get('app.site_name');
+            $view->with('header_title', $header_title);
+        });
     }
 
     /**

@@ -11,13 +11,6 @@
 |
 */
 
-// APIs that needn't to check user
-
-Route::group(['prefix' => 'api'], function () {
-    Route::get('getProblemList', 'ProblemController@apiList');
-    Route::get('getSolutionList', 'SolutionController@apiList');
-});
-
 Route::group(['middleware' => 'web'], function () {
 
     // Password Reset Routes...
