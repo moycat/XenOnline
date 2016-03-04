@@ -15,15 +15,6 @@ class Problem extends Eloquent
         'title', 'content', 'tag', 'test_turn', 'time_limit', 'memory_limit',
     ];
 
-    /**
-     * The attributes excluded from the model's JSON form.
-     *
-     * @var array
-     */
-    protected $hidden = [
-        'hash', 'ver',
-    ];
-
     public function solutions()
     {
         return $this->hasMany('App\Solution');

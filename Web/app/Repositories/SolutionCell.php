@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use Auth;
+use DB;
 use pRedis;
 use Cell;
 use Response;
@@ -42,9 +43,7 @@ class SolutionCell extends Cell
         $solution = new Solution;
         $solution_pending = new SolutionPending;
 
-        // 验证
-        // 用户处理
-        // 题目处理
+        //验证
 
         $solution->problem_id = $problem->id;
         $solution->user_id = $user->id;
@@ -55,6 +54,7 @@ class SolutionCell extends Cell
 
         $solution_pending->solution_id = $solution->id;
         $solution_pending->user_id = $user->id;
+        $solution_pending->problem_id = $user->id;
         $solution_pending->language = $request->input('language');
         $solution_pending->code = $request->input('code');
         $solution_pending->hash = $problem->hash;
@@ -66,6 +66,15 @@ class SolutionCell extends Cell
 
         $channel = 'mo://MoyOJ/ClientServer';
         pRedis::publish($channel, $solution_pending->toJson());
+
+        $toTryList = DB::collection('users')->where('_id', $user->id)->update(['$addToSet'=>["try_list"=>$problem->id]]);
+        if ($toTryList) {
+            DB::collection('users')->where('_id', $user->id)->update(['$inc'=>["try"=>1,"submit"=>1]]);
+            DB::collection('problems')->where('_id', $problem->id)->update(['$inc'=>["try"=>1,"submit"=>1]]);
+        } else {
+            DB::collection('users')->where('_id', $user->id)->update(['$inc'=>["submit"=>1]]);
+            DB::collection('problems')->where('_id', $problem->id)->update(['$inc'=>["submit"=>1]]);
+        }
 
         $result = ['ok'=>True, 'sid'=>$solution->id];
         return $result;

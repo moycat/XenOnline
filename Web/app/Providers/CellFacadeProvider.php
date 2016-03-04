@@ -36,5 +36,9 @@ class CellFacadeProvider extends ServiceProvider
         {
             return new \App\Repositories\UserCell();
         });
+        App::bind('CacheCell', function()
+        {
+            return new \App\Repositories\CacheCell();
+        });
     }
 }

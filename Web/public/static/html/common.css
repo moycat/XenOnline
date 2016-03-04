@@ -437,6 +437,9 @@ label {
 .problems-tag h6 {
     display: inline;
 }
+.problems-tag .label {
+    display: inline-block;
+}
 
 /*
 * The solution things

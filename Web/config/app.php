@@ -228,6 +228,7 @@ return [
         // My aliases
         'Input'     => Illuminate\Support\Facades\Input::class,
         'Cell'      => App\Repositories\Contracts\Cell::class,
+        'CacheCell'  => App\Facades\CacheCell::class,
         'ProblemCell'   => App\Facades\ProblemCell::class,
         'SolutionCell'  => App\Facades\SolutionCell::class,
         'UserCell'  => App\Facades\UserCell::class,

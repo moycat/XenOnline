@@ -27,7 +27,7 @@ $pram = isset($url[1])?'?'.$url[1]:'';
                 <tbody>
                 @foreach($problems as $problem)
                     <tr>
-                        <td><a href="/problem/{{ $problem->id }}">{{ $problem->title }}</a></a></td>
+                        <td><a href="/problem/{{ $problem->_id }}">{{ $problem->title }}</a></a></td>
                         <td class="problem-list-na">{{ $problem->submit or '0' }}</td>
                         <td class="problem-list-na">{{ $problem->ac or '0' }}</td>
                     </tr>
@@ -77,12 +77,21 @@ $pram = isset($url[1])?'?'.$url[1]:'';
             <div class="problems-tag">
             @foreach($tags as $tag)
                 <h6>
-                    @if(isset($filter)&&$filter)
+                    @if($filter&&in_array($tag, $filter))
+                    <?php $tmp_filter = $filter; unset($tmp_filter[array_search($tag,$tmp_filter)]); ?>
+                    <a href="/problem?tag={{ implode('+', $tmp_filter) }}">
+                    @elseif($filter)
                     <a href="/problem?tag={{ implode('+', $filter).'+'.$tag }}">
                     @else
                     <a href="/problem?tag={{ $tag }}">
                     @endif
-                        <span class="label label-primary">{{ $tag }}</span>
+                        @if(in_array($tag, $filter))
+                        <span class="label label-warning">
+                        @else
+                        <span class="label label-primary">
+                        @endif
+                            {{ $tag }}
+                        </span>
                     </a>
                 </h6>
             @endforeach

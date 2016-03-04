@@ -6,7 +6,7 @@
                 <div class="h2 left-border-blue solution-bigheading">
                     {{ $problem->title }}
                 </div>
-                <input type="hidden" id="pid" value="{{ $problem->id }}">
+                <input type="hidden" id="pid" value="{{ $problem->_id }}">
                 <h5><small>
                     时间限制 <code>{{ $problem->time_limit }} ms</code>
                     内存限制 <code>{{ $problem->memory_limit }} MiB</code>
@@ -26,7 +26,7 @@
                     </div>
                 </div>
                 <div class="top-border-red solution-area">
-                    <div class="h3 solution-heading">提交代码 <small>1KiB以内</small></div>
+                    <div class="h3 solution-heading">提交代码 <small>10KiB以内</small></div>
                     <div id="source-code"></div>
                     <form class="form-inline solution-post solution-post" role="form">
                         <input type="radio" name="cpp" id="cpp" value="cpp" checked> C++/C
@@ -42,7 +42,19 @@
                     我的提交
                 </div>
                 <div class="h4 top-border-red">
-                    <small>//TODO</small>
+                    <small>
+                    @if(Auth::check())
+                        @if(isset($my_solutions))
+                            @foreach($my_solutions as $my_solution)
+
+                            @endforeach
+                        @else
+                        暂无提交
+                        @endif
+                    @else
+                        请登录后查看
+                    @endif
+                    </small>
                 </div>
             </div>
             <div class="card">
