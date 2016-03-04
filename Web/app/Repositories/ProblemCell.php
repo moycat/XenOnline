@@ -57,7 +57,6 @@ class ProblemCell extends Cell
         $result['previous'] = ($startID > 0);
         $result['next'] = $result['count'] >= $startID + $size - 1;
         $result['tags'] = CacheCell::readSet('mo:problem:tags');
-        $result['filter'] = $filter;
 
         return $result;
     }

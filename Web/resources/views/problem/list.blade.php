@@ -77,10 +77,10 @@ $pram = isset($url[1])?'?'.$url[1]:'';
             <div class="problems-tag">
             @foreach($tags as $tag)
                 <h6>
-                    @if($filter&&in_array($tag, $filter))
+                    @if(isset($filter)&&$filter&&in_array($tag, $filter))
                     <?php $tmp_filter = $filter; unset($tmp_filter[array_search($tag,$tmp_filter)]); ?>
                     <a href="/problem?tag={{ implode('+', $tmp_filter) }}">
-                    @elseif($filter)
+                    @elseif(isset($filter)&&$filter)
                     <a href="/problem?tag={{ implode('+', $filter).'+'.$tag }}">
                     @else
                     <a href="/problem?tag={{ $tag }}">

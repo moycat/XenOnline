@@ -18,6 +18,7 @@ class ProblemController extends Controller
         // Get the list
         $result = ProblemCell::index($size, $startID, $filter);
         $result['page'] = $page;
+        $result['filter'] = $filter;
 
         return view('problem.list', $result);
     }
