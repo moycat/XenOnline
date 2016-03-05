@@ -41,20 +41,27 @@
                 <div class="h3 left-border-orange">
                     我的提交
                 </div>
-                <div class="h4 top-border-red">
-                    <small>
+                <div id="my-solutions" class="top-border-red">
                     @if(Auth::check())
-                        @if(isset($my_solutions))
-                            @foreach($my_solutions as $my_solution)
-
-                            @endforeach
+                        @if(isset($solutions)&&$solutions)
+                        @foreach($solutions as $solution)
+                        <p>
+                            <a href="/solution/{{ $solution['_id'] }}">
+                                ·{{ $solution['created_at']->toDateTime()->format('m-d') }}
+                                @if(isset($solution['result']))
+                                {!! SolutionCell::state($solution['result']) !!}
+                                @else
+                                {!! SolutionCell::state(0) !!}
+                                @endif
+                            </a>
+                        </p>
+                        @endforeach
                         @else
-                        暂无提交
+                        <p>暂无提交</p>
                         @endif
                     @else
                         请登录后查看
                     @endif
-                    </small>
                 </div>
             </div>
             <div class="card">
@@ -75,8 +82,8 @@
     emoji           : true,
     taskList        : true,
     tex             : true,
-    flowChart       : true,
-    sequenceDiagram : true,
+    //flowChart       : true,
+    //sequenceDiagram : true,
     });
     var editor = ace.edit("source-code");
     editor.setTheme("ace/theme/chrome");
@@ -97,10 +104,10 @@
 @section('extra_js')
     <script src="https://pandao.github.io/editor.md/lib/marked.min.js"></script>
     <script src="https://pandao.github.io/editor.md/lib/prettify.min.js"></script>
-    <script src="https://pandao.github.io/editor.md/lib/raphael.min.js"></script>
-    <script src="https://pandao.github.io/editor.md/lib/underscore.min.js"></script>
-    <script src="https://pandao.github.io/editor.md/lib/sequence-diagram.min.js"></script>
-    <script src="https://pandao.github.io/editor.md/lib/flowchart.min.js"></script>
-    <script src="https://pandao.github.io/editor.md/lib/jquery.flowchart.min.js"></script>
+    <!-- <script src="https://pandao.github.io/editor.md/lib/raphael.min.js"></script> -->
+    <!-- <script src="https://pandao.github.io/editor.md/lib/underscore.min.js"></script> -->
+    <!-- <script src="https://pandao.github.io/editor.md/lib/sequence-diagram.min.js"></script> -->
+    <!-- <script src="https://pandao.github.io/editor.md/lib/flowchart.min.js"></script> -->
+    <!-- <script src="https://pandao.github.io/editor.md/lib/jquery.flowchart.min.js"></script> -->
     <script src="https://pandao.github.io/editor.md/editormd.min.js"></script>
 @stop

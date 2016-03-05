@@ -232,6 +232,7 @@ return [
         'ProblemCell'   => App\Facades\ProblemCell::class,
         'SolutionCell'  => App\Facades\SolutionCell::class,
         'UserCell'  => App\Facades\UserCell::class,
+        'ClientCell'  => App\Facades\ClientCell::class,
 
     ],
 

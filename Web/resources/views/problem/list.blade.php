@@ -102,7 +102,14 @@ $pram = isset($url[1])?'?'.$url[1]:'';
                 搜索
             </div>
             <div class="h4 top-border-red">
-                <small>//TODO: 搜索功能尚未上线</small>
+                <div class="input-group">
+                    <input type="text" id="search" class="form-control" placeholder="搜索标题">
+                    <span class="input-group-btn">
+                        <button class="btn btn-danger" type="button" onclick="location.href='/problem/search/'+$('#search').val()">
+                            Go!
+                        </button>
+                    </span>
+                </div>
             </div>
         </div>
     </div>

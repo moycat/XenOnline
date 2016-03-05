@@ -4,32 +4,33 @@ namespace App\Repositories;
 
 use Auth;
 use DB;
-use pRedis;
 use Cell;
+use CacheCell;
 use Response;
+
 use App\Solution;
 use App\SolutionPending;
 use App\Problem;
 
 class SolutionCell extends Cell
 {
-    protected $load;
-    protected $failedToLoad;
 
     public function index($size, $startID, $filter = array())
     {
-        $result = Solution::where('_id', '>', $startID)->take($size)->get();
+        // TODO
 
-        return $result;
+        return;
     }
 
-    public function find($id)
+    public function find($sid)
     {
-        $solution = Solution::findOrFail($id);
-
-        $user = Auth::user();
-        if ($solution->user_id != $user->id) {
-            abort(404);
+        $solution = CacheCell::read('mo:solution:'.$sid);
+        if ($solution) {
+            $solution = json_decode($solution);
+        } else {
+            $solution = Solution::findOrFail($sid);
+            if($solution->result > 0)
+            CacheCell::write('mo:solution:'.$sid, $solution->toJson());
         }
 
         return $solution;
@@ -65,19 +66,46 @@ class SolutionCell extends Cell
         $solution_pending->save();
 
         $channel = 'mo://MoyOJ/ClientServer';
-        pRedis::publish($channel, $solution_pending->toJson());
+        CacheCell::publish($channel, $solution_pending->toJson());
 
+        // TODO: user things
         $toTryList = DB::collection('users')->where('_id', $user->id)->update(['$addToSet'=>["try_list"=>$problem->id]]);
         if ($toTryList) {
             DB::collection('users')->where('_id', $user->id)->update(['$inc'=>["try"=>1,"submit"=>1]]);
             DB::collection('problems')->where('_id', $problem->id)->update(['$inc'=>["try"=>1,"submit"=>1]]);
+            //CacheCell::incArrayItem('mo:user');
+            CacheCell::incArrayItem('mo:problem:'.$problem->id, 'try', 1);
+            CacheCell::incArrayItem('mo:problem:'.$problem->id, 'submit', 1);
         } else {
             DB::collection('users')->where('_id', $user->id)->update(['$inc'=>["submit"=>1]]);
             DB::collection('problems')->where('_id', $problem->id)->update(['$inc'=>["submit"=>1]]);
+            //CacheCell::incArrayItem('mo:user');
+            CacheCell::incArrayItem('mo:problem:'.$problem->id, 'submit', 1);
         }
 
         $result = ['ok'=>True, 'sid'=>$solution->id];
         return $result;
+    }
+
+    public function search($option)
+    {
+        $query = DB::collection('solutions');
+        if (isset($option['pid'])) {
+            $query->where('problem_id', $option['pid']);
+        }
+        if (isset($option['uid'])) {
+            $query->where('user_id', $option['uid']);
+        }
+        if (isset($option['result'])) {
+            $query->where('result', $option['result']);
+        }
+        if (isset($option['skip'])) {
+            $query->skip($option['skip']);
+        }
+        if (isset($option['size'])) {
+            $query->take($option['size']);
+        }
+        return $query->get();
     }
 
     public function count($filter = array())

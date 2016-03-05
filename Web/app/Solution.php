@@ -15,15 +15,6 @@ class Solution extends Eloquent
         'code', 'language',
     ];
 
-    /**
-     * The attributes excluded from the model's JSON form.
-     *
-     * @var array
-     */
-    protected $hidden = [
-        'code', 'detail', 'detail_result', 'detail_time', 'detail_memory',
-    ];
-
     public function user()
     {
         return $this->belongsTo('App\User');

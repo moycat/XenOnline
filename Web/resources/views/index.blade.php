@@ -73,7 +73,7 @@
                     </div>
                     <div class="form-group">
                         <label for="Password">密码</label>
-                        <small class="pull-right">最小长度8位</small>
+                        <small class="pull-right">最小长度6位</small>
                         <input type="password" class="form-control" name="password" id="Password" placeholder="Password" required>
                     </div>
                     <div class="form-group">

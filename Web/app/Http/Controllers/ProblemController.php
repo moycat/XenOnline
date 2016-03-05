@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 
+use Auth;
 use ProblemCell;
+use SolutionCell;
 
 class ProblemController extends Controller
 {
@@ -26,7 +28,21 @@ class ProblemController extends Controller
     public function show($pid)
     {
         $problem = ProblemCell::find($pid);
+        $solutions = array();
+        if (Auth::check()) {
+            $solutions = SolutionCell::search(['pid'=>$pid, 'uid'=>Auth::user()->id]);
+        }
 
-        return view('problem.view', ['problem'=>$problem]);
+        return view('problem.view', ['problem'=>$problem, 'solutions'=>$solutions]);
+    }
+
+    public function search($keyword = NULL)
+    {
+        if ($keyword === NULL) {
+            return redirect()->back();
+        }
+        $result = ProblemCell::search($keyword);
+
+        return view('problem.search', $result);
     }
 }

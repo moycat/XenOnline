@@ -2,11 +2,10 @@
 
 namespace App\Repositories;
 
-use Auth;
 use Cell;
 use CacheCell;
+
 use App\Problem;
-use Illuminate\Support\Facades\Cache;
 
 class ProblemCell extends Cell
 {
@@ -92,6 +91,20 @@ class ProblemCell extends Cell
     public function add($info, $option)
     {
         // TODO
+    }
+
+    /*
+     * Search the problems with a keyword
+     *
+     * @return array
+     */
+    public function search($keyword)
+    {
+        $result['problems'] = Problem::where('title', 'like', '%'.$keyword.'%')->get();
+        $result['count'] = count($result['problems']);
+        $result['keyword'] = $keyword;
+
+        return $result;
     }
 
     /*

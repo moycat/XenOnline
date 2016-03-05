@@ -468,3 +468,18 @@ label {
     margin-bottom: 5px;
     margin-top: 5px;
 }
+.my-solutions p {
+    line-height: 1.2;
+}
+
+/*
+* The buggy things
+*/
+
+.btn-danger {
+    color: #fff !important;
+    background-color: #e74c3c !important;
+}
+.input-group-btn .btn {
+    border: 0;
+}

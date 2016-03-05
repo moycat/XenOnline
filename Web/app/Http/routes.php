@@ -22,10 +22,12 @@ Route::group(['middleware' => 'web'], function () {
     Route::get('/', function () {
         return view('index');
     });
+    Route::get('/hitokoto', 'AdminController@hitokoto');
 
     // Problems
     Route::get('/problem', 'ProblemController@index');
     Route::get('/problem/page/{page}', 'ProblemController@index');
+    Route::get('/problem/search/{keyword?}', 'ProblemController@search');
     Route::get('/problem/{pid}', ['as' => 'problem', 'uses' => 'ProblemController@show']);
 
     // Solutions
@@ -46,6 +48,11 @@ Route::group(['middleware' => 'web'], function () {
     Route::group(['middleware' => 'auth'], function () {
         Route::put('/solution', 'SolutionController@submit');
         Route::get('/solution/{sid}', ['as' => 'solution', 'uses' => 'SolutionController@show']);
+    });
+
+    // Admin Pages
+    Route::group(['prefix' => 'admin', 'middleware' => 'admin'], function () {
+        Route::get('/', 'AdminController@index');
     });
 
 });

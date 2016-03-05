@@ -16,7 +16,7 @@
                                     <p><strong>提交编号</strong></p>
                                 </div>
                                 <div class="col-xs-9">
-                                    <p><code>#{{ $solution->id }}</code></p>
+                                    <p><code>#{{ $solution->_id }}</code></p>
                                 </div>
                             </div>
                             <div class="row">
@@ -141,10 +141,12 @@
                     </div>
                 </div>
                 @endif
+                @if(Auth::user()->id == $solution->user_id)
                 <div class="top-border-red solution-area">
                     <div class="h3 solution-heading">源代码 <small>{{ $solution->code_length }} Byte</small></div>
                     <div id="source-code">{{ $solution->code }}</div>
                 </div>
+                @endif
             </div>
         </div>
     </div>
