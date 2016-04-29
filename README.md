@@ -1,26 +1,22 @@
-MoyOJ - 开源的信息学竞赛在线评测系统
+XenOnline - 开源的信息学竞赛在线评测系统
 ======================
 
-![MoyOJ](https://raw.githubusercontent.com/moycat/MoyOJ/master/MoyOJ.png)
+![XenOnline](https://raw.githubusercontent.com/moycat/XenOnline/master/XenOnline.png)
 
 MoyOJ（将）是一个美观、实用、强大的Online Judge，并且完全开源。
 
-主要特性：推送式、分布式评测，主题、插件的二次开发、缓存提速、Docker沙盒。
+主要特性：推送式、分布式评测，缓存提速，Docker沙盒评测。
 
-主要技术：PHP/HHVM、MongoDB、Redis、Docker、Socket。
+主要技术：PHP/HHVM、Python、MongoDB、Redis、Docker、Socket。
 
-更多信息和文档请访问本项目的[Wiki](https://github.com/moycat/MoyOJ/wiki)(有待补全)。
+更多信息和文档请访问本项目的[Wiki](https://github.com/moycat/XenOnline/wiki)(有待补全)。
 
-Demo: [MoyOJ](https://moyoj.xyz/)
-
-新的开发计划——Yuki
+新的开发计划
 -----------
 
-虽然已存在的版本基本能跑起来，但我还是决定重写，因为现在的样子真是太挫了……
+XenOnline，也就是原先的MoyOJ。经过上一次失败的开发，现在我有了更明确的计划与方向。
 
-这次重写，Web方面我将使用Laravel框架。Client Server应该还是Workerman框架，至于评测端应该不会有太大变动。
-
-原先的版本可以在两个archive分支中找到。
+所以呢……这个坑就在这里慢慢填吧。如果想看之前的模样，可以看看两个标着archive的branch。
 
 高能预警
 -----------
@@ -39,17 +35,8 @@ Demo: [MoyOJ](https://moyoj.xyz/)
 1. 多种编程语言的支持
 1. 手机客户端
 
-本程序使用/借鉴的开源项目
+特别感谢
 -----------
 
-本项目部分代码和思路来自一些开源项目，感谢他们！
+[hustoj](https://github.com/zhblue/hustoj)：使用了其判断系统调用的函数，借鉴了部分评测端C语言程序
 
-~~[PyMySQL](https://github.com/PyMySQL/PyMySQL)：提供Python环境下的MySQL访问支持~~（已弃用此方案）
-
-[hustoj](https://github.com/zhblue/hustoj)：使用了其判断返回值的函数，借鉴了部分其他函数和数据库结构
-
-[WordPress](https://wordpress.org/)：WP的网站结构不错～插件和主题系统的思路亦来自此
-
-[Workerman](http://www.workerman.net/)：开源的PHP Socket框架
-
-[Editor.md](https://pandao.github.io/editor.md/)：开源的Markdown在线编辑器
