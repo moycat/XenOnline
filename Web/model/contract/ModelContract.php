@@ -1,10 +1,13 @@
 <?php
 /**
- * class/classes.php @ XenOnline
+ * model/contract/ModelContract.php @ XenOnline
  *
- * This file includes other files in the 'class' folder.
+ * The contract of models.
  *
  * Authored by Moycat <moycat@makedie.net>
  * Licensed under GPLv2, see file LICENSE in this source tree.
  */
 
+abstract class ModelContract {
+
+}

@@ -8,3 +8,5 @@
  * Licensed under GPLv2, see file LICENSE in this source tree.
  */
 
+require_once FUNC. 'main.php';
+require_once FUNC. 'tool.php';

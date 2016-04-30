@@ -1,6 +1,15 @@
 {
     "require": {
         "mongodb/mongodb": "^1.0.0",
-        "smarty/smarty": "~3.1"
+        "smarty/smarty": "~3.1",
+        "noahbuscher/macaw": "dev-master"
+    },
+    "autoload": {
+        "classmap": [
+            "facade",
+            "controller",
+            "model/contract",
+            "model"
+        ]
     }
 }

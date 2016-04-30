@@ -8,7 +8,7 @@
  * Licensed under GPLv2, see file LICENSE in this source tree.
  */
 
-require_once '../config.php';
+require_once '../config/config.php';
 
-// Start the process
-//web_init();
+// Process the process :)
+web_init();

@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "d450f3be33c04766a75f271f3fd1f82e",
-    "content-hash": "9da66279f87d365037494aa6f912133c",
+    "hash": "956cab42b94cb1ba1809d9792f66f013",
+    "content-hash": "5cd39e1187776de38f410cdcca37c98e",
     "packages": [
         {
             "name": "mongodb/mongodb",
@@ -61,6 +61,36 @@
                 "persistence"
             ],
             "time": "2016-03-30 19:10:28"
+        },
+        {
+            "name": "noahbuscher/macaw",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/noahbuscher/Macaw.git",
+                "reference": "57426d1a5d0993dc094ceafcf54be0b86c795f61"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/noahbuscher/Macaw/zipball/57426d1a5d0993dc094ceafcf54be0b86c795f61",
+                "reference": "57426d1a5d0993dc094ceafcf54be0b86c795f61",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "NoahBuscher\\Macaw\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Simple PHP router class.",
+            "time": "2016-04-05 01:58:47"
         },
         {
             "name": "smarty/smarty",
@@ -121,7 +151,9 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "noahbuscher/macaw": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
