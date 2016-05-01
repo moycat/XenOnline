@@ -10,3 +10,6 @@
 
 /* The site name */
 define('SITE_NAME', 'XenOnlineJudge');
+
+/* Set to true to close the site temporarily */
+define('SITE_CLOSE', false);

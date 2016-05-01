@@ -8,7 +8,7 @@
  * Licensed under GPLv2, see file LICENSE in this source tree.
  */
 
-//error_reporting(E_WARNING);
+error_reporting(E_WARNING);
 require_once 'config/config.php';
 
 use MongoDB\Client;
@@ -47,7 +47,8 @@ echo "
 ==    XenOnline - An Open-source Online Judge System       ==
 ==          https://github.com/moycat/XenOnline            ==
 ==---------------------------------------------------------==
-==      Now we are going to install the database.          ==
+==      Welcome to XenOnline!\\(✿'▽`)/ Now we are going     ==
+==   to install the database.                              ==
 ==      Please check whether the connection information    ==
 ==   is correct. If OK, input 'y' to start installing.     ==
 ==      You can change them at config/config.php .         ==
@@ -75,7 +76,7 @@ Input 'y' and press enter key to install XenOnline, or other letters to stop.
 ";
 $check = trim(fgets(STDIN));
 if ($check !== 'y') {
-    die('Installing abort.');
+    die("Installing abort.( º﹃º )\n");
 }
 
 // MongoDB things
@@ -88,9 +89,8 @@ if (DB_USER && DB_PWD) {
 }
 try {
     $mongodb = new Client($conn_string);
-}
-catch(Exception $e) {
-    die("Failed to connect to the database!\n\n");
+} catch(Exception $e) {
+    die("Failed to connect to the database!( º﹃º )\n\n");
 }
 echo "Successfully connected to the database!\n";
 
@@ -98,9 +98,9 @@ echo "Successfully connected to the database!\n";
 echo "Now trying to connect to the Redis server($REDIS_HOST:$REDIS_PORT)...\n";
 $redis = new Redis();
 if (!$redis->pconnect(REDIS_HOST, REDIS_PORT)) {
-    die("Failed to connect to the Redis server!\n\n");
+    die("Failed to connect to the Redis server!( º﹃º )\n\n");
 } elseif (REDIS_PWD && !$redis->auth(REDIS_PWD)) {
-    die("Failed to login in the Redis server! (Connected though)\n\n");
+    die("Failed to login in the Redis server! (Connected though)( º﹃º )\n\n");
 }
 echo "Successfully connected to the Redis server!\n";
 $redis->delete('xen:*');
@@ -114,7 +114,7 @@ foreach ($mongodb->listDatabases() as $databaseInfo) {
         echo "!!!If so, the existing database will be removed permanently!!!\n";
         $check = trim(fgets(STDIN));
         if ($check !== 'y') {
-            die("Installing abort.\n");
+            die("Installing abort.( º﹃º )\n");
         }
         $mongodb->dropDatabase(DB_NAME);
         echo "Existing database removed.\n\n";
@@ -138,7 +138,7 @@ foreach ($indexes_to_create as $now_col => $new_index) {
 echo "Finished installing the database!\n";
 
 // Add a new admin account
-echo "Now, it's high time we set up the first admin account.\n";
+echo "Now, it's high time we set up the first admin account. _(:3 」∠ )_\n";
 echo "Admin Name:";
 $admin_name = trim(fgets(STDIN));
 echo "Admin Password:";
@@ -161,7 +161,7 @@ echo "Admin user added!\n
 ==      If no errors are displayed above, then you have    ==
 ==   successfully installed XenOnline!                     ==
 ==      Don't forget to install the client server and      ==
-==   the clients!                                          ==
+==   the clients! XD                                       ==
 =============================================================
 
 ";

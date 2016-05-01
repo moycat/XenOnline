@@ -5,11 +5,13 @@
         "noahbuscher/macaw": "dev-master"
     },
     "autoload": {
+        "psr-4": {
+            "Facade\\": "facade/",
+            "Model\\": "model/",
+            "Model\\Contract\\": "model/contract/"
+        },
         "classmap": [
-            "facade",
-            "controller",
-            "model/contract",
-            "model"
+            "controller"
         ]
     }
 }

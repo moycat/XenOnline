@@ -1,12 +1,14 @@
 <?php
 /**
- * model/contract/ModelContract.php @ XenOnline
+ * model/Contract/ModelContract.php @ XenOnline
  *
  * The contract of models.
  *
  * Authored by Moycat <moycat@makedie.net>
  * Licensed under GPLv2, see file LICENSE in this source tree.
  */
+
+namespace Model\Contract;
 
 abstract class ModelContract {
     protected $_data = [];
@@ -18,7 +20,7 @@ abstract class ModelContract {
     public function __construct($id = null)
     {
         $this->id = $id;
-        $this->load();
+        $this->load($id);
     }
 
     public function getID()
@@ -54,7 +56,7 @@ abstract class ModelContract {
     abstract public function refreshCache();
 
     /* Load this from the db or cache */
-    abstract protected function load();
+    abstract protected function load($id);
 
     public function __set($name, $value)
     {

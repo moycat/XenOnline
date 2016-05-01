@@ -11,7 +11,9 @@
 use \NoahBuscher\Macaw\Macaw as Router;
 
 Router::get('', function() {
-    echo "成功！";
+    $t = timing();
+    echo "成功！
+    Processed in {$t} ms.";
 });
 
 Router::get('(:all)', function($fu) {

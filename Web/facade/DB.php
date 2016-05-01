@@ -8,7 +8,10 @@
  * Licensed under GPLv2, see file LICENSE in this source tree.
  */
 
+namespace Facade;
+
 use MongoDB\Client;
+use \Exception;
 
 class DB {
     private static $client;
@@ -23,7 +26,12 @@ class DB {
         } else {
             $conn_string = 'mongodb://'. $host. ':'. $port;
         }
-        self::$client = new Client($conn_string);
+        try {
+            self::$client = new Client($conn_string);
+            
+        } catch(Exception $e) {
+            die("Failed to connect to the database.");
+        }
         self::$db = self::$client->selectDatabase($database);
         debug('Connected to the database.');
     }
