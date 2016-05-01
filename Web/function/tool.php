@@ -28,3 +28,8 @@ function timing($n = 2)
     list($m1, $s1) = explode(" ", $now_time);
     return sprintf('%.'.$n.'f', ($s1 + $m1 - $s0 - $m0) * 1000);
 }
+
+function oid($str = null)
+{
+    return new \MongoDB\BSON\ObjectID($str);
+}

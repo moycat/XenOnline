@@ -10,7 +10,6 @@
 
 namespace Facade;
 
-use MongoDB\BSON\ObjectID as ObjectID;
 
 class User {
     static private $users;
@@ -20,7 +19,7 @@ class User {
             return self::$users[$uid];
         }
         DB::select('users');
-        self::$users[$uid] = DB::findOne(['_id' => new ObjectID($uid)]);
+        self::$users[$uid] = DB::findOne(['_id' => oid($uid)]);
         return self::$users[$uid];
     }
 

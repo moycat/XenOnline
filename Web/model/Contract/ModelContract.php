@@ -11,7 +11,6 @@
 namespace Model\Contract;
 
 use MongoDB\BSON\Persistable as Persistable;
-use MongoDB\BSON\ObjectID as ObjectID;
 use Facade\DB;
 
 abstract class ModelContract implements Persistable {
@@ -20,9 +19,7 @@ abstract class ModelContract implements Persistable {
     protected $_modified = [];
     protected $_loaded = false;
     protected $_json_item = [];
-
     protected $_collection = '';
-    protected $_bson_map = [];      // mongodb_name => php_name
 
     public function getID()
     {
@@ -55,26 +52,31 @@ abstract class ModelContract implements Persistable {
         }
         DB::select($this->_collection);
 
-        if (!$this->load || !$this->_id) {  // New model
+        if (!$this->_loaded) {  // New model
             DB::insertOne($this);
             $this->_modified = [];
             return true;
-        } elseif ($this->_id && $this->_loaded && $this->_modified) {   // Update
-            $rs = null;
-            if ($replace) {
-                $rs = DB::findOneAndReplace(['_id' => $this->_id], $this);
-            } else {
-                $update = [];
-                foreach ($this->_modified as $item) {
-                    $update['$set'][] = [$item => $this->_data[$item]];
-                }
-                $rs = DB::updateOne(['_id' => $this->_id, $update]);
-            }
+        } elseif ($this->_loaded && $this->_modified) {   // Update
+            $replace ? $this->replace() : $this->update();
             $this->_modified = [];
-            return $rs;
+            return true;
         } else {    // Existing and unmodified
             return false;
         }
+    }
+
+    protected function update()
+    {
+        $update = ['$set'=>[]];
+        foreach ($this->_modified as $item => $_) {
+            $update['$set'][$item] = $this->_data[$item];
+        }
+        return DB::updateOne(['_id' => $this->_id], $update);
+    }
+
+    protected function replace()
+    {
+        return DB::findOneAndReplace(['_id' => $this->_id], $this);
     }
 
     /* Convert this to json format */
@@ -82,10 +84,8 @@ abstract class ModelContract implements Persistable {
     {
         $data = array();
         foreach ($this->_json_item as $item) {
-            if (!isset($this->_data[$item])) {
-                return null;
-            }
-            $data[$item] = $this->_data[$item];
+            $data[$item] = isset($this->_data[$item]) ?
+                                        $this->_data[$item] : null;
         }
         return json_encode($data);
     }
@@ -96,27 +96,36 @@ abstract class ModelContract implements Persistable {
     function bsonSerialize()    // From the interface
     {
         $bson_doc = array();
-        foreach ($this->_bson_map as $des => $src) {
-            $bson_doc[$des] = $this->_data[$src];
+        foreach ($this->_data as $key => $value) {
+            $bson_doc[$key] = $value;
         }
         if (!$this->_id) {
-            $this->_id = new ObjectID();
+            $this->_id = oid();
         }
         $bson_doc['_id'] = $this->_id;
+        $this->onZip($bson_doc);
         return $bson_doc;
     }
 
     function bsonUnserialize(array $data)   // From the interface
     {
+        $this->onExtract($data);
         foreach ($data as $key => $value)
         {
-            if (isset($this->_bson_map[$key])) {
-                $this->_data[$this->_bson_map[$key]] = $value;
-            } else {
-                $this->_data[$key] = $value;
-            }
+            $this->_data[$key] = $value;
         }
         $this->_id = $data['_id'];
+        $this->_loaded = true;
+    }
+
+    protected function onZip(&$doc)
+    {
+
+    }
+
+    protected function onExtract(&$data)
+    {
+
     }
 
     public function __set($name, $value)

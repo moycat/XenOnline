@@ -12,16 +12,23 @@ namespace Model;
 
 use \Model\Contract\ModelContract;
 use \Facade\DB;
-use \MongoDB\BSON\ObjectID as ObjectID;
 
 class User extends ModelContract {
     protected $_collection = 'users';
-    protected $_bson_map = [
-        'username' => 'username'
+    protected $_json_item = [
+        'username',
+        'email'
     ];
 
     public function refreshCache()
     {
         // TODO: Implement refreshCache() method.
+    }
+
+    protected function onZip(&$doc)
+    {
+        if (!password_get_info($doc['password'])['algo']) {
+            $doc['password'] = password_hash($doc['password'], PASSWORD_DEFAULT);
+        }
     }
 }
