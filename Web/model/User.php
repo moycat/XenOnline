@@ -12,29 +12,16 @@ namespace Model;
 
 use \Model\Contract\ModelContract;
 use \Facade\DB;
+use \MongoDB\BSON\ObjectID as ObjectID;
 
 class User extends ModelContract {
-    public function save()
-    {
-        // TODO: Implement save() method.
-    }
-    public function toJson()
-    {
-        // TODO: Implement toJson() method.
-    }
+    protected $_collection = 'users';
+    protected $_bson_map = [
+        'username' => 'username'
+    ];
+
     public function refreshCache()
     {
         // TODO: Implement refreshCache() method.
-    }
-    protected function load($id)
-    {
-        $query = ['_id' => $id];
-        DB::select('users');
-        $rs = DB::findOne($query);
-        if (!$rs) {
-            return false;
-        }
-
-        var_dump($rs);
     }
 }

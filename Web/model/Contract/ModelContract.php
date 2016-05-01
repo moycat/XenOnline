@@ -10,22 +10,23 @@
 
 namespace Model\Contract;
 
-abstract class ModelContract {
+use MongoDB\BSON\Persistable as Persistable;
+use MongoDB\BSON\ObjectID as ObjectID;
+use Facade\DB;
+
+abstract class ModelContract implements Persistable {
     protected $_data = [];
     protected $_id = null;
     protected $_modified = [];
     protected $_loaded = false;
     protected $_json_item = [];
 
-    public function __construct($id = null)
-    {
-        $this->id = $id;
-        $this->load($id);
-    }
+    protected $_collection = '';
+    protected $_bson_map = [];      // mongodb_name => php_name
 
     public function getID()
     {
-        return $this->id;
+        return $this->_id;
     }
 
     public function setID($id)
@@ -33,7 +34,7 @@ abstract class ModelContract {
         if (!$id) {
             return false;
         }
-        $this->id = $id;
+        $this->_id = $id;
         return true;
     }
 
@@ -47,26 +48,83 @@ abstract class ModelContract {
     }
 
     /* Save the data to the db */
-    abstract public function save();
+    public function save($replace = false)
+    {
+        if (!$this->_data) {
+            return false;
+        }
+        DB::select($this->_collection);
+
+        if (!$this->load || !$this->_id) {  // New model
+            DB::insertOne($this);
+            $this->_modified = [];
+            return true;
+        } elseif ($this->_id && $this->_loaded && $this->_modified) {   // Update
+            $rs = null;
+            if ($replace) {
+                $rs = DB::findOneAndReplace(['_id' => $this->_id], $this);
+            } else {
+                $update = [];
+                foreach ($this->_modified as $item) {
+                    $update['$set'][] = [$item => $this->_data[$item]];
+                }
+                $rs = DB::updateOne(['_id' => $this->_id, $update]);
+            }
+            $this->_modified = [];
+            return $rs;
+        } else {    // Existing and unmodified
+            return false;
+        }
+    }
 
     /* Convert this to json format */
-    abstract public function toJson();
+    public function toJson()
+    {
+        $data = array();
+        foreach ($this->_json_item as $item) {
+            if (!isset($this->_data[$item])) {
+                return null;
+            }
+            $data[$item] = $this->_data[$item];
+        }
+        return json_encode($data);
+    }
 
     /* Clear the cache */
     abstract public function refreshCache();
 
-    /* Load this from the db or cache */
-    abstract protected function load($id);
+    function bsonSerialize()    // From the interface
+    {
+        $bson_doc = array();
+        foreach ($this->_bson_map as $des => $src) {
+            $bson_doc[$des] = $this->_data[$src];
+        }
+        if (!$this->_id) {
+            $this->_id = new ObjectID();
+        }
+        $bson_doc['_id'] = $this->_id;
+        return $bson_doc;
+    }
+
+    function bsonUnserialize(array $data)   // From the interface
+    {
+        foreach ($data as $key => $value)
+        {
+            if (isset($this->_bson_map[$key])) {
+                $this->_data[$this->_bson_map[$key]] = $value;
+            } else {
+                $this->_data[$key] = $value;
+            }
+        }
+        $this->_id = $data['_id'];
+    }
 
     public function __set($name, $value)
     {
-        if (isset($this->_data[$name])) {
-            $old = $this->_data[$name];
-            $this->_data[$name] = $value;
-            return $old;
-        }
+        $rt = isset($this->_data[$name]) ? $this->_data[$name] : $value;
         $this->_data[$name] = $value;
-        return $value;
+        $this->_modified[$name] = true;
+        return $rt;
     }
 
     public function __get($name)

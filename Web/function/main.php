@@ -25,5 +25,7 @@ function web_init()
     Auth::check();
 
 
+
+
     Router::dispatch();
 }

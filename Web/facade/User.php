@@ -10,14 +10,22 @@
 
 namespace Facade;
 
+use MongoDB\BSON\ObjectID as ObjectID;
+
 class User {
     static private $users;
 
-    static public function load($uid) {
-        if (isset(self::$users[$uid])) {
+    static public function load($uid, $reload = false) {
+        if (!$reload && isset(self::$users[$uid])) {
             return self::$users[$uid];
         }
-        $users[$uid] = new \Model\User($uid);
-        return $users[$uid];
+        DB::select('users');
+        self::$users[$uid] = DB::findOne(['_id' => new ObjectID($uid)]);
+        return self::$users[$uid];
+    }
+
+    static public function one()
+    {
+        return new \Model\User();
     }
 }
