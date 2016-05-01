@@ -22,6 +22,10 @@ $REDIS_HOST =   REDIS_HOST;
 $REDIS_PORT =   REDIS_PORT;
 $REDIS_PWD =    REDIS_PWD   ? '******'  : '(null)';
 
+$mongodb = null;
+$db = null;
+$col = null;
+
 $collections_to_create = [
     'users',
     'problems',
@@ -141,3 +145,23 @@ echo "Admin Password:";
 $admin_pwd = trim(fgets(STDIN));
 echo "Password hashing...\n";
 $admin_pwd = password_hash($admin_pwd, PASSWORD_DEFAULT);
+if (!isset($col['admins'])) {
+    $col['admins'] = $db->selectCollection('admins');
+}
+$col['admins']->insertOne([
+    'username'      =>  $admin_name,
+    'password'      =>  $admin_pwd,
+    'permission'    =>  'all'
+]);
+echo "Admin user added!\n
+
+=============================================================
+==                     Congratulations!                    ==
+==---------------------------------------------------------==
+==      If no errors are displayed above, then you have    ==
+==   successfully installed XenOnline!                     ==
+==      Don't forget to install the client server and      ==
+==   the clients!                                          ==
+=============================================================
+
+";
