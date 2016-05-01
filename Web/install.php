@@ -82,10 +82,10 @@ if ($check !== 'y') {
 // MongoDB things
 echo "Now trying to connect to the database(mongodb://$DB_HOST:$DB_PORT/$DB_NAME)...\n";
 if (DB_USER && DB_PWD) {
-    $conn_string = 'mongodb://'. DB_USER. ':'. DB_PWD. '@'.
-        DB_HOST. ':'. DB_PORT;
+    $conn_string = 'mongodb://'.DB_USER.':'.DB_PWD.'@'.
+        DB_HOST.':'.DB_PORT;
 } else {
-    $conn_string = 'mongodb://'. DB_HOST. ':'. DB_PORT;
+    $conn_string = 'mongodb://'.DB_HOST.':'.DB_PORT;
 }
 try {
     $mongodb = new Client($conn_string);

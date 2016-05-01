@@ -21,10 +21,10 @@ class DB {
     public static function init($host, $port, $database, $username, $password)
     {
         if ($username && $password) {
-            $conn_string = 'mongodb://'. $username. ':'. $password. '@'.
-                $host. ':'. $port;
+            $conn_string = 'mongodb://'.$username.':'.$password.'@'.
+                $host.':'.$port;
         } else {
-            $conn_string = 'mongodb://'. $host. ':'. $port;
+            $conn_string = 'mongodb://'.$host.':'.$port;
         }
         try {
             self::$client = new Client($conn_string);

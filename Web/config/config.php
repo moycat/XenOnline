@@ -24,14 +24,14 @@ define('REDIS_PWD', null);
 define('DEBUG', true);
 
 /* Envionment variables */
-define('ROOT', __DIR__. '/../');
-define('PUBLIC', __DIR__. 'public/');
-define('CONFIG', ROOT. 'config/');
-define('FUNC', ROOT. 'function/');
-define('VIEW', ROOT. 'view/');
+define('ROOT', __DIR__.'/../');
+define('PUBLIC', __DIR__.'public/');
+define('CONFIG', ROOT.'config/');
+define('FUNC', ROOT.'function/');
+define('VIEW', ROOT.'view/');
 
 /* OK, now let's require some strange things... */
-require_once CONFIG. 'site.php';
-require_once ROOT. 'vendor/autoload.php';
-require_once ROOT. 'function/functions.php';
-require_once CONFIG. 'router.php';
+require_once CONFIG.'site.php';
+require_once ROOT.'vendor/autoload.php';
+require_once ROOT.'function/functions.php';
+require_once CONFIG.'router.php';
