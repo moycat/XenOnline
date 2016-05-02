@@ -42,7 +42,7 @@ class Auth {
         if (!$rs) {
             return false;
         }
-        if (!password_verify($password, $rs->password)) {
+        if (!password_verify($password, $rs['password'])) {
             return false;
         }
         self::session_start($rs);
@@ -58,14 +58,14 @@ class Auth {
     private static function session_start($user)
     {
         Session::set('uid', $user->getID());
-        Session::set('mask', $user->mask);
+        Session::set('mask', $user['mask']);
     }
 
     private static function cookie_start($user, $day)
     {
         $time = time();
         $ticket_exp = $time + $day * 86400; // When the ticket should expire
-        $ticket = sha1($user->getID().$user->mask.$user->password.$ticket_exp);
+        $ticket = sha1($user->getID().$user['mask'].$user['password'].$ticket_exp);
         setcookie("uid", $user->getID(), $ticket_exp);
         setcookie("ticket", $ticket, $ticket_exp);
         setcookie("ticket_exp", $ticket_exp, $ticket_exp);
@@ -79,7 +79,7 @@ class Auth {
             return false;
         }
         $user = User::load($uid);
-        if (!$user || $mask !== $user->mask) {
+        if (!$user || $mask !== $user['mask']) {
             return false;
         }
         self::$uid = $uid;
@@ -105,7 +105,7 @@ class Auth {
         if (!$user) {
             return false;
         }
-        $real_ticket = sha1($user->getID().$user->mask.$user->password.$ticket_exp);
+        $real_ticket = sha1($user->getID().$user['mask'].$user['password'].$ticket_exp);
         if ($real_ticket !== $ticket) {
             return false;
         }

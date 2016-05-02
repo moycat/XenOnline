@@ -10,11 +10,12 @@
 
 namespace Model\Contract;
 
+use ArrayAccess;
 use MongoDB\BSON\Persistable as Persistable;
 use Facade\Site;
 use Facade\DB;
 
-abstract class ModelContract implements Persistable {
+abstract class ModelContract implements Persistable, ArrayAccess {
 
     protected $_data = [];          // Data wrapper
     protected $_id = null;          // ObjectID
@@ -76,11 +77,17 @@ abstract class ModelContract implements Persistable {
 
     protected function _update()
     {
-        $update = ['$set'=>[]]; // Constuct a query
+        $update = []; // Constuct a query
         foreach ($this->_modified as $item => $_) {
-            $update['$set'][$item] = $this->_data[$item];
+            if (isset($this->_data[$item])) {
+                $update['$set'][$item] = $this->_data[$item];
+            } else {
+                $update['$unset'][$item] = '';
+            }
         }
-        $this->onZip($update['$set']);
+        if (isset($update['$set'])) {
+            $this->onZip($update['$set']);
+        }
         return DB::updateOne(['_id' => $this->_id], $update);
     }
 
@@ -136,20 +143,29 @@ abstract class ModelContract implements Persistable {
         $this->_loaded = true;
     }
 
-    public function __set($name, $value)
+    public function offsetExists($offset)
     {
-        $rt = isset($this->_data[$name]) ? $this->_data[$name] : $value;
-        $this->_data[$name] = $value;
-        $this->_modified[$name] = true;
-        return $rt;
+        return (isset($this->_data[$offset]));
     }
 
-    public function __get($name)
+    public function offsetSet($name, $value)
+    {
+        $this->_data[$name] = $value;
+        $this->_modified[$name] = true;
+    }
+
+    public function offsetGet($name)
     {
         if (isset($this->_data[$name])) {
             return $this->_data[$name];
         }
         return null;
+    }
+
+    public function offsetUnset($name)
+    {
+        unset($this->_data[$name]);
+        $this->_modified[$name] = true;
     }
 
     public function __toString()

@@ -11,7 +11,7 @@
 namespace Facade;
 
 use MongoDB\Client;
-use \Exception;
+use Exception;
 
 class DB {
     private static $client;
