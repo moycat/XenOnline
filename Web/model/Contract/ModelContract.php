@@ -65,7 +65,7 @@ abstract class ModelContract implements Persistable {
             $this->_modified = [];
             return true;
         } elseif ($this->_loaded && $this->_modified) {   // Existing model
-            $replace ? $this->replace() : $this->update();
+            $replace ? $this->_replace() : $this->_update();
             $this->_modified = [];
             return true;
         } else {    // Unmodified
@@ -73,7 +73,7 @@ abstract class ModelContract implements Persistable {
         }
     }
 
-    protected function update()
+    protected function _update()
     {
         $update = ['$set'=>[]]; // Constuct a query
         foreach ($this->_modified as $item => $_) {
@@ -83,7 +83,7 @@ abstract class ModelContract implements Persistable {
         return DB::updateOne(['_id' => $this->_id], $update);
     }
 
-    protected function replace()
+    protected function _replace()
     {
         return DB::findOneAndReplace(['_id' => $this->_id], $this);
     }
@@ -97,6 +97,16 @@ abstract class ModelContract implements Persistable {
                                         $this->_data[$item] : null;
         }
         return json_encode($data);
+    }
+
+    public function __call($name, $arg)
+    {
+        if (!$this->_loaded) {
+            return false;
+        }
+        $query = array_merge([['_id' => $this->_id]], $arg);
+        DB::select($this->_collection);
+        return call_user_func_array('\Facade\DB::'.$name, $query);
     }
 
     function bsonSerialize()    // From the interface

@@ -31,7 +31,9 @@ Router::get('', function() {
 
     //$a = User::load('5726363de64b4627c7618732');
     //$a = User::one();
-    //var_dump($a);
+    $a = Auth::user();
+    var_dump($a);
+    $a->updateOne(['$set'=>['username'=>'pp']]);
     //Auth::login(['username'=>'222333'], 'qewqeww', 20);
     var_dump($_SESSION);
 
