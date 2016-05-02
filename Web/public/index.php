@@ -10,5 +10,7 @@
 
 require_once '../config/config.php';
 
+use \Facade\Site;
+
 // Process the process :)
-web_init();
+Site::init();

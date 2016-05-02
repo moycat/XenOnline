@@ -51,7 +51,7 @@ class Auth {
         }
         self::$uid = $rs->getID();
         self::$user = $rs;
-        debug('Login with the password');
+        Site::debug('Login with the password');
         return true;
     }
 
@@ -84,7 +84,7 @@ class Auth {
         }
         self::$uid = $uid;
         self::$user = $user;
-        debug('Login during a session.');
+        Site::debug('Login during a session.');
         return true;
     }
 
@@ -112,7 +112,7 @@ class Auth {
         self::$uid = $uid;
         self::$user = $user;
         self::session_start($user);
-        debug('Login with a cookie.');
+        Site::debug('Login with a cookie.');
         return true;
     }
 }

@@ -11,6 +11,7 @@
 namespace Model\Contract;
 
 use MongoDB\BSON\Persistable as Persistable;
+use Facade\Site;
 use Facade\DB;
 
 abstract class ModelContract implements Persistable {
@@ -39,7 +40,7 @@ abstract class ModelContract implements Persistable {
         if (!$id) {
             return false;
         }
-        $this->_id = oid($id);
+        $this->_id = Site::ObjectID($id);
         return true;
     }
 
@@ -99,6 +100,7 @@ abstract class ModelContract implements Persistable {
         return json_encode($data);
     }
 
+    /* Forward to operation on this model directly */
     public function __call($name, $arg)
     {
         if (!$this->_loaded) {
@@ -116,7 +118,7 @@ abstract class ModelContract implements Persistable {
             $bson_doc[$key] = $value;
         }
         if (!$this->_id) {
-            $this->_id = oid();
+            $this->_id = Site::ObjectID();
         }
         $bson_doc['_id'] = $this->_id;
         $this->onZip($bson_doc);

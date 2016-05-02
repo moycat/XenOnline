@@ -10,6 +10,7 @@
 
 namespace Facade\Contract;
 
+use \Facade\Site;
 use \Facade\DB;
 
 trait FacadeModelTrait {
@@ -29,7 +30,7 @@ trait FacadeModelTrait {
             return self::$member[$id];
         }
         DB::select(self::$collection);
-        self::$member[$id] = DB::findOne(['_id' => oid($id)]);
+        self::$member[$id] = DB::findOne(['_id' => Site::ObjectID($id)]);
         return self::$member[$id];
     }
 

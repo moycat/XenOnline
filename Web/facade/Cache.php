@@ -28,7 +28,7 @@ class Cache {
                 die("Failed to connect to the Redis server.");
             }
         }
-        debug('Connected to the Redis.');
+        Site::debug('Connected to the Redis.');
     }
 
     public static function __callStatic($name, $arg)

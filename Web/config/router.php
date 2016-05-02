@@ -9,7 +9,7 @@
  */
 
 use \NoahBuscher\Macaw\Macaw as Router;
-
+use \Facade\Site;
 use \Facade\User;
 use \Facade\DB;
 use \Facade\Auth;
@@ -31,9 +31,9 @@ Router::get('', function() {
 
     //$a = User::load('5726363de64b4627c7618732');
     //$a = User::one();
-    $a = Auth::user();
-    var_dump($a);
-    $a->updateOne(['$set'=>['username'=>'pp']]);
+    //$a = Auth::user();
+    //var_dump($a);
+    //$a->updateOne(['$set'=>['username'=>'pp']]);
     //Auth::login(['username'=>'222333'], 'qewqeww', 20);
     var_dump($_SESSION);
 
@@ -44,7 +44,7 @@ Router::get('', function() {
     
 
 
-    $t = timing();
+    $t = Site::timing();
     echo "成功！
     Processed in {$t} ms.";
 });

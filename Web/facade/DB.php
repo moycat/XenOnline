@@ -33,7 +33,7 @@ class DB {
             die("Failed to connect to the database.");
         }
         self::$db = self::$client->selectDatabase($database);
-        debug('Connected to the database.');
+        Site::debug('Connected to the database.');
     }
 
     public static function select($collection)
