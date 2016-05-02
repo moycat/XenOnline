@@ -20,14 +20,14 @@ class Site {
         if (SITE_CLOSE) {
             die("The site is away from home. Come later.");
         }
-    self::timing();
-    session_start();
-    DB::init(DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PWD);
-    Cache::init(REDIS_HOST, REDIS_PORT, REDIS_PWD);
-    Auth::check();
+        self::$begin_time = microtime();
+        session_start();
 
+        DB::init(DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PWD);
+        Cache::init(REDIS_HOST, REDIS_PORT, REDIS_PWD);
+        Auth::check();
 
-    Router::dispatch();
+        Router::dispatch();
     }
 
     static public function ObjectID($str = null)
@@ -37,10 +37,6 @@ class Site {
 
     static public function timing($n = 2)
     {
-        if (!self::$begin_time) {
-            self::$begin_time = microtime();
-            return '';
-        }
         $now_time = microtime();
         list($m0, $s0) = explode(" ", self::$begin_time);
         list($m1, $s1) = explode(" ", $now_time);
