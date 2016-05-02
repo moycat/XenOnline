@@ -10,21 +10,11 @@
 
 namespace Facade;
 
+use \Facade\Contract\FacadeModelTrait;
 
 class User {
-    static private $users;
+    use FacadeModelTrait;
 
-    static public function load($uid, $reload = false) {
-        if (!$reload && isset(self::$users[$uid])) {
-            return self::$users[$uid];
-        }
-        DB::select('users');
-        self::$users[$uid] = DB::findOne(['_id' => oid($uid)]);
-        return self::$users[$uid];
-    }
-
-    static public function one()
-    {
-        return new \Model\User();
-    }
+    static protected $collection = 'users';
+    static protected $model = '\Model\User';
 }

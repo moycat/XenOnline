@@ -11,13 +11,15 @@
 namespace Model;
 
 use \Model\Contract\ModelContract;
-use \Facade\DB;
 
 class User extends ModelContract {
     protected $_collection = 'users';
     protected $_json_item = [
         'username',
-        'email'
+        'email',
+        'score',
+        'try_cnt',
+        'ac_cnt'
     ];
 
     public function refreshCache()
@@ -27,7 +29,8 @@ class User extends ModelContract {
 
     protected function onZip(&$doc)
     {
-        if (!password_get_info($doc['password'])['algo']) {
+        // Hash the password
+        if (isset($doc['password']) && !password_get_info($doc['password'])['algo']) {
             $doc['password'] = password_hash($doc['password'], PASSWORD_DEFAULT);
         }
     }

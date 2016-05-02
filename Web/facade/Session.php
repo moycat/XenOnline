@@ -51,4 +51,10 @@ class Session {
     {
         return isset($_SESSION[$name]);
     }
+
+    static public function clear()
+    {
+        session_destroy();
+        session_start();
+    }
 }

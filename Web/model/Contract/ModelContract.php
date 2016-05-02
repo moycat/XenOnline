@@ -14,16 +14,24 @@ use MongoDB\BSON\Persistable as Persistable;
 use Facade\DB;
 
 abstract class ModelContract implements Persistable {
-    protected $_data = [];
-    protected $_id = null;
-    protected $_modified = [];
-    protected $_loaded = false;
-    protected $_json_item = [];
-    protected $_collection = '';
+
+    protected $_data = [];          // Data wrapper
+    protected $_id = null;          // ObjectID
+    protected $_modified = [];      // Items modified
+    protected $_loaded = false;     // Flag if loaded
+    protected $_json_item = [];     // Items to json
+    protected $_collection = '';    // *Collection name
+
+    /* Clear the cache */
+    abstract public function refreshCache();
+
+    /* Callbacks */
+    protected function onZip(&$doc) {}
+    protected function onExtract(&$data) {}
 
     public function getID()
     {
-        return $this->_id;
+        return (string)$this->_id;
     }
 
     public function setID($id)
@@ -31,7 +39,7 @@ abstract class ModelContract implements Persistable {
         if (!$id) {
             return false;
         }
-        $this->_id = $id;
+        $this->_id = oid($id);
         return true;
     }
 
@@ -56,21 +64,22 @@ abstract class ModelContract implements Persistable {
             DB::insertOne($this);
             $this->_modified = [];
             return true;
-        } elseif ($this->_loaded && $this->_modified) {   // Update
+        } elseif ($this->_loaded && $this->_modified) {   // Existing model
             $replace ? $this->replace() : $this->update();
             $this->_modified = [];
             return true;
-        } else {    // Existing and unmodified
+        } else {    // Unmodified
             return false;
         }
     }
 
     protected function update()
     {
-        $update = ['$set'=>[]];
+        $update = ['$set'=>[]]; // Constuct a query
         foreach ($this->_modified as $item => $_) {
             $update['$set'][$item] = $this->_data[$item];
         }
+        $this->onZip($update['$set']);
         return DB::updateOne(['_id' => $this->_id], $update);
     }
 
@@ -89,9 +98,6 @@ abstract class ModelContract implements Persistable {
         }
         return json_encode($data);
     }
-
-    /* Clear the cache */
-    abstract public function refreshCache();
 
     function bsonSerialize()    // From the interface
     {
@@ -116,16 +122,6 @@ abstract class ModelContract implements Persistable {
         }
         $this->_id = $data['_id'];
         $this->_loaded = true;
-    }
-
-    protected function onZip(&$doc)
-    {
-
-    }
-
-    protected function onExtract(&$data)
-    {
-
     }
 
     public function __set($name, $value)

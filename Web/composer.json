@@ -7,8 +7,7 @@
     "autoload": {
         "psr-4": {
             "Facade\\": "facade/",
-            "Model\\": "model/",
-            "Model\\Contract\\": "model/contract/"
+            "Model\\": "model/"
         },
         "classmap": [
             "controller"
