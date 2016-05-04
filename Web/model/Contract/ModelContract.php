@@ -27,7 +27,7 @@ abstract class ModelContract implements Persistable, ArrayAccess {
     /* Clear the cache */
     abstract public function refreshCache();
 
-    /* Callbacks */
+    /* Callbacks, use these to edit data before they are saved/read */
     protected function onZip(&$doc) {}
     protected function onExtract(&$data) {}
 
@@ -45,6 +45,7 @@ abstract class ModelContract implements Persistable, ArrayAccess {
         return true;
     }
 
+    /* Decide which items should be converted into json format */
     public function setJsonItem($item)
     {
         if (!is_array($item)) {
@@ -61,16 +62,19 @@ abstract class ModelContract implements Persistable, ArrayAccess {
             return false;
         }
         DB::select($this->_collection);
-
-        if (!$this->_loaded) {  // New model
+        if (!$this->_loaded) {
+            // New model
             DB::insertOne($this);
             $this->_modified = [];
+            $this->_loaded = true;
             return true;
-        } elseif ($this->_loaded && $this->_modified) {   // Existing model
+        } elseif ($this->_loaded && $this->_modified) {
+            // Existing model
             $replace ? $this->_replace() : $this->_update();
             $this->_modified = [];
             return true;
-        } else {    // Unmodified
+        } else {
+            // Unmodified
             return false;
         }
     }
@@ -86,7 +90,7 @@ abstract class ModelContract implements Persistable, ArrayAccess {
             }
         }
         if (isset($update['$set'])) {
-            $this->onZip($update['$set']);
+            $this->onZip($update['$set']); // Or onZip won't be executed
         }
         return DB::updateOne(['_id' => $this->_id], $update);
     }

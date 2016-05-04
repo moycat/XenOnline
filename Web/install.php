@@ -8,7 +8,7 @@
  * Licensed under GPLv2, see file LICENSE in this source tree.
  */
 
-error_reporting(E_WARNING);
+//error_reporting(E_WARNING);
 require_once 'config/config.php';
 
 use MongoDB\Client;
@@ -32,14 +32,25 @@ $collections_to_create = [
     'solutions',
     'solutions_pending',
     'discussions',
-    'admins'
+    'admins',
+    'counters',
+    'clients',
+    'logs'
 ];
 
 $indexes_to_create = [
     'users' => [
-        'username' => 1
+        [['username' => 1], ['unique' => true]],
+        [['email' => 1], ['unique' => true]]
     ],
-
+    'solutions' => [
+        [['problem_id' => 1]],
+        [['user_id' => 1]]
+    ],
+    'logs' => [
+        [['user_id' => 1]],
+        [['type' => 1]]
+    ]
 ];
 
 echo "
@@ -133,7 +144,9 @@ foreach ($indexes_to_create as $now_col => $new_index) {
     if (!isset($col[$now_col])) {
         $col[$now_col] = $db->selectCollection($now_col);
     }
-    $col[$now_col]->createIndex($new_index);
+    foreach ($new_index as $item) {
+        call_user_func_array([$col[$now_col], 'createIndex'], $item);
+    }
 }
 echo "Finished installing the database!\n";
 

@@ -32,7 +32,7 @@ class Site {
 
     static public function ObjectID($str = null)
     {
-        return new \MongoDB\BSON\ObjectID($str);
+        return $str ? new \MongoDB\BSON\ObjectID($str) : new \MongoDB\BSON\ObjectID();
     }
 
     static public function timing($n = 2)

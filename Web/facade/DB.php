@@ -16,7 +16,8 @@ use Exception;
 class DB {
     private static $client;
     private static $db;
-    private static $col;
+    private static $col = [];
+    private static $col_name = '';
 
     public static function init($host, $port, $database, $username, $password)
     {
@@ -38,11 +39,20 @@ class DB {
 
     public static function select($collection)
     {
-        self::$col = self::$db->selectCollection($collection);
+        self::$col_name = $collection;
+        if (isset(self::$col[$collection])) {
+            return;
+        }
+        self::$col[$collection] = self::$db->selectCollection($collection);
+    }
+
+    public static function count($col)
+    {
+        self::select('count');
     }
 
     public static function __callStatic($name, $arg)
     {
-        return call_user_func_array([self::$col, $name], $arg);
+        return call_user_func_array([self::$col[self::$col_name], $name], $arg);
     }
 }

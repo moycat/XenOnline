@@ -1,6 +1,6 @@
 <?php
 /**
- * config/router.php @ XenOnline
+ * config/IndexController.php @ XenOnline
  *
  * The controller of the index.
  *
@@ -9,14 +9,17 @@
  */
 
 use \Facade\Auth;
+use \Facade\Site;
+use \Facade\User;
+use \Facade\View;
 
 class IndexController {
     public function home()
     {
-        echo "Welcome!";
-        var_dump($_SESSION);
-        $a = Auth::user();
-        unset($a['lsls']);
-        $a->save();
+        echo "Welcome!\n";
+        //$m = User::load('572999eae64b463b1538f8c1');
+        //var_dump($m);
+        echo 'Processed in ', Site::timing(), ' ms.';
+        View::show('index');
     }
 }

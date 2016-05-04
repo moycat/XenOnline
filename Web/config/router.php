@@ -10,8 +10,17 @@
 
 use \NoahBuscher\Macaw\Macaw as Router;
 
+/* Public Pages */
 Router::get('', 'IndexController@home');
 
+/* Problems Related */
+Router::get('problem', 'ProblemController@home');
+Router::get('problem/(:any)', 'ProblemController@view');
+
+/* Administration */
+Router::get('admin', 'AdminController@home');
+
+/* Errors */
 Router::error(
     function() {
         //Site::view('404');
