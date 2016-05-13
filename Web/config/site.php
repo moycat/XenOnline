@@ -9,7 +9,7 @@
  */
 
 /* The site name */
-define('SITE_NAME', 'XenOnlineJudge');
+define('SITE_NAME', 'XenOnline');
 
 /* Set to true to close the site temporarily */
 define('SITE_CLOSE', false);

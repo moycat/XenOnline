@@ -10,6 +10,8 @@
 
 namespace Facade;
 
+use \Model\User;
+
 class Auth {
     private static $uid = null;
     private static $user = null;
@@ -28,6 +30,11 @@ class Auth {
     public static function user()
     {
         return self::$user;
+    }
+
+    public static function admin()
+    {
+        return (self::$user && self::$user['role'] == 0);
     }
 
     /**

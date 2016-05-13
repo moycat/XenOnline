@@ -16,13 +16,14 @@ use Facade\Site;
 use Facade\DB;
 
 abstract class ModelContract implements Persistable, ArrayAccess {
+    static protected $collection = '';    // *Collection name
 
     protected $_data = [];          // Data wrapper
     protected $_id = null;          // ObjectID
     protected $_modified = [];      // Items modified
     protected $_loaded = false;     // Flag if loaded
     protected $_json_item = [];     // Items to json
-    protected $_collection = '';    // *Collection name
+    protected $_default_item = [];  // Default values
 
     /* Clear the cache */
     abstract public function refreshCache();
@@ -61,7 +62,7 @@ abstract class ModelContract implements Persistable, ArrayAccess {
         if (!$this->_data) {
             return false;
         }
-        DB::select($this->_collection);
+        DB::select(self::$collection);
         if (!$this->_loaded) {
             // New model
             DB::insertOne($this);
@@ -118,7 +119,7 @@ abstract class ModelContract implements Persistable, ArrayAccess {
             return false;
         }
         $query = array_merge([['_id' => $this->_id]], $arg);
-        DB::select($this->_collection);
+        DB::select(self::$collection);
         return call_user_func_array('\Facade\DB::'.$name, $query);
     }
 
@@ -131,8 +132,16 @@ abstract class ModelContract implements Persistable, ArrayAccess {
         if (!$this->_id) {
             $this->_id = Site::ObjectID();
         }
-        $bson_doc['_id'] = $this->_id;
         $this->onZip($bson_doc);
+        // For new models
+        if (!$this['_id']) {
+            foreach ($this->_default_item as $item => $value) {
+                if (!isset($bson_doc[$item])) {
+                    $bson_doc[$item] = $value;
+                }
+            }
+        }
+        $bson_doc['_id'] = $this->_id;
         return $bson_doc;
     }
 

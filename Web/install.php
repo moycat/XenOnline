@@ -12,6 +12,7 @@
 require_once 'config/config.php';
 
 use MongoDB\Client;
+use \Facade\DB;
 
 $DB_HOST =      DB_HOST;
 $DB_PORT =      DB_PORT;
@@ -32,7 +33,6 @@ $collections_to_create = [
     'solutions',
     'solutions_pending',
     'discussions',
-    'admins',
     'counters',
     'clients',
     'logs'
@@ -134,6 +134,7 @@ foreach ($mongodb->listDatabases() as $databaseInfo) {
 }
 
 // Build a new database
+DB::init(DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PWD);
 $db = $mongodb->selectDatabase(DB_NAME);
 echo "Now creating the collections...\n";
 foreach ($collections_to_create as $new_col) {
@@ -156,16 +157,14 @@ echo "Admin Name:";
 $admin_name = trim(fgets(STDIN));
 echo "Admin Password:";
 $admin_pwd = trim(fgets(STDIN));
-echo "Password hashing...\n";
-$admin_pwd = password_hash($admin_pwd, PASSWORD_DEFAULT);
-if (!isset($col['admins'])) {
-    $col['admins'] = $db->selectCollection('admins');
-}
-$col['admins']->insertOne([
-    'username'      =>  $admin_name,
-    'password'      =>  $admin_pwd,
-    'permission'    =>  'all'
-]);
+$new_admin = new \Model\User;
+$new_admin['username'] = $admin_name;
+$new_admin['password'] = $admin_pwd;
+$new_admin['role'] = 0;
+$new_admin['permission'] = 'all';
+$new_admin['reg_ip'] = '127.0.0.1';
+$new_admin->save();
+
 echo "Admin user added!\n
 
 =============================================================

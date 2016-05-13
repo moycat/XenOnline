@@ -10,10 +10,27 @@
 
 use \Facade\Auth;
 use \Facade\Site;
+use \Facade\Session;
+use \Facade\View;
 
-class IndexController {
+class AdminController {
     public function home()
     {
-        
+        $this->check();
+        $this->show('admin/index');
+    }
+
+    private function check()
+    {
+        if (!Auth::admin()) {
+            header('location: /');
+            exit();
+        }
+    }
+
+    private function show($tpl)
+    {
+        View::assign('user', Auth::user());
+        View::show($tpl);
     }
 }

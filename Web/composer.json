@@ -10,7 +10,9 @@
             "Model\\": "model/"
         },
         "classmap": [
-            "controller"
+            "controller",
+            "facade",
+            "model"
         ]
     }
 }

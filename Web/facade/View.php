@@ -21,6 +21,12 @@ class View {
         self::$smarty->display($tp.'.tpl');
     }
 
+    public static function assign($name, $var)
+    {
+        self::setup();
+        self::$smarty->assign($name, $var);
+    }
+
     private static function setup()
     {
         if (self::$smarty) {

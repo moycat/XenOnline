@@ -10,13 +10,13 @@
 
 use \Facade\Auth;
 use \Facade\Site;
-use \Facade\User;
 use \Facade\View;
 
 class IndexController {
     public function home()
     {
         echo "Welcome!\n";
+        //Auth::login(['username'=>'moycat'], 'qiiq123', 1);
         //$m = User::load('572999eae64b463b1538f8c1');
         //var_dump($m);
         echo 'Processed in ', Site::timing(), ' ms.';
