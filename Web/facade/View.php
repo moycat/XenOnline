@@ -18,6 +18,9 @@ class View {
     public static function show($tp)
     {
         self::setup();
+        // Process time should be computed just before showing
+        self::$smarty->assign('process_time', Site::timing());
+
         self::$smarty->display($tp.'.tpl');
     }
 
@@ -41,5 +44,13 @@ class View {
         self::$smarty->template_dir = ROOT.'view';
         self::$smarty->compile_dir = ROOT.'tmp';
         self::$smarty->cache_dir = ROOT.'tmp';
+
+        // Assign default values
+        $default_value = [
+            'site_name' => SITE_NAME,
+        ];
+        foreach ($default_value as $var => $value) {
+            self::$smarty->assign($var, $value);
+        }
     }
 }

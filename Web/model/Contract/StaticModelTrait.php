@@ -52,6 +52,12 @@ trait StaticModelTrait {
         return DB::find($filter, $option);
     }
 
+    static public function count()
+    {
+        DB::select(self::getCollectionName());
+        return DB::count();
+    }
+
     /* Create a new model */
     static public function one()
     {

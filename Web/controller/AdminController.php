@@ -13,10 +13,19 @@ use \Facade\Site;
 use \Facade\Session;
 use \Facade\View;
 
+use \Model\Problem;
+use \Model\User;
+
 class AdminController {
     public function home()
     {
         $this->check();
+        
+        $count = [];
+        $count['problem'] = Problem::count();
+        $count['user'] = User::count();
+
+        View::assign('count', $count);
         $this->show('admin/index');
     }
 

@@ -4,7 +4,6 @@
  * Authored by Moycat <moycat@makedie.net>
  * Licensed under GPLv2, see file LICENSE in this source tree.
 **********************************************************}
-{assign var='site_name' value=$smarty.const.SITE_NAME}
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>

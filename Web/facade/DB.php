@@ -41,14 +41,10 @@ class DB {
     {
         self::$col_name = $collection;
         if (isset(self::$col[$collection])) {
-            return;
+            return false;
         }
         self::$col[$collection] = self::$db->selectCollection($collection);
-    }
-
-    public static function count($col)
-    {
-        self::select('count');
+        return self::$col[$collection];
     }
 
     public static function __callStatic($name, $arg)

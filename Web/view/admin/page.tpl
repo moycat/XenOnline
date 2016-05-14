@@ -11,7 +11,7 @@
                 </h2>
                 <p>This is an online judge system powered by <a href="https://github.com/moycat/XenOnline">XenOnline</a>.</p>
                 <p><a href="https://github.com/moycat/XenOnline">XenOnline</a> is free and open-source software licensed under GPLv2.</p>
-                <p>Thanks for using it.</p>
+                <p>Page processed in {$process_time} ms.</p>
             </div>
         </div>
     </div>

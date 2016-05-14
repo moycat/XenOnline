@@ -15,6 +15,11 @@
 </div>
 <ul>
     <li>
+        <a href="/admin">概览
+            <span class="glyphicon glyphicon-home" aria-hidden="true"></span>
+        </a>
+    </li>
+    <li>
         <a href="/admin/problem">题库管理
             <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
         </a>
@@ -37,6 +42,11 @@
     <li>
         <a href="/admin/client">评测端管理
             <span class="glyphicon glyphicon-tasks" aria-hidden="true"></span>
+        </a>
+    </li>
+    <li>
+        <a href="/admin/system">系统管理
+            <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
         </a>
     </li>
 </ul>
