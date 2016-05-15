@@ -20,6 +20,10 @@ a:hover, a:visited {
     color: #0066FF;
 }
 
+a.btn {
+    color: #FFF;
+}
+
 * {
     padding: 0;
     margin: 0;
@@ -239,7 +243,7 @@ label {
 .wrapper {
     margin-left: 240px;
     transition-duration: 0.5s;
-    background: #F6F6F6 !important;
+    background: #FAFAFA !important;
     width: auto;
     height: 100%;
     position: relative;

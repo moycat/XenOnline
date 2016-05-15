@@ -9,6 +9,7 @@
  */
 
 use \NoahBuscher\Macaw\Macaw as Router;
+use \Facade\View;
 
 /* Public Pages */
 Router::get('', 'IndexController@home');
@@ -32,11 +33,12 @@ Router::get('user/(:any)', 'UserController@view');
 
 /* Administration */
 Router::get('admin', 'AdminController@home');
+Router::get('admin/problem', 'AdminController@problemList');
+Router::get('admin/problem/page/(:any)', 'AdminController@problemList');
 
 /* Errors */
 Router::error(
     function() {
-        //Site::view('404');
-        echo '未匹配到路由';
+        View::error404();
     }
 );

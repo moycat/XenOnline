@@ -40,7 +40,7 @@
         </a>
     </li>
     <li>
-        <a href="/admin/client">评测端管理
+        <a href="/admin/client">评测机管理
             <span class="glyphicon glyphicon-tasks" aria-hidden="true"></span>
         </a>
     </li>

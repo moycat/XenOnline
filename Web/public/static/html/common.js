@@ -1,3 +1,20 @@
+// Add some self-start things...
+$(function () {
+    $(window).scroll(gotopanywhere);
+    $('.collapse.in').prev('.panel-heading').addClass('active');
+    $('#accordion, #bs-collapse')
+        .on('show.bs.collapse', function (a) {
+            $(a.target).prev('.panel-heading').addClass('active');
+        })
+        .on('hide.bs.collapse', function (a) {
+            $(a.target).prev('.panel-heading').removeClass('active');
+        });
+    $('input').iCheck({
+        checkboxClass: 'icheckbox_flat-red',
+        radioClass: 'iradio_flat-red'
+    });
+});
+
 // User...
 function login() {
     email = $("#ajax-email").val();
@@ -35,11 +52,24 @@ function toggleMenu() {
     $('.openNav').toggleClass('foo');
     //$('.goback').toggleClass('foo');
 }
+
 // Go top
+var goingtop = false;
 function gotop() {
-    $("html,body").animate({scrollTop: "0px"}, 200);
+    goingtop = true;
+    $("html,body").animate(
+        {scrollTop: "0px"},
+        200,
+        function(){
+            goingtop = false;
+            gotopanywhere();
+        }
+    );
 }
 function gotopanywhere() {
+    if (goingtop) {
+        return;
+    }
     var scrollt = $("body").scrollTop();
     if (scrollt > 200) {
         $(".gotop").addClass("gotop-show");
@@ -47,6 +77,7 @@ function gotopanywhere() {
         $(".gotop").removeClass("gotop-show");
     }
 }
+
 // Rotate a card
 function toggleCard(frontID, backID) {
     var front = $('#' + frontID);
@@ -63,22 +94,6 @@ function toggleCard(frontID, backID) {
         setTimeout("$('#" + backID + "').removeClass('back-hidden')", 450);
     }
 }
-// Add some self-start things...
-$(function () {
-    $(window).scroll(gotopanywhere);
-    $('.collapse.in').prev('.panel-heading').addClass('active');
-    $('#accordion, #bs-collapse')
-        .on('show.bs.collapse', function (a) {
-            $(a.target).prev('.panel-heading').addClass('active');
-        })
-        .on('hide.bs.collapse', function (a) {
-            $(a.target).prev('.panel-heading').removeClass('active');
-        });
-    $('input').iCheck({
-        checkboxClass: 'icheckbox_flat-red',
-        radioClass: 'iradio_flat-red'
-    });
-});
 // Side...
 function side_card(show, hide) {
     $(hide).removeClass("user-op-card-foo");

@@ -1,7 +1,8 @@
 {extends file='page.tpl'}
 {block name="title" prepend}管理后台 - {/block}
 {block name="nav"}{include file='admin/common/sidebar.tpl'}{/block}
-{block name='wrapper'}
+{block name='wrapper'}{/block}
+{block name='footer'}
     <div class="footer">
         <div class="row">
             <div class="col-sm-12">

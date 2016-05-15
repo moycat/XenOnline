@@ -30,6 +30,11 @@ class View {
         self::$smarty->assign($name, $var);
     }
 
+    public static function error404()
+    {
+        self::show('404');
+    }
+
     private static function setup()
     {
         if (self::$smarty) {

@@ -16,7 +16,7 @@ class IndexController {
     public function home()
     {
         echo "Welcome!\n";
-        //Auth::login(['username'=>'moycat'], 'qiiq123', 1);
+        //Auth::login(['username'=>'moycat'], 'qiiq123', 30);
         //$m = User::load('572999eae64b463b1538f8c1');
         //var_dump($m);
         echo 'Processed in ', Site::timing(), ' ms.';
