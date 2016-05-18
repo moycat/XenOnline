@@ -1,0 +1,3 @@
+[submodule "Web/public/static/vendor/editor.md"]
+	path = Web/public/static/vendor/editor.md
+	url = https://github.com/pandao/editor.md
