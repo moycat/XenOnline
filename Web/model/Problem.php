@@ -15,7 +15,6 @@ use \Model\Contract\StaticModelTrait;
 
 class Problem extends ModelContract {
     use StaticModelTrait;
-    static protected $collection = 'problems';
 
     protected $_json_item = [
         'title',
@@ -39,6 +38,11 @@ class Problem extends ModelContract {
         'try_cnt'       =>  0,
         'solve_cnt'     =>  0
     ];
+    
+    static public function getCollectionName()
+    {
+        return 'problems';
+    }
 
     public function refreshCache()
     {

@@ -24,11 +24,6 @@ trait StaticModelTrait {
 
     static protected $member;
 
-    static public function getCollectionName()
-    {
-        return self::$collection;
-    }
-
     /* Load by ObjectID */
     static public function load($id, $reload = false)
     {

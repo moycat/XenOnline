@@ -9,7 +9,6 @@
                     </a>
                 </li>
                 <li role="presentation"><a href="/admin/problem/add">添加题目</a></li>
-                <li role="presentation"><a href="/admin/problem/add">添加题目</a></li>
             </ul>
         </div>
         <div class="col-sm-5">
@@ -38,7 +37,7 @@
             <tr>
                 <th>#</th>
                 <th>标题</th>
-                <th>AC / 提交 (通过 / 尝试)</th>
+                <th>AC/提交(通过/尝试)</th>
                 <th>评测限制</th>
                 <th>操作</th>
             </tr>
@@ -50,25 +49,31 @@
                 {else}
                     <tr class="danger">
                 {/if}
-                    <th scope="row">{$prob['id']}</th>
-                    <td>{$prob['title']}</td>
+                    <th scope="row">
+                        {$prob['id']}
+                    </th>
                     <td>
-                        <code>{$prob['ac_cnt']} / {$prob['submit_cnt']}</code>
-                        (<code>{$prob['solve_cnt']} / {$prob['try_cnt']}</code>)
+                        <a href="/problem/{$prob['id']}" target="_blank">{$prob['title']}</a>
                     </td>
-                    <td><code>{$prob['time_limit']}ms</code>/<code>{$prob['mem_limit']}MiB</code>({$prob['turn']})</td>
-                    <td>@mdo</td>
+                    <td>
+                        <code>{$prob['ac_cnt']}/{$prob['submit_cnt']}</code>
+                        (<code>{$prob['solve_cnt']}/{$prob['try_cnt']}</code>)
+                    </td>
+                    <td>
+                        <code>{$prob['time_limit']}ms</code>/<code>{$prob['mem_limit']}MiB</code>({$prob['turn']})
+                    </td>
+                    <td>
+                        <a class="btn btn-xs btn-info" href="/admin/problem/{$prob['id']}/edit" role="button">编辑</a>
+                        <a class="btn btn-xs btn-default" href="#" role="button">详情</a>
+                        {if $prob['status'] == 1}
+                            <a class="btn btn-xs btn-warning" href="/admin/problem/{$prob['id']}/lock" role="button">锁定</a>
+                        {else}
+                            <a class="btn btn-xs btn-primary" href="/admin/problem/{$prob['id']}/unlock" role="button">解锁</a>
+                        {/if}
+                        <a class="btn btn-xs btn-danger" href="/admin/problem/{$prob['id']}/delete" role="button">删除</a>
+                    </td>
                 </tr>
             {/foreach}
-
-            <tr>
-                <th scope="row">1</th>
-                <td>踩踩踩踩踩</td>
-                <td><code>12 / 233</code> (<code>5 / 111</code>)</td>
-                <td><code>500ms</code>/<code>128MiB</code>(10)</td>
-                <td>@mdo</td>
-            </tr>
-
             </tbody>
         </table>
     </div>

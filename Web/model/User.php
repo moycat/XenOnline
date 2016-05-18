@@ -16,7 +16,6 @@ use \Facade\Request;
 
 class User extends ModelContract {
     use StaticModelTrait;
-    static protected $collection = 'users';
 
     protected $_json_item = [
         'username',
@@ -37,6 +36,11 @@ class User extends ModelContract {
         'solved_prob'   =>  [],
         'msg_session'   =>  []
     ];
+
+    static public function getCollectionName()
+    {
+        return 'users';
+    }
 
     public function refreshCache()
     {

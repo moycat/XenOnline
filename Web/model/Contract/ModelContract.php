@@ -15,9 +15,7 @@ use MongoDB\BSON\Persistable as Persistable;
 use Facade\Site;
 use Facade\DB;
 
-abstract class ModelContract implements Persistable, ArrayAccess {
-    static protected $collection = '';    // *Collection name
-
+abstract class ModelContract implements Persistable, ArrayAccess, Model {
     protected $_data = [];          // Data wrapper
     protected $_id = null;          // ObjectID
     protected $_modified = [];      // Items modified
@@ -62,7 +60,7 @@ abstract class ModelContract implements Persistable, ArrayAccess {
         if (!$this->_data) {
             return false;
         }
-        DB::select(self::$collection);
+        DB::select($this->getCollectionName());
         if (!$this->_loaded) {
             // New model
             DB::insertOne($this);
@@ -119,7 +117,7 @@ abstract class ModelContract implements Persistable, ArrayAccess {
             return false;
         }
         $query = array_merge([['_id' => $this->_id]], $arg);
-        DB::select(self::$collection);
+        DB::select($this->getCollectionName());
         return call_user_func_array('\Facade\DB::'.$name, $query);
     }
 
@@ -185,4 +183,8 @@ abstract class ModelContract implements Persistable, ArrayAccess {
     {
         return $this->toJson();
     }
+}
+
+interface Model {
+    public static function getCollectionName();
 }
