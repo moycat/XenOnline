@@ -37,6 +37,7 @@ class AdminController {
 
     public function problemList($page = 1)
     {
+        // TODO: 分页
         $count = [
             'problem' => Problem::count()
         ];
@@ -52,6 +53,17 @@ class AdminController {
         View::assign('problem', $problem);
         View::assign('count', $count);
         $this->show('admin/problem');
+    }
+
+    public function problemAddPage()
+    {
+        $count = [
+            'problem' => Problem::count()
+        ];
+
+
+        View::assign('count', $count);
+        $this->show('admin/problem.edit');
     }
 
     private function check()

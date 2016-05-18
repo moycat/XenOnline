@@ -46,7 +46,6 @@ function login() {
 }
 // Change the state of the menu
 function toggleMenu() {
-    $('#Yuki').toggleClass('Naving');
     $('nav').toggleClass('foo');
     $('.wrapper').toggleClass('foo');
     $('.openNav').toggleClass('foo');

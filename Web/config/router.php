@@ -34,6 +34,10 @@ Router::get('user/(:any)', 'UserController@view');
 /* Administration */
 Router::get('admin', 'AdminController@home');
 Router::get('admin/problem', 'AdminController@problemList');
+Router::get('admin/problem/add', 'AdminController@problemAddPage');
+Router::post('admin/problem/add', 'AdminController@problemAdd');
+Router::get('admin/problem/(:any)/edit', 'AdminController@problemEditPage');
+Router::post('admin/problem/(:any)/edit', 'AdminController@problemEdit');
 Router::get('admin/problem/page/(:any)', 'AdminController@problemList');
 
 /* Errors */
