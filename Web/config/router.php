@@ -13,10 +13,12 @@ use \Facade\View;
 
 /* Public Pages */
 Router::get('', 'IndexController@home');
+Router::post('upload', 'IndexController@upload');
 
 /* Problem */
 Router::get('problem', 'ProblemController@home');
 Router::get('problem/(:any)', 'ProblemController@view');
+Router::get('problem/(:any)/md', 'ProblemController@viewMD');
 
 /* Solution */
 Router::get('solution', 'SollutionController@home');

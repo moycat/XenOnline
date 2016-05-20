@@ -24,10 +24,10 @@ class View {
         self::$smarty->display($tp.'.tpl');
     }
 
-    public static function assign($name, $var)
+    public static function assign($name, $var, $nocache = true)
     {
         self::setup();
-        self::$smarty->assign($name, $var);
+        self::$smarty->assign($name, $var, $nocache);
     }
 
     public static function error404()

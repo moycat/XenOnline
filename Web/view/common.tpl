@@ -14,7 +14,7 @@
     <link href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
     <link href="//cdn.bootcss.com/flat-ui/2.2.2/css/flat-ui.min.css" rel="stylesheet">
     <link href="//cdn.bootcss.com/iCheck/1.0.2/skins/flat/red.css" rel="stylesheet">
-    <link href="/static/html/common.css" rel="stylesheet">
+    <link href="/static/css/common.css" rel="stylesheet">
     {block name=extra_head}{/block}
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -29,6 +29,6 @@
 <script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 <script src="//cdn.bootcss.com/flat-ui/2.2.2/js/flat-ui.min.js"></script>
 <script src="//cdn.bootcss.com/iCheck/1.0.2/icheck.min.js"></script>
-<script src="/static/html/common.js"></script>
+<script src="/static/js/common.js"></script>
 {block name=extra_foot}{/block}
 </html>

@@ -17,3 +17,9 @@
         </div>
     </div>
 {/block}
+{block name='extra_head' append}
+    <link rel="stylesheet" href="/static/css/admin.css"/>
+{/block}
+{block name='extra_foot' append}
+    <script src="/static/js/admin.js"></script>
+{/block}
