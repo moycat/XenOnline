@@ -190,6 +190,7 @@ label {
     z-index: 9;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
     transition-duration: 0.5s;
+    opacity: 0.9;
 }
 
 .tool-button:hover {
@@ -276,6 +277,7 @@ label {
     left: 20px;
     z-index: 9;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+    opacity: 0.9;
 }
 
 .openNav.foo,

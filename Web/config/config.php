@@ -25,9 +25,8 @@ define('DEBUG', true);
 
 /* Envionment variables */
 define('ROOT', __DIR__.'/../');
-define('PUBLIC', __DIR__.'public/');
+define('PUBLICDIR', ROOT.'public/');
 define('CONFIG', ROOT.'config/');
-define('FUNC', ROOT.'function/');
 define('VIEW', ROOT.'view/');
 
 /* OK, now let's require some strange things... */

@@ -5,10 +5,10 @@ function adminNewData() {
 '<div id="data'+adminNewData.count+'">\
     <div class="row">\
         <div class="col-md-4">\
-            <p><input type="file" id="input'+adminNewData.count+'" title="输入数据 #'+adminNewData.count+'" name="input[]" class="btn-info btn-sm"></p>\
+            <p><input type="file" id="input'+adminNewData.count+'" title="输入数据 #'+adminNewData.count+'" name="input[]" class="btn-info btn-sm" required></p>\
         </div>\
         <div class="col-md-4">\
-            <p><input type="file" id="stdout'+adminNewData.count+'" title="输出数据 #'+adminNewData.count+'" name="stdout[]" class="btn-info btn-sm"></p>\
+            <p><input type="file" id="stdout'+adminNewData.count+'" title="输出数据 #'+adminNewData.count+'" name="stdout[]" class="btn-info btn-sm" required></p>\
         </div>\
         <div class="col-md-4">\
             <button type="button" class="btn btn-danger btn-sm" onclick="adminDelData('+adminNewData.count+')">\

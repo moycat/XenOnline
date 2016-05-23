@@ -20,13 +20,16 @@
 {/block}
 {block name='content'}
     <div class="row">
-        <form class="col-sm-12" method="post" action="/admin/problem/add">
+        {literal}
+        <form class="col-sm-12" method="post" action="/admin/problem/post"
+              onkeydown="if(event.keyCode==13){return false;}" enctype="multipart/form-data">
+            {/literal}
             <div class="form-group">
                 <label for="title" class="h3">标题</label>
-                <input type="text" class="form-control" id="title" name="title" placeholder="题目标题">
+                <input type="text" class="form-control" id="title" name="title" placeholder="题目标题" autofocus required>
             </div>
             <div class="form-group">
-                <label for="editor" class="h3">题面</label>
+                <label for="editor" class="h3" autocomplete="off">题面</label>
                 <div id="editormd">
                     <textarea id="editor" name="content" style="display:none;">
                     </textarea>
@@ -38,19 +41,28 @@
             </div>
             <div class="form-group" id="test-data">
                 <label class="h3">测试数据</label>
-                {if isset($problem)}
-                    <div class="alert alert-warning">如不更新测试数据，请不要在此选择文件！一旦选择文件，将覆盖此题已上传的所有测试数据。</div>
+                {if isset($problem['id'])}
+                    <div class="alert alert-warning">
+                        <b>如不更新测试数据，请不要在此选择文件！</b>一旦选择文件，将覆盖此题已上传的所有测试数据。
+                        <br>
+                        不修改测试数据请按红×，手动删除所有下方文件框。
+                    </div>
                 {/if}
                 <div id="data0">
                     <div class="row">
                         <div class="col-md-4">
-                            <p><input type="file" id="input0" title="输入数据 #0" name="input[]" class="btn-info btn-sm"></p>
+                            <p><input type="file" id="input0" title="输入数据 #0" name="input[]" class="btn-info btn-sm"
+                                      required>
+                            </p>
                         </div>
                         <div class="col-md-4">
-                            <p><input type="file" id="stdout0" title="输出数据 #0" name="stdout[]" class="btn-info btn-sm"></p>
+                            <p><input type="file" id="stdout0" title="输出数据 #0" name="stdout[]" class="btn-info btn-sm"
+                                      required>
+                            </p>
                         </div>
                         <div class="col-md-4">
-                            <button type="button" class="btn btn-danger btn-sm" onclick="adminDelData('+adminNewData.count+')">
+                            <button type="button" class="btn btn-danger btn-sm"
+                                    onclick="adminDelData(0)">
                                 <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                             </button>
                         </div>
@@ -65,17 +77,22 @@
                 <div class="col-sm-6">
                     <div class="form-group">
                         <label for="time-limit" class="h3">时间限制（ms）</label>
-                        <input type="text" class="form-control" id="time-limit" name="time_limit" placeholder="单位：毫秒">
+                        <input type="number" min=1 step=1 class="form-control" id="time-limit" name="time_limit"
+                               placeholder="单位：毫秒" required>
                     </div>
                 </div>
                 <div class="col-sm-6">
                     <div class="form-group">
                         <label for="mem-limit" class="h3">内存限制（MiB）</label>
-                        <input type="text" class="form-control" id="mem-limit" name="mem_limit" placeholder="单位：兆字节">
+                        <input type="number" min=1 step=1 class="form-control" id="mem-limit" name="mem_limit"
+                               placeholder="单位：兆字节" required>
                     </div>
                 </div>
             </div>
             <br>
+            {if isset($problem['id'])}
+                <input type="hidden" name="pid" value="{$problem['id']}">
+            {/if}
             <button type="submit" class="btn btn-info btn-lg">发布</button>
         </form>
     </div>
@@ -92,30 +109,29 @@
         $(function () {
             $('input[type=file]').bootstrapFileInput();
             $('.file-inputs').bootstrapFileInput();
+
+            {if isset($problem)}
+            $("#title").attr('value', "{$problem['title']}");
+            $("#time-limit").attr('value', "{$problem['time_limit']}");
+            $("#mem-limit").attr('value', "{$problem['mem_limit']}");
+            {if isset($problem['tag'])}
+            $('#tag').attr('value', '{implode(',', $problem['tag'])}');
+            {/if}
+            {/if}
             $('#tag').inputTags(
                     {
                         init: function ($elem) {
-                            {if isset($problem)}
-                            $(".inputTags-field").attr('value', 'todo');
-                            {else}
                             $(".inputTags-field").attr('placeholder', '输入新标签，回车添加');
-                            {/if}
                         }
                     }
             );
             if ($(document.body).outerWidth(true) > 768)
                 toggleMenu();
-            {if isset($problem)}
-                $("#title").attr('value', "{$peoblem['title']}");
-                $("#time-limit").attr('value', "{$peoblem['time_limit']}");
-                $("#mem-limit").attr('value', "{$peoblem['mem_limit']}");
-            {/if}
             $.get('/static/problem-instruction.md', function (md) {
                 Editor = editormd("editormd", {
                     height: "80vh",
                     path: '/static/vendor/editor.md/lib/',
-                    markdown:
-                    {if isset($problem)}atob("{base64_encode($problem['content'])}"){else}md{/if},
+                    markdown: {if isset($problem)}decodeURIComponent("{urlencode($problem['content'])}"){else}md{/if},
                     codeFold: true,
                     saveHTMLToTextarea: true,
                     searchReplace: true,

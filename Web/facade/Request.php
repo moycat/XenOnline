@@ -29,7 +29,7 @@ class Request {
 
     static public function getIP()
     {
-        if (isset($_SERVER["HTTP_CF_CONNECTING_IP"])) {
+        if (isset($_SERVER["HTTP_CF_CONNECTING_IP"])) { // For Cloudflare
             return $_SERVER["HTTP_CF_CONNECTING_IP"];
         }
         if (isset($_SERVER['REMOTE_ADDR'])) {

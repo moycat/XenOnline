@@ -11,6 +11,7 @@
 namespace Facade;
 
 use MongoDB\Client;
+use MongoDB\BSON\Regex;
 use Exception;
 
 class DB {
@@ -41,10 +42,32 @@ class DB {
     {
         self::$col_name = $collection;
         if (isset(self::$col[$collection])) {
-            return false;
+            return self::$col[$collection];
         }
         self::$col[$collection] = self::$db->selectCollection($collection);
         return self::$col[$collection];
+    }
+
+    public static function autoinc($mark)
+    {
+        $rs = self::select('autoinc')->findOneAndUpdate(
+            [
+                'mark' => $mark
+            ],
+            [
+                '$inc' => [
+                    'id' => 1
+                ]
+            ],
+            [
+                'upsert' => true
+            ]
+        );
+        return $rs->id;
+    }
+
+    public static function regex($str, $mode = 'i') {
+        return new Regex($str, $mode);
     }
 
     public static function __callStatic($name, $arg)

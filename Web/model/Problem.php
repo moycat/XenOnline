@@ -53,7 +53,21 @@ class Problem extends ModelContract {
     {
         // For new problems
         $this->_default_item['created_at'] = time();
-        $this->_default_item['hash'] = sha1($doc['title'].(string)rand(1,10000));
+        if (!isset($doc['hash'])) {
+            $this->_default_item['hash'] = str_replace(
+                '/',
+                'x',
+                password_hash($doc['title'].(string)rand(1,10000), PASSWORD_DEFAULT)
+            );
+        }
+    }
+
+    protected function onExtract(&$data)
+    {
+        // Tags to array
+        if (isset($data['tag']) && $data['tag'] instanceof \MongoDB\Model\BSONArray) {
+            $data['tag'] = $data['tag']->getArrayCopy();
+        }
     }
 
 }

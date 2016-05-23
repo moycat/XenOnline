@@ -20,8 +20,9 @@ class View {
         self::setup();
         // Process time should be computed just before showing
         self::$smarty->assign('process_time', Site::timing());
-
         self::$smarty->display($tp.'.tpl');
+
+        exit();
     }
 
     public static function assign($name, $var, $nocache = true)
@@ -32,6 +33,7 @@ class View {
 
     public static function error404()
     {
+        header($_SERVER['SERVER_PROTOCOL']." 404 Not Found");
         self::show('404');
     }
 

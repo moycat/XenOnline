@@ -18,7 +18,6 @@ Router::post('upload', 'IndexController@upload');
 /* Problem */
 Router::get('problem', 'ProblemController@home');
 Router::get('problem/(:any)', 'ProblemController@view');
-Router::get('problem/(:any)/md', 'ProblemController@viewMD');
 
 /* Solution */
 Router::get('solution', 'SollutionController@home');
@@ -36,10 +35,10 @@ Router::get('user/(:any)', 'UserController@view');
 /* Administration */
 Router::get('admin', 'AdminController@home');
 Router::get('admin/problem', 'AdminController@problemList');
+Router::post('admin/problem/search', 'AdminController@problemSearch');
 Router::get('admin/problem/add', 'AdminController@problemAddPage');
-Router::post('admin/problem/add', 'AdminController@problemAdd');
+Router::post('admin/problem/post', 'AdminController@problemPost');
 Router::get('admin/problem/(:any)/edit', 'AdminController@problemEditPage');
-Router::post('admin/problem/(:any)/edit', 'AdminController@problemEdit');
 Router::get('admin/problem/page/(:any)', 'AdminController@problemList');
 
 /* Errors */

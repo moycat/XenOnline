@@ -7,6 +7,10 @@
             <div class="card">
                 {block name='menu'}{/block}
                 <hr>
+                {if isset($info)}
+                    {$info}
+                {/if}
+                {Facade\Session::fetch('info')}
                 {block name='content'}{/block}
             </div>
         </div>

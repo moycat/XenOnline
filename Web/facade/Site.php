@@ -27,7 +27,26 @@ class Site {
         Cache::init(REDIS_HOST, REDIS_PORT, REDIS_PWD);
         Auth::check();
 
+        // Fix the bug when many/no '/'
+        $_SERVER['REQUEST_URI'] = '/'.trim($_SERVER['REQUEST_URI'], '/');
+
         Router::dispatch();
+    }
+
+    static public function go($url, $code = 200)
+    {
+        switch ($code) {
+            default:
+                break;
+            case 404:
+                header($_SERVER['SERVER_PROTOCOL']." 404 Not Found");
+                break;
+            case 301:
+                header($_SERVER['SERVER_PROTOCOL']." 301 Moved Permanently");
+                break;
+        }
+        header('location: '.$url);
+        exit(0);
     }
 
     static public function ObjectID($str = null)

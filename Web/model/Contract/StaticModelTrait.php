@@ -31,26 +31,24 @@ trait StaticModelTrait {
             return self::$member[$id];
         }
         DB::select(self::getCollectionName());
-        self::$member[$id] = DB::findOne(['_id' => Site::ObjectID($id)]);
+        self::$member[$id] = DB::select(self::getCollectionName())->
+                                findOne(['_id' => Site::ObjectID($id)]);
         return self::$member[$id];
     }
 
     static public function find($filter,  $option = [])
     {
-        DB::select(self::getCollectionName());
-        return DB::findOne($filter, $option);
+        return DB::select(self::getCollectionName())->findOne($filter, $option);
     }
 
     static public function findMany($filter, $option = [])
     {
-        DB::select(self::getCollectionName());
-        return DB::find($filter, $option);
+        return DB::select(self::getCollectionName())->find($filter, $option);
     }
 
     static public function count()
     {
-        DB::select(self::getCollectionName());
-        return DB::count();
+        return DB::select(self::getCollectionName())->count();
     }
 
     /* Create a new model */

@@ -30,9 +30,9 @@ abstract class ModelContract implements Persistable, ArrayAccess, Model {
     protected function onZip(&$doc) {}
     protected function onExtract(&$data) {}
 
-    public function getID()
+    public function getID($raw = false)
     {
-        return (string)$this->_id;
+        return $raw ? $this->_id : (string)$this->_id;
     }
 
     public function setID($id)
