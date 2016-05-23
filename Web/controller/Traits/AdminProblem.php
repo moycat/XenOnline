@@ -7,6 +7,7 @@
  */
 
 namespace Controller\Traits;
+
 use \Facade\DB;
 use \Facade\View;
 use \Facade\Request;
@@ -42,7 +43,7 @@ trait AdminProblem
             View::error404();
         }
 
-        $problems = Problem::findMany([], ['skip'=>$skip, 'limit'=>$limit])->toArray();
+        $problems = Problem::findMany([], ['skip' => $skip, 'limit' => $limit])->toArray();
 
         View::assign('problems', $problems);
         $this->show('admin/problem.list');
@@ -53,7 +54,7 @@ trait AdminProblem
         $problem = $this->getPostedProblem();
         $files = $this->getPostedProblemData($problem);
 
-        $file_dir = PUBLICDIR.'data/';
+        $file_dir = PUBLICDIR . 'data/';
 
         if (!$problem['id'] && !$files) {
             /* ERROR: New problems must have data */
@@ -61,6 +62,7 @@ trait AdminProblem
             View::assign('problem', $problem);
             $this->show('admin/problem.edit');
             exit();
+
         } elseif ($problem['id']) {
             /* Existing problems with new data */
             $existing_problem = Problem::find(
@@ -79,7 +81,8 @@ trait AdminProblem
             // Update data?
             if ($files) {
                 $existing_problem['turn'] = count($files['input']);
-                if (!$this->saveProblemTestData($file_dir.$existing_problem['hash'], $files)) {
+                $existing_problem['ver'] = $existing_problem['ver'] + 1; // Update test data version
+                if (!$this->saveProblemTestData($file_dir . $existing_problem['hash'], $files)) {
                     /* ERROR: Failed to save test data */
                     $this->info('danger', '测试数据保存失败，题目未发布');
                     View::assign('problem', $problem);
@@ -88,8 +91,9 @@ trait AdminProblem
                 }
             }
             $existing_problem->save();
-            $this->info('success', '修改题目成功！题号#'.$problem['id'], 'session');
+            $this->info('success', '修改题目成功！题号#' . $problem['id'], 'session');
             Site::go('/admin/problem');
+
         } elseif (!$problem['id']) {
             /* New problems */
             $problem['id'] = DB::autoinc('problem');
@@ -101,13 +105,13 @@ trait AdminProblem
                 ]
             );
             // Save test data
-            if (!$this->saveProblemTestData($file_dir.$problem['hash'], $files)) {
+            if (!$this->saveProblemTestData($file_dir . $problem['hash'], $files)) {
                 /* ERROR: Failed to save test data */
                 $this->info('danger', '测试数据保存失败，但题目已发布');
                 View::assign('problem', $problem);
                 $this->show('admin/problem.edit');
             } else {
-                $this->info('success', '添加题目成功！题号#'.$problem['id'], 'session');
+                $this->info('success', '添加题目成功！题号#' . $problem['id'], 'session');
                 Site::go('/admin/problem');
             }
         }
@@ -151,7 +155,7 @@ trait AdminProblem
                 $info .= "<b>Search[ID]:</b> #";
                 break;
             case 'title':
-                $filter['title'] = DB::regex('.*'.$user_filter.'.*');
+                $filter['title'] = DB::regex('.*' . $user_filter . '.*');
                 $info .= "<b>Search[Title]:</b> ";
                 break;
             case 'tag':
@@ -171,19 +175,65 @@ trait AdminProblem
         $this->show('admin/problem.list');
     }
 
+    public function problemLock($id)
+    {
+        $rs = Problem::db()->updateOne(
+            [
+                'id' => (int)$id
+            ],
+            [
+                '$set' =>
+                    [
+                        'status' => 0
+                    ]
+            ]
+        );
+        if (!$rs->getMatchedCount()) {
+            $this->info('danger', '尝试锁定不存在的题目！', 'session');
+        } elseif (!$rs->getModifiedCount()) {
+            $this->info('warning', '题目#'.$id.'已被锁定！', 'session');
+        } else {
+            $this->info('success', '题目#'.$id.'锁定成功！此题目将无法被浏览。', 'session');
+        }
+        Site::go('/admin/problem');
+    }
+
+    public function problemUnlock($id)
+    {
+        $rs = Problem::db()->updateOne(
+            [
+                'id' => (int)$id
+            ],
+            [
+                '$set' =>
+                    [
+                        'status' => 1
+                    ]
+            ]
+        );
+        if (!$rs->getMatchedCount()) {
+            $this->info('danger', '尝试解锁不存在的题目！', 'session');
+        } elseif (!$rs->getModifiedCount()) {
+            $this->info('warning', '题目#'.$id.'未被锁定！', 'session');
+        } else {
+            $this->info('success', '题目#'.$id.'解锁成功！此题目已可浏览。', 'session');
+        }
+        Site::go('/admin/problem');
+    }
+
     private function saveProblemTestData($dir, $files)
     {
         echo $dir;
         if (!mkdir($dir) && !file_exists($dir)) {
             return false;
         }
-        foreach($files['input'] as $n => $file) {
-            if (!move_uploaded_file($file, $dir.'/'.$n.'.in')) {
+        foreach ($files['input'] as $n => $file) {
+            if (!move_uploaded_file($file, $dir . '/' . $n . '.in')) {
                 return false;
             }
         }
-        foreach($files['stdout'] as $n => $file) {
-            if (!move_uploaded_file($file, $dir.'/'.$n.'.out')) {
+        foreach ($files['stdout'] as $n => $file) {
+            if (!move_uploaded_file($file, $dir . '/' . $n . '.out')) {
                 return false;
             }
         }
@@ -210,7 +260,7 @@ trait AdminProblem
         foreach ($_FILES["input"]["error"] as $key => $error) {
             if ($error != UPLOAD_ERR_OK) {
                 $name = $_FILES["input"]["name"][$key];
-                $info .= '<br>[Input]'.$name;
+                $info .= '<br>[Input]' . $name;
             } else {
                 $files['input'][] = $_FILES["input"]["tmp_name"][$key];
             }
@@ -218,13 +268,13 @@ trait AdminProblem
         foreach ($_FILES["stdout"]["error"] as $key => $error) {
             if ($error != UPLOAD_ERR_OK) {
                 $name = $_FILES["stdout"]["name"][$key];
-                $info .= '<br>[Output]'.$name;
+                $info .= '<br>[Output]' . $name;
             } else {
                 $files['stdout'][] = $_FILES["stdout"]["tmp_name"][$key];
             }
         }
         if ($info) {
-            $this->info('danger', '测试数据上传错误：'.$info);
+            $this->info('danger', '测试数据上传错误：' . $info);
             View::assign('problem', $problem);
             $this->show('admin/problem.edit');
             exit();
@@ -232,7 +282,7 @@ trait AdminProblem
 
         return $files;
     }
-    
+
     private function getPostedProblem()
     {
         // Fetch the problem posted
@@ -242,7 +292,7 @@ trait AdminProblem
             $problem[$key] = Request::post($value);
             // Error only when it's an error
             if (!$problem[$key] && isset($this->problem_post_error[$key])) {
-                $info .= '<br>'.$this->problem_post_error[$key];
+                $info .= '<br>' . $this->problem_post_error[$key];
             }
         }
         $problem['tag'] = explode(',', $problem['tag']);
@@ -258,7 +308,7 @@ trait AdminProblem
 
         // If necessary fields aren't filled
         if ($info) {
-            $info = '<b>缺少必要信息：</b>'.$info;
+            $info = '<b>缺少必要信息：</b>' . $info;
             $this->info('danger', $info);
             View::assign('problem', $problem);
             $this->show('admin/problem.edit');

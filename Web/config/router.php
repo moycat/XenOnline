@@ -35,11 +35,13 @@ Router::get('user/(:any)', 'UserController@view');
 /* Administration */
 Router::get('admin', 'AdminController@home');
 Router::get('admin/problem', 'AdminController@problemList');
+Router::get('admin/problem/page/(:any)', 'AdminController@problemList');
 Router::post('admin/problem/search', 'AdminController@problemSearch');
 Router::get('admin/problem/add', 'AdminController@problemAddPage');
 Router::post('admin/problem/post', 'AdminController@problemPost');
 Router::get('admin/problem/(:any)/edit', 'AdminController@problemEditPage');
-Router::get('admin/problem/page/(:any)', 'AdminController@problemList');
+Router::get('admin/problem/(:any)/lock', 'AdminController@problemLock');
+Router::get('admin/problem/(:any)/unlock', 'AdminController@problemUnlock');
 
 /* Errors */
 Router::error(

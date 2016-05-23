@@ -50,6 +50,9 @@ $indexes_to_create = [
     'logs' => [
         [['user_id' => 1]],
         [['type' => 1]]
+    ],
+    'problem' => [
+        [['id' => 1], ['unique' => true]]
     ]
 ];
 
