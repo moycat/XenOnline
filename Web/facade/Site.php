@@ -54,6 +54,15 @@ class Site {
         return $str ? new \MongoDB\BSON\ObjectID($str) : new \MongoDB\BSON\ObjectID();
     }
 
+    static public function random($seed = '')
+    {
+        return str_replace(
+            '/',
+            'x',
+            password_hash($seed.(string)rand(1,10000), PASSWORD_DEFAULT)
+        );
+    }
+
     static public function timing($n = 2)
     {
         $now_time = microtime();

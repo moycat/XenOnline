@@ -221,6 +221,21 @@ trait AdminProblem
         Site::go('/admin/problem');
     }
 
+    public function problemDelete($id)
+    {
+        $rs = Problem::db()->deleteOne(
+            [
+                'id' => (int)$id
+            ]
+        );
+        if (!$rs->getDeletedCount()) {
+            $this->info('danger', '尝试删除不存在的题目！', 'session');
+        } else {
+            $this->info('success', '题目#'.$id.'删除成功！', 'session');
+        }
+        Site::go('/admin/problem');
+    }
+
     private function saveProblemTestData($dir, $files)
     {
         echo $dir;

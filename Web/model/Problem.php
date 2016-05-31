@@ -2,8 +2,6 @@
 /**
  * model/Problem.php @ XenOnline
  *
- * The model of problems.
- *
  * Authored by Moycat <moycat@makedie.net>
  * Licensed under GPLv2, see file LICENSE in this source tree.
  */
@@ -12,6 +10,8 @@ namespace Model;
 
 use \Model\Contract\ModelContract;
 use \Model\Contract\StaticModelTrait;
+
+use \Facade\Site;
 
 class Problem extends ModelContract {
     use StaticModelTrait;
@@ -54,11 +54,7 @@ class Problem extends ModelContract {
         // For new problems
         $this->_default_item['created_at'] = time();
         if (!isset($doc['hash'])) {
-            $this->_default_item['hash'] = str_replace(
-                '/',
-                'x',
-                password_hash($doc['title'].(string)rand(1,10000), PASSWORD_DEFAULT)
-            );
+            $this->_default_item['hash'] = Site::random($doc['title']);
         }
     }
 

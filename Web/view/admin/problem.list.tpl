@@ -1,5 +1,23 @@
 {extends file='admin/subpage.tpl'}
 {block name='menu'}
+    <div id="deleteProblem" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="DeleteProblem">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="deleteProblemLabel">删除题目<a id="pidtodelTitle"></a></h4>
+                </div>
+                <div class="modal-body">
+                    <p><b>你确定要删除这个题目吗？</b>此题目的内容将被清除，此操作将无法撤销。</p>
+                    <p>此题目的测试数据不会被删除，已有的评测记录也将保留。</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <a id="pidtodelButton" class="btn btn-danger" href="#" role="button">删除</a>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="row">
         <div class="col-sm-7">
             <ul class="nav nav-pills">
@@ -66,6 +84,7 @@
                 <td>
                     <a class="btn btn-xs btn-info" href="/admin/problem/{$problem['id']}/edit" role="button">编辑</a>
                     <a class="btn btn-xs btn-default" href="#" role="button">详情</a>
+                    <!-- TODO -->
                     {if $problem['status'] == 1}
                         <a class="btn btn-xs btn-warning" href="/admin/problem/{$problem['id']}/lock"
                            role="button">锁定</a>
@@ -73,7 +92,7 @@
                         <a class="btn btn-xs btn-primary" href="/admin/problem/{$problem['id']}/unlock"
                            role="button">解锁</a>
                     {/if}
-                    <a class="btn btn-xs btn-danger" href="/admin/problem/{$problem['id']}/delete" role="button">删除</a>
+                    <a class="btn btn-xs btn-danger" onclick="deleteProblem({$problem['id']})" role="button">删除</a>
                 </td>
                 </tr>
             {/foreach}

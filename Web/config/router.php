@@ -42,6 +42,8 @@ Router::post('admin/problem/post', 'AdminController@problemPost');
 Router::get('admin/problem/(:any)/edit', 'AdminController@problemEditPage');
 Router::get('admin/problem/(:any)/lock', 'AdminController@problemLock');
 Router::get('admin/problem/(:any)/unlock', 'AdminController@problemUnlock');
+Router::get('admin/problem/(:any)/delete', 'AdminController@problemDelete');
+Router::get('admin/client', 'AdminController@clientList');
 
 /* Errors */
 Router::error(

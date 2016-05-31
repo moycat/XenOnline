@@ -1,3 +1,10 @@
+/* Problen */
+function deleteProblem(id) {
+    $("#pidtodelTitle").text("#" + id);
+    $("#pidtodelButton").attr('href', '/admin/problem/' + id + '/delete');
+    $('#deleteProblem').modal();
+}
+
 /* Data upload */
 adminNewData.count = 1;
 function adminNewData() {

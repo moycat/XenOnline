@@ -18,6 +18,7 @@ use \Model\User;
 
 class AdminController {
     use \Controller\Traits\AdminProblem;
+    use \Controller\Traits\AdminClient;
 
     static private $piece_per_page = 20;
     private $count = [];
