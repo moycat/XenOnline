@@ -44,6 +44,8 @@ Router::get('admin/problem/(:any)/lock', 'AdminController@problemLock');
 Router::get('admin/problem/(:any)/unlock', 'AdminController@problemUnlock');
 Router::get('admin/problem/(:any)/delete', 'AdminController@problemDelete');
 Router::get('admin/client', 'AdminController@clientList');
+Router::get('admin/client/(:any)/delete', 'AdminController@clientDelete');
+Router::post('admin/client/post', 'AdminController@clientPost');
 
 /* Errors */
 Router::error(

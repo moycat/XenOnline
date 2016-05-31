@@ -111,6 +111,10 @@ small {
     -webkit-transform: translateY(-7px);
 }
 
+.popover-content {
+    word-break:break-all;
+}
+
 /*
 * The rotating things
 */

@@ -15,6 +15,7 @@ use \Facade\View;
 
 use \Model\Problem;
 use \Model\User;
+use \Model\Client;
 
 class AdminController {
     use \Controller\Traits\AdminProblem;
@@ -64,7 +65,7 @@ class AdminController {
             'user' => User::count(),
             // TODO
             'solution' => 0,
-            'client' => 0,
+            'client' => Client::count(),
             'online_client' => 0,
             'discussion' => 0
         ];

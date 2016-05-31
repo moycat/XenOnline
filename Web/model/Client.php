@@ -11,6 +11,7 @@ namespace Model;
 use \Model\Contract\ModelContract;
 use \Model\Contract\StaticModelTrait;
 
+use \Facade\DB;
 use \Facade\Site;
 use \Facade\View;
 
@@ -27,8 +28,7 @@ class Client extends ModelContract {
     ];
 
     protected $_default_item = [
-        'status'        =>  1,
-        'load'          =>  [],
+        'load'          =>  [0, 0, 0],
         'memory'        =>  0,
         'last_ping'     =>  0
     ];
@@ -45,10 +45,13 @@ class Client extends ModelContract {
 
     protected function onZip(&$doc)
     {
-        // For new problems
+        // For new clients
         $this->_default_item['created_at'] = time();
-        if (!isset($doc['password'])) {
+        if (!isset($doc['password']) && !isset($this->_default_item['hash'])) {
             $this->_default_item['hash'] = Site::random($doc['name']);
+        }
+        if (!isset($doc['id']) && !isset($this->_default_item['id'])) {
+            $this->_default_item['id'] = DB::autoinc('client');
         }
     }
 

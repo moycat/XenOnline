@@ -53,7 +53,7 @@ class Problem extends ModelContract {
     {
         // For new problems
         $this->_default_item['created_at'] = time();
-        if (!isset($doc['hash'])) {
+        if (!isset($doc['hash']) && !isset($this->_default_item['hash'])) {
             $this->_default_item['hash'] = Site::random($doc['title']);
         }
     }

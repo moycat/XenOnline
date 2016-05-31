@@ -1,19 +1,20 @@
 {extends file='admin/subpage.tpl'}
+{block name="subtitle"}题库管理{/block}
 {block name='menu'}
-    <div id="deleteProblem" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="DeleteProblem">
+    <div id="deleteItem" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="DeleteItem">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="deleteProblemLabel">删除题目<a id="pidtodelTitle"></a></h4>
+                    <h4 class="modal-title" id="deleteItemLabel">删除题目 <a id="idtodelTitle"></a></h4>
                 </div>
                 <div class="modal-body">
-                    <p><b>你确定要删除这个题目吗？</b>此题目的内容将被清除，此操作将无法撤销。</p>
+                    <p><b>你确定要删除这道题目吗？</b>此题目的内容将被清除，此操作将无法撤销。</p>
                     <p>此题目的测试数据不会被删除，已有的评测记录也将保留。</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                    <a id="pidtodelButton" class="btn btn-danger" href="#" role="button">删除</a>
+                    <a id="idtodelButton" class="btn btn-danger" href="#" role="button">删除</a>
                 </div>
             </div>
         </div>
@@ -92,7 +93,7 @@
                         <a class="btn btn-xs btn-primary" href="/admin/problem/{$problem['id']}/unlock"
                            role="button">解锁</a>
                     {/if}
-                    <a class="btn btn-xs btn-danger" onclick="deleteProblem({$problem['id']})" role="button">删除</a>
+                    <a class="btn btn-xs btn-danger" onclick="deleteItem('problem', {$problem['id']}, '{$problem['title']|escape}')" role="button">删除</a>
                 </td>
                 </tr>
             {/foreach}
